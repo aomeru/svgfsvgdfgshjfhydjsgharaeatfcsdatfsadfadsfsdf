@@ -33,21 +33,14 @@ class LoginController extends Controller
     public function get_token(Request $r)
     {
         if (isset($_GET['code'])) {
-            // Check that state matches
             if (empty($_GET['state']) || ($_GET['state'] !== $r->session()->get('oauth_state'))) {
-                return $this->kill_process($r,'error',"There is an issue with your login, please try again.");
-                // exit('State provided in redirect does not match expected value.');
+                return $this->kill_process($r,'error',"There is an issue with your login, please try again. [EP00001:OAUTH STATE]");
             }
-
-            // Clear saved state
             $r->session()->forget('oauth_state');
 
-            // Initialize the OAuth client
             $oauthClient = $this->get_custom_client();
 
             try {
-
-                // Make the token request
                 $accessToken = $oauthClient->getAccessToken('authorization_code', [
                     'code' => $_GET['code']
                 ]);
@@ -59,10 +52,12 @@ class LoginController extends Controller
 
             }
             catch (League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-                exit('ERROR getting tokens: '.$e->getMessage());
+                return $this->kill_process($r,'error',"There is an issue with your login, please try again. [EP00002:TOKEN ERROR]");
+                // exit('ERROR getting tokens: '.$e->getMessage());
             }
         } elseif (isset($_GET['error'])) {
-            exit('ERROR: '.$_GET['error'].' - '.$_GET['error_description']);
+            return $this->kill_process($r,'error',"There is an issue with your login, please try again. [EP00003]");
+            // exit('ERROR: '.$_GET['error'].' - '.$_GET['error_description']);
         }
     }
 

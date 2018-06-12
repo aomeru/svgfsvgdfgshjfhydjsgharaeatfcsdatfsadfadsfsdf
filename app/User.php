@@ -27,8 +27,13 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function usertoken()
-    {
-        // return $this->hasOne(Models\UserToken::class);
+    public function manager()
+	{
+        return $this->hasOne(Models\UserManager::class, 'user_id');
     }
+
+    public function users()
+	{
+        return $this->hasMany(Models\UserManager::class, 'manager_id');
+	}
 }
