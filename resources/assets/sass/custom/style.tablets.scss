@@ -1,0 +1,116 @@
+// width
+.sm-w-100 { width: 100%; }
+.sm-w-50 { width: 50%; }
+.sm-w-33 { width: 33.33%; }
+.sm-w-25 { width: 25%; }
+.sm-w-20 { width: 20%; }
+
+$i: 5;
+@while $i <= 500 {
+    .sm-pw-#{$i} { width : #{$i}px !important }
+    .sm-w#{$i} { width : #{$i}px !important }
+    .sm-h#{$i} { height : #{$i}px !important }
+    $i: $i + 5;
+}
+
+// font size
+.sm-fontp8x {font-size: .8em;}
+.sm-fontp85x {font-size: .85em;}
+.sm-fontp9x {font-size: .9em;}
+.sm-fontp95x {font-size: .95em;}
+.sm-font1x {font-size: 1em;}
+.sm-font125x {font-size: 1.25em;}
+.sm-font15x {font-size: 1.5em;}
+.sm-font2x {font-size: 2em;}
+.sm-font25x {font-size: 2.5em;}
+.sm-font3x {font-size: 3em;}
+.sm-font35x {font-size: 3.5em;}
+.sm-font4x {font-size: 4em;}
+.sm-font45x {font-size: 4.5em;}
+.sm-font5x {font-size: 5em;}
+
+$f: 12;
+@while $f <= 48 {
+	.sm-font-#{$f}x { font-size: #{$f}px }
+	$f: $f + 1;
+}
+
+// padding and margin
+$list: margin padding;
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.sm-#{$item}-#{$i} {#{$item}: #{$i}px;}
+	$i: $i + 5;
+}
+
+}	
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.sm-h-#{$item}-#{$i} {
+			#{$item}-left: #{$i}px;
+	#{$item}-right: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.sm-v-#{$item}-#{$i} {
+			#{$item}-bottom: #{$i}px;
+	#{$item}-top: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+$i: 0;
+@while $i <= 500 {
+    .sm-mr#{$i} {
+        margin-right: #{$i}px;
+    }
+    .sm-ml#{$i} {
+        margin-left: #{$i}px;
+    }
+    .sm-mt#{$i} {
+        margin-top: #{$i}px;
+    }
+    .sm-mb#{$i} {
+        margin-bottom: #{$i}px;
+    }
+    .sm-pr#{$i} {
+        padding-right: #{$i}px;
+    }
+    .sm-pl#{$i} {
+        padding-left: #{$i}px;
+    }
+    .sm-pt#{$i} {
+        padding-top: #{$i}px;
+    }
+    .sm-pb#{$i} {
+        padding-bottom: #{$i}px;
+    }
+	$i: $i + 5;
+}
+
+.sm-no-padding {padding: 0 !important;}
+.sm-no-top-padding {padding-top: 0 !important;}
+.sm-no-bottom-padding {padding-bottom: 0 !important;}
+.sm-no-right-padding {padding-right: 0 !important;}
+.sm-no-left-padding {padding-left: 0 !important;}
+.sm-no-margin {margin: 0 !important;}
+.sm-no-top-margin {margin-top: 0 !important;}
+.sm-no-bottom-margin {margin-bottom: 0 !important;}
+.sm-no-right-margin {margin-right: 0 !important;}
+.sm-no-left-margin {margin-left: 0 !important;}
+
+.sm-no-border {border: none;}
+.sm-no-outline {outline: none;}
+.sm-no-text-shadow {text-shadow: none;}
+.sm-no-box-shadow {box-shadow: none;}
+
+.sm-relative {position: relative !important;}

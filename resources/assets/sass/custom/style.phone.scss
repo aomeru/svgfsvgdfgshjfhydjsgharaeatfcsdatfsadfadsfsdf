@@ -1,0 +1,118 @@
+// width
+.xs-w-100 { width: 100%; }
+.xs-w-50 { width: 50%; }
+.xs-w-33 { width: 33.33%; }
+.xs-w-25 { width: 25%; }
+.xs-w-20 { width: 20%; }
+
+$i: 5;
+@while $i <= 500 {
+    .xs-pw-#{$i} { width : #{$i}px !important }
+    .xs-w#{$i} { width : #{$i}px !important }
+    .xs-h#{$i} { height : #{$i}px !important }
+    $i: $i + 5;
+}
+
+// font size
+.xs-fontp8x {font-size: .8em;}
+.xs-fontp85x {font-size: .85em;}
+.xs-fontp9x {font-size: .9em;}
+.xs-fontp95x {font-size: .95em;}
+.xs-font1x {font-size: 1em;}
+.xs-font125x {font-size: 1.25em;}
+.xs-font15x {font-size: 1.5em;}
+.xs-font2x {font-size: 2em;}
+.xs-font25x {font-size: 2.5em;}
+.xs-font3x {font-size: 3em;}
+.xs-font35x {font-size: 3.5em;}
+.xs-font4x {font-size: 4em;}
+.xs-font45x {font-size: 4.5em;}
+.xs-font5x {font-size: 5em;}
+
+$f: 12;
+@while $f <= 48 {
+	.xs-font-#{$f}x { font-size: #{$f}px }
+	$f: $f + 1;
+}
+
+// padding and margin
+$list: margin padding;
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xs-#{$item}-#{$i} {#{$item}: #{$i}px;}
+	$i: $i + 5;
+}
+
+}	
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xs-h-#{$item}-#{$i} {
+			#{$item}-left: #{$i}px;
+	#{$item}-right: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xs-v-#{$item}-#{$i} {
+			#{$item}-bottom: #{$i}px;
+	#{$item}-top: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+$i: 0;
+@while $i <= 500 {
+	.xs-mr#{$i} {
+		margin-right: #{$i}px;
+	}
+	.xs-ml#{$i} {
+		margin-left: #{$i}px;
+	}
+	.xs-mt#{$i} {
+		margin-top: #{$i}px;
+	}
+	.xs-mb#{$i} {
+		margin-bottom: #{$i}px;
+	}
+	.xs-pr#{$i} {
+		padding-right: #{$i}px;
+	}
+	.xs-pl#{$i} {
+		padding-left: #{$i}px;
+	}
+	.xs-pt#{$i} {
+		padding-top: #{$i}px;
+	}
+	.xs-pb#{$i} {
+		padding-bottom: #{$i}px;
+	}
+	$i: $i + 5;
+}
+
+
+.xs-no-padding {padding: 0 !important;}
+.xs-no-top-padding {padding-top: 0 !important;}
+.xs-no-bottom-padding {padding-bottom: 0 !important;}
+.xs-no-right-padding {padding-right: 0 !important;}
+.xs-no-left-padding {padding-left: 0 !important;}
+.xs-no-margin {margin: 0 !important;}
+.xs-no-top-margin {margin-top: 0 !important;}
+.xs-no-bottom-margin {margin-bottom: 0 !important;}
+.xs-no-right-margin {margin-right: 0 !important;}
+.xs-no-left-margin {margin-left: 0 !important;}
+
+.xs-no-border {border: none;}
+.xs-no-outline {outline: none;}
+.xs-no-text-shadow {text-shadow: none;}
+.xs-no-box-shadow {box-shadow: none;}
+
+.xs-relative {position: relative !important;}
+			

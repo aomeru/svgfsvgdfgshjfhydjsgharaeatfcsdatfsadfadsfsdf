@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+@import "variables";
+@import '~bootstrap/scss/bootstrap';
+@import "custom/style.normal";
+@import "sim";
+@import "reset";
+
+
+.navbar-laravel {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+body {
+    background-color: #f5f5f5;
+}
+#portal-left {
+    position: fixed;
+    top: 50px;
+    left: -300px;
+    bottom: 0;
+    width: 300px;
+    background-color: #fff;
+    overflow-y: auto;
+    z-index: 100;
+    transition: left 0.3s ease-in-out;
+    &.is-active {
+        top: 50px;
+        left: 0;
+        transition: left 0.3s ease-in-out;
+    }
+
+    @include media-breakpoint-up(sm) {
+        top: 0;
+        left: 0;
+        width: 350px;
+    }
+
+    .nav {
+        font-size: 18px;
+
+        .nav-item {
+            // margin-bottom: 5px;
+
+            .nav-link {
+                color: #333;
+                border-radius: 20px;
+                padding: .5rem 1.5rem;
+
+                &.nav-link-red {
+                    color: #f00;
+                }
+
+                &.active {
+                    background-color: $cyancolor;
+                    color: #fff;
+                    &:hover {
+                        color: #fff;
+                        padding-left: 1.5rem;
+                    }
+                }
+                &.sub-active {
+                    color: $cyancolor;
+                    &:hover {
+                        padding-left: 1.5rem;
+                    }
+                }
+                &:hover {
+                    color: $cyancolor;
+                    padding-left: 2rem;
+                }
+            }
+
+            .has-sub-nav {
+                cursor: pointer;
+            }
+
+            .sub-nav {
+                list-style: none;
+                font-size: 16px;
+                border-left: 2px solid #ccc;
+                max-height: 0;
+                overflow: hidden;
+                transition: all 0.2s ease-in-out;
+
+                .sub-nav-item {
+                    .sub-nav-link {
+                        display: block;
+                        padding: .5rem 1rem;
+                        border-radius: 20px;
+                        color: #666;
+
+                        &.active {
+                            background-color: $cyancolor;
+                            color: #fff;
+                            &:hover {
+                                color: #fff;
+                                padding-left: 1rem;
+                            }
+                        }
+                        &:hover {
+                            color: $cyancolor;
+                            padding-left: 1.5rem;
+                            text-decoration: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#portal-mobile-header {
+    position: relative;
+    height: 50px;
+    max-height: 50px;
+    // background-color: $bcolorb;
+    background-color: #fff;
+    color: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.15);
+    .brand {
+        display: block;
+        height: 50px;
+        padding: 5px 0 5px 10px;
+
+        img {
+            height: 40px;
+            width: auto;
+        }
+    }
+    .portal-mobile-menu-button {
+        padding: 10px 20px;
+        // background-color: rgba(3,169,244,.25);
+        background-color: $bcolorb;
+        height: 50px;
+        max-height: 50px;
+        cursor: pointer;
+    }
+}
+#portal-right {
+    top: 0;
+    right: 0;
+    // background-color: $bcolorg;
+    @include media-breakpoint-up(sm) {
+        position: absolute;
+        left: 350px;
+    }
+}
+

@@ -1,0 +1,117 @@
+// width
+.xl-w-100 { width: 100%; }
+.xl-w-50 { width: 50%; }
+.xl-w-33 { width: 33.33%; }
+.xl-w-25 { width: 25%; }
+.xl-w-20 { width: 20%; }
+
+$i: 5;
+@while $i <= 500 {
+    .xl-pw-#{$i} { width : #{$i}px !important }
+    .xl-w#{$i} { width : #{$i}px !important }
+    .xl-h#{$i} { height : #{$i}px !important }
+    $i: $i + 5;
+}
+
+// font size
+.xl-fontp8x {font-size: .8em;}
+.xl-fontp85x {font-size: .85em;}
+.xl-fontp9x {font-size: .9em;}
+.xl-fontp95x {font-size: .95em;}
+.xl-font1x {font-size: 1em;}
+.xl-font125x {font-size: 1.25em;}
+.xl-font15x {font-size: 1.5em;}
+.xl-font2x {font-size: 2em;}
+.xl-font25x {font-size: 2.5em;}
+.xl-font3x {font-size: 3em;}
+.xl-font35x {font-size: 3.5em;}
+.xl-font4x {font-size: 4em;}
+.xl-font45x {font-size: 4.5em;}
+.xl-font5x {font-size: 5em;}
+
+
+$f: 12;
+@while $f <= 48 {
+	.xl-font-#{$f}x { font-size: #{$f}px }
+	$f: $f + 1;
+}
+
+// padding and margin
+$list: margin padding;
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xl-#{$item}-#{$i} {#{$item}: #{$i}px;}
+	$i: $i + 5;
+}
+
+}	
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xl-h-#{$item}-#{$i} {
+			#{$item}-left: #{$i}px;
+	#{$item}-right: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.xl-v-#{$item}-#{$i} {
+			#{$item}-bottom: #{$i}px;
+	#{$item}-top: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+$i: 0;
+@while $i <= 500 {
+    .xl-mr#{$i} {
+        margin-right: #{$i}px;
+    }
+    .xl-ml#{$i} {
+        margin-left: #{$i}px;
+    }
+    .xl-mt#{$i} {
+        margin-top: #{$i}px;
+    }
+    .xl-mb#{$i} {
+        margin-bottom: #{$i}px;
+    }
+    .xl-pr#{$i} {
+        padding-right: #{$i}px;
+    }
+    .xl-pl#{$i} {
+        padding-left: #{$i}px;
+    }
+    .xl-pt#{$i} {
+        padding-top: #{$i}px;
+    }
+    .xl-pb#{$i} {
+        padding-bottom: #{$i}px;
+    }
+	$i: $i + 5;
+}
+
+.xl-no-padding {padding: 0 !important;}
+.xl-no-top-padding {padding-top: 0 !important;}
+.xl-no-bottom-padding {padding-bottom: 0 !important;}
+.xl-no-right-padding {padding-right: 0 !important;}
+.xl-no-left-padding {padding-left: 0 !important;}
+.xl-no-margin {margin: 0 !important;}
+.xl-no-top-margin {margin-top: 0 !important;}
+.xl-no-bottom-margin {margin-bottom: 0 !important;}
+.xl-no-right-margin {margin-right: 0 !important;}
+.xl-no-left-margin {margin-left: 0 !important;}
+
+.xl-no-border {border: none;}
+.xl-no-outline {outline: none;}
+.xl-no-text-shadow {text-shadow: none;}
+.xl-no-box-shadow {box-shadow: none;}
+
+.xl-relative {position: relative !important;}

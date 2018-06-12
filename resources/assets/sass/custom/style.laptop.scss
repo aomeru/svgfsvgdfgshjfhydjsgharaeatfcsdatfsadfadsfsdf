@@ -1,0 +1,116 @@
+// width
+.md-w-100 { width: 100%; }
+.md-w-50 { width: 50%; }
+.md-w-33 { width: 33.33%; }
+.md-w-25 { width: 25%; }
+.md-w-20 { width: 20%; }
+
+$i: 5;
+@while $i <= 500 {
+    .md-pw-#{$i} { width : #{$i}px !important }
+    .md-w#{$i} { width : #{$i}px !important }
+    .md-h#{$i} { height : #{$i}px !important }
+    $i: $i + 5;
+}
+
+// font size
+.md-fontp8x {font-size: .8em;}
+.md-fontp85x {font-size: .85em;}
+.md-fontp9x {font-size: .9em;}
+.md-fontp95x {font-size: .95em;}
+.md-font1x {font-size: 1em;}
+.md-font125x {font-size: 1.25em;}
+.md-font15x {font-size: 1.5em;}
+.md-font2x {font-size: 2em;}
+.md-font25x {font-size: 2.5em;}
+.md-font3x {font-size: 3em;}
+.md-font35x {font-size: 3.5em;}
+.md-font4x {font-size: 4em;}
+.md-font45x {font-size: 4.5em;}
+.md-font5x {font-size: 5em;}
+
+$f: 12;
+@while $f <= 48 {
+	.md-font-#{$f}x { font-size: #{$f}px }
+	$f: $f + 1;
+}
+
+// padding and margin
+$list: margin padding;
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.md-#{$item}-#{$i} {#{$item}: #{$i}px;}
+	$i: $i + 5;
+}
+
+}	
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.md-h-#{$item}-#{$i} {
+			#{$item}-left: #{$i}px;
+	#{$item}-right: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.md-v-#{$item}-#{$i} {
+			#{$item}-bottom: #{$i}px;
+	#{$item}-top: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+$i: 0;
+@while $i <= 500 {
+	.md-mr#{$i} {
+		margin-right: #{$i}px;
+	}
+	.md-ml#{$i} {
+		margin-left: #{$i}px;
+	}
+    .md-mt#{$i} {
+        margin-top: #{$i}px;
+    }
+    .md-mb#{$i} {
+        margin-bottom: #{$i}px;
+    }
+	.md-pr#{$i} {
+		padding-right: #{$i}px;
+	}
+	.md-pl#{$i} {
+		padding-left: #{$i}px;
+	}
+    .md-pt#{$i} {
+        padding-top: #{$i}px;
+    }
+    .md-pb#{$i} {
+        padding-bottom: #{$i}px;
+    }
+	$i: $i + 5;
+}
+
+.md-no-padding {padding: 0 !important;}
+.md-no-top-padding {padding-top: 0 !important;}
+.md-no-bottom-padding {padding-bottom: 0 !important;}
+.md-no-right-padding {padding-right: 0 !important;}
+.md-no-left-padding {padding-left: 0 !important;}
+.md-no-margin {margin: 0 !important;}
+.md-no-top-margin {margin-top: 0 !important;}
+.md-no-bottom-margin {margin-bottom: 0 !important;}
+.md-no-right-margin {margin-right: 0 !important;}
+.md-no-left-margin {margin-left: 0 !important;}
+
+.md-no-border {border: none;}
+.md-no-outline {outline: none;}
+.md-no-text-shadow {text-shadow: none;}
+.md-no-box-shadow {box-shadow: none;}
+
+.md-relative {position: relative !important;}

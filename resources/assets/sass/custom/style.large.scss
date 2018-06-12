@@ -1,0 +1,116 @@
+// width
+.lg-w-100 { width: 100%; }
+.lg-w-50 { width: 50%; }
+.lg-w-33 { width: 33.33%; }
+.lg-w-25 { width: 25%; }
+.lg-w-20 { width: 20%; }
+
+$i: 5;
+@while $i <= 500 {
+    .lg-pw-#{$i} { width : #{$i}px !important }
+    .lg-w#{$i} { width : #{$i}px !important }
+    .lg-h#{$i} { height : #{$i}px !important }
+    $i: $i + 5;
+}
+
+// font size
+.lg-fontp8x {font-size: .8em;}
+.lg-fontp85x {font-size: .85em;}
+.lg-fontp9x {font-size: .9em;}
+.lg-fontp95x {font-size: .95em;}
+.lg-font1x {font-size: 1em;}
+.lg-font125x {font-size: 1.25em;}
+.lg-font15x {font-size: 1.5em;}
+.lg-font2x {font-size: 2em;}
+.lg-font25x {font-size: 2.5em;}
+.lg-font3x {font-size: 3em;}
+.lg-font35x {font-size: 3.5em;}
+.lg-font4x {font-size: 4em;}
+.lg-font45x {font-size: 4.5em;}
+.lg-font5x {font-size: 5em;}
+
+$f: 12;
+@while $f <= 48 {
+	.lg-font-#{$f}x { font-size: #{$f}px }
+	$f: $f + 1;
+}
+
+// padding and margin
+$list: margin padding;
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.lg-#{$item}-#{$i} {#{$item}: #{$i}px;}
+	$i: $i + 5;
+}
+
+}	
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.lg-h-#{$item}-#{$i} {
+			#{$item}-left: #{$i}px;
+	#{$item}-right: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+@each $item in $list {
+	$i: 5;
+	@while $i <= 500 {
+		.lg-v-#{$item}-#{$i} {
+			#{$item}-bottom: #{$i}px;
+	#{$item}-top: #{$i}px;
+}
+$i: $i + 5;
+}
+}
+
+$i: 0;
+@while $i <= 500 {
+    .lg-mr#{$i} {
+        margin-right: #{$i}px;
+    }
+    .lg-ml#{$i} {
+        margin-left: #{$i}px;
+    }
+    .lg-mt#{$i} {
+        margin-top: #{$i}px;
+    }
+    .lg-mb#{$i} {
+        margin-bottom: #{$i}px;
+    }
+    .lg-pr#{$i} {
+        padding-right: #{$i}px;
+    }
+    .lg-pl#{$i} {
+        padding-left: #{$i}px;
+    }
+    .lg-pt#{$i} {
+        padding-top: #{$i}px;
+    }
+    .lg-pb#{$i} {
+        padding-bottom: #{$i}px;
+    }
+	$i: $i + 5;
+}
+
+.lg-no-padding {padding: 0 !important;}
+.lg-no-top-padding {padding-top: 0 !important;}
+.lg-no-bottom-padding {padding-bottom: 0 !important;}
+.lg-no-right-padding {padding-right: 0 !important;}
+.lg-no-left-padding {padding-left: 0 !important;}
+.lg-no-margin {margin: 0 !important;}
+.lg-no-top-margin {margin-top: 0 !important;}
+.lg-no-bottom-margin {margin-bottom: 0 !important;}
+.lg-no-right-margin {margin-right: 0 !important;}
+.lg-no-left-margin {margin-left: 0 !important;}
+
+.lg-no-border {border: none;}
+.lg-no-outline {outline: none;}
+.lg-no-text-shadow {text-shadow: none;}
+.lg-no-box-shadow {box-shadow: none;}
+
+.lg-relative {position: relative !important;}
