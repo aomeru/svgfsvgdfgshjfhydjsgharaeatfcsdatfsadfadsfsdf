@@ -17693,6 +17693,10 @@ a.text-dark:focus {
   border: 3px solid #03a9f4 !important;
 }
 
+label {
+  font-weight: bold;
+}
+
 .alert {
   border: none;
 }
