@@ -7,7 +7,6 @@
 
 $i: 5;
 @while $i <= 500 {
-	.pw-#{$i} { width : #{$i}px !important }
 	.w#{$i} { width : #{$i}px !important }
 	.h#{$i} { height : #{$i}px !important }
 	$i: $i + 5;

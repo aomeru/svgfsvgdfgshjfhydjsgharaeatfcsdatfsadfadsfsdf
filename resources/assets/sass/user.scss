@@ -5,6 +5,22 @@
 @import "sim";
 @import "reset";
 
+@media only screen and (max-width: 543px) { @import 'custom/style.phone'; }
+
+// landscape - phones and tablets
+@media only screen and (min-width: 544px) { @import 'custom/style.tablets'; }
+
+// medium - tablets
+@media only screen and (min-width: 768px) { @import 'custom/style.laptop'; }
+
+// large - laptops
+@media only screen and (min-width: 992px) { @import 'custom/style.large';
+}
+
+// Extra large - desktops
+@media only screen and (min-width: 1200px) { @import 'custom/style.xlarge'; }
+
+
 
 .navbar-laravel {
     background-color: #fff;
@@ -143,5 +159,45 @@ body {
         position: absolute;
         left: 350px;
     }
+    .breadcrumb {
+        // background-color: #fff;
+        background-color: transparent;
+        // padding: .25rem 1rem;
+        padding: 0;
+        margin-bottom: 0;
+        .breadcrumb-item {
+            color: $cyancolor;
+            a {
+                color: $cyancolor;
+                text-decoration: none;
+                &:hover {
+                    color: $cyancolor;
+                    text-decoration: none;
+                }
+            }
+            &.active {
+                color: #666;
+            }
+        }
+    }
 }
 
+@include media-breakpoint-up(sm) {
+    .modal {
+        text-align: center;
+        padding: 0 !important;
+        &:before {
+            content: '';
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+            margin-right: -4px;
+        }
+    }
+
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+}

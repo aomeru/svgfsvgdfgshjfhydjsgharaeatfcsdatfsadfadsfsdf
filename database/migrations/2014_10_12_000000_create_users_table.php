@@ -20,7 +20,14 @@ class CreateUsersTable extends Migration
             $table->string('password')->nullable();
             $table->string('firstname');
             $table->string('lastname');
+            $table->string('job_title')->nullable();
+            $table->string('city')->default('Lagos');
+            $table->string('state')->default('Lagos');
             $table->date('date_of_hire')->nullable();
+            $t->enum('employee_type', ['Full Time','Contract','Part Time', 'Graduate Trainee'])->default('Full Time');
+            $table->longText('photo')->nullable();
+            $table->integer('unit_id')->nullable()->unsigned();
+            $table->foreign('unit_id')->references('id')->on('units');
             $table->rememberToken();
             $table->timestamps();
         });

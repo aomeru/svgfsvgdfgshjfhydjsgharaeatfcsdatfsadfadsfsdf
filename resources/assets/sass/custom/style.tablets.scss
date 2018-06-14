@@ -7,7 +7,6 @@
 
 $i: 5;
 @while $i <= 500 {
-    .sm-pw-#{$i} { width : #{$i}px !important }
     .sm-w#{$i} { width : #{$i}px !important }
     .sm-h#{$i} { height : #{$i}px !important }
     $i: $i + 5;
@@ -44,7 +43,7 @@ $list: margin padding;
 	$i: $i + 5;
 }
 
-}	
+}
 
 @each $item in $list {
 	$i: 5;

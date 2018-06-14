@@ -35,5 +35,10 @@ class User extends Authenticatable
     public function users()
 	{
         return $this->hasMany(Models\UserManager::class, 'manager_id');
-	}
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Models\Unit::class);
+    }
 }

@@ -14,5 +14,10 @@ class Unit extends Model
     public function manager()
 	{
 		return $this->belongsTo(\App\User::class, 'manager_id');
-	}
+    }
+
+    public function users()
+	{
+		return $this->hasMany(\App\User::class, 'unit_id');
+    }
 }

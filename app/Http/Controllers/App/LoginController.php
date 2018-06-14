@@ -11,6 +11,8 @@ use Session;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 use App\User;
+use App\Models\Department;
+use App\Models\Unit;
 use GuzzleHttp\Exception\RequestException;
 
 class LoginController extends Controller
@@ -69,19 +71,20 @@ class LoginController extends Controller
         $res = $graph->createRequest('GET', '/me')->setReturnType(Model\User::class)->execute();
         if(!$this->is_staff($res->getUserPrincipalName())) return $this->kill_process($r,'denied',"You are not a staff of this organization.");
 
-        $user = $this->is_user($res->getUserPrincipalName(),$res->getGivenName(),$res->getSurname()); // check if record exists or create
+        // $user = $this->is_user($res->getUserPrincipalName(),$res->getGivenName(),$res->getSurname()); // check if record exists or create
+        $user = $this->is_user($res, $tokenCache->getAccessToken());
 
-        session([ // set needed values
-            'userinfo' => [
-                'display_name' => $res->getDisplayName(),
-                'job_title' => $res->getJobTitle(),
-                'dept' => $res->getDepartment(),
-                'city' => $res->getCity(),
-                'state' => $res->getState(),
-                'location' => $res->getCity().', '.$res->getState(),
-                'photo' => $this->get_image($tokenCache->getAccessToken())
-            ]
-        ]);
+        // session([ // set needed values
+        //     'userinfo' => [
+        //         'display_name' => $res->getDisplayName(),
+        //         'job_title' => $res->getJobTitle(),
+        //         'dept' => $res->getDepartment(),
+        //         'city' => $res->getCity(),
+        //         'state' => $res->getState(),
+        //         'location' => $res->getCity().', '.$res->getState(),
+        //         'photo' => $this->get_image($tokenCache->getAccessToken())
+        //     ]
+        // ]);
 
         Auth::login($user); // login user
         return redirect()->route('portal');
@@ -114,19 +117,80 @@ class LoginController extends Controller
         return redirect()->route('home');
     }
 
-    public function is_user($e,$f,$l)
+    public function is_user($r, $t)
     {
-        $user = User::where('email',$e)->first();
+        $user = User::where('email',$r->getUserPrincipalName())->first();
         if($user == null)
         {
-            $new = new User;
-            $new->firstname = $f;
-            $new->lastname = $l;
-            $new->email = $e;
-            $new->save();
-            return $new;
+            return $this->create_user($r, $t);
+        } else {
+            return $this->update_user($user, $r, $t);
         }
-        return $user;
+    }
+
+    private function create_user($r, $t)
+    {
+        $new = new User;
+        $new->firstname = $r->getGivenName();
+        $new->lastname = $r->getSurname();
+        $new->email = $r->getUserPrincipalName();
+        $new->job_title = $r->getJobTitle();
+
+        if($r->getCity() != null) $new->city = $r->getCity();
+
+        if($r->getState() != null) $new->state = $r->getState();
+
+        $unit_id = $this->get_unit($r->getDepartment());
+        if($unit_id) $new->unit_id = $unit_id;
+
+        $photo = $this->get_image($t);
+        if($photo) $new->photo = $photo;
+        $new->save();
+        return $new;
+    }
+
+    private function update_user($u, $r, $t)
+    {
+        $u->firstname = $r->getGivenName();
+        $u->lastname = $r->getSurname();
+        $u->email = $r->getUserPrincipalName();
+        $u->job_title = $r->getJobTitle();
+
+        if($r->getCity() != null) $u->city = $r->getCity();
+
+        if($r->getState() != null) $u->state = $r->getState();
+
+        $unit_id = $this->get_unit($r->getDepartment());
+        if($unit_id) $u->unit_id = $unit_id;
+
+        $photo = $this->get_image($t);
+        if($photo) $u->photo = $photo;
+        $u->update();
+        return $u;
+    }
+
+    private function get_unit($d)
+    {
+        if($d != null)
+        {
+            $dept = Department::where('title',$d)->first();
+            if($dept == null)
+            {
+                $dept = new Department;
+                $dept->title = $d;
+                $dept->save();
+            }
+            $unit = Unit::where('title',$dept->title)->first();
+            if($unit == null)
+            {
+                $unit = new Unit;
+                $unit->title = $dept->title;
+                $unit->department_id = $dept->id;
+                $unit->save();
+            }
+            return $unit->id;
+        }
+        return false;
     }
 
     public function get_image($token)
