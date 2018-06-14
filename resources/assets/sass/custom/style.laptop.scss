@@ -6,7 +6,7 @@
 .md-w-20 { width: 20%; }
 
 $i: 5;
-@while $i <= 500 {
+@while $i <= 750 {
     .md-w#{$i} { width : #{$i}px !important }
     .md-h#{$i} { height : #{$i}px !important }
     $i: $i + 5;

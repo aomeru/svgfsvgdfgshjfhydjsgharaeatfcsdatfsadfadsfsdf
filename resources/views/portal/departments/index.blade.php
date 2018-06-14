@@ -31,7 +31,7 @@
 
                         <div class="table-responsive">
 
-                            <table id="dept-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="10">
+                            <table id="dept-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="25">
 
                                 <thead>
                                     <tr class="active">
@@ -114,7 +114,7 @@
 
                         <div class="table-responsive">
 
-                            <table id="unit-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="10">
+                            <table id="unit-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="25">
 
                                 <thead>
                                     <tr class="actiive">
@@ -481,7 +481,7 @@
 				success: function(response) {
 					btn.html(btn_text);
                     $('#add-dept-modal').modal('hide');
-					swal_alert('Department Created','Department has been created','success','Continue');
+					swal_alert('Department Created','','success','Continue');
                     window.setTimeout(function(){
                         window.location.href = "{{route('portal.depts')}}";
                     },1000);
@@ -543,7 +543,7 @@
 				success: function(response) {
 					btn.html(btn_text);
                     $('#edit-dept-modal').modal('hide');
-                    swal_alert('Department Updated','Department has been updated','success','Continue');
+                    swal_alert('Department Updated','','success','Continue');
 					$(load_element).data('item-title',dept_name);
 					$(load_element).data('item-head-type',head_type);
 					$(load_element).data('item-head',head_value);
@@ -593,7 +593,7 @@
 				success: function(response) {
 					btn.html(btn_text);
                     $('#delete-dept-modal').modal('hide');
-                    swal_alert('Department Updated',response.message,'success','Continue');
+                    swal_alert('Department Deleted','','success','Continue');
 					$(remove_element).remove();
 					//$(load_element).load(location.href + " "+ load_element +">*","");
 				},

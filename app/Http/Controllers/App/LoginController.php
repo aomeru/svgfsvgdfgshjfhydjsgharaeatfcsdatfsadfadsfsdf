@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use App\Traits\OauthTrait;
+use App\Traits\CommonTrait;
 use App\TokenStore\TokenCache;
 use Session;
 use Microsoft\Graph\Graph;
@@ -17,7 +18,7 @@ use GuzzleHttp\Exception\RequestException;
 
 class LoginController extends Controller
 {
-    use OauthTrait;
+    use OauthTrait, CommonTrait;
 
     public function __construct()
     {
@@ -85,8 +86,9 @@ class LoginController extends Controller
         //         'photo' => $this->get_image($tokenCache->getAccessToken())
         //     ]
         // ]);
-
-        Auth::login($user); // login user
+        if($user->status != 'active') return $this->kill_process($r,'denied',"You are not permitted to use the ERP Portal.");
+        Auth::login($user);
+        $this->log(Auth::user()->id,'User Logged into the ERP Portal',$r->path());
         return redirect()->route('portal');
     }
 
@@ -220,6 +222,7 @@ class LoginController extends Controller
 
     public function logout(Request $r)
     {
+        $this->log(Auth::user()->id,'User Logged out of the ERP Portal',$r->path());
         Auth::logout();
         $r->session()->flush();
         return $this->kill_process($r, 'success', 'Logout Successful');

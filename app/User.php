@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Models\Unit::class);
     }
+
+    public function logs()
+	{
+		return $this->hasMany(Models\Log::class);
+	}
 }
