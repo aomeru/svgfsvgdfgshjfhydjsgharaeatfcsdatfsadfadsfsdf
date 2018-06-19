@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Portal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Models\UserManager;
 use App\Models\Unit;
+use Crypt;
+use Session;
+use Illuminate\Support\Facades\Validator;
+use App\Traits\CommonTrait;
+
 class UserController extends Controller
 {
+    use CommonTrait;
+
     public function index()
     {
 		// $this->log(Auth::user()->id, 'Opened the users page.', Request()->path());
@@ -43,41 +51,45 @@ class UserController extends Controller
 			], 400);
         }
 
-        return response()->json(array('success' => false, 'errors' => ['errors' => ['This user does not exist.']]), 400);
+		// $pfirstname = $user->firstname;
+		// $plastname = $user->lastname;
+		// $pemail = $user->email;
+		// $pgender = $user->gender;
+		// $prole = $user->username;
+		// $punit = $user->unit == null ? '' : $user->unit->title;
+		// $psid = $user->staff_id;
+		// $pstatus = $user->status;
 
-		$pfirstname = $user->firstname;
-		$plastname = $user->lastname;
-		$pemail = $user->email;
-		$pgender = $user->gender;
-		$prole = $user->username;
-		$punit = $user->unit == null ? '' : $user->unit->title;
-		$psid = $user->staff_id;
-		$pstatus = $user->status;
-
-		$user->firstname = $r->firstname;
-		$user->lastname = $r->lastname;
-		$user->email = $r->email;
-		$e = explode('@',$r->email);
-        $user->username = strtolower($e[0]);
-		$user->gender = $r->gender;
-		$user->role_id = Role::where('title',$r->role_id)->value('id');
+        $user->staff_id = $r->staff_id;
+        $user->date_of_hire = $r->doh;
 		$user->unit_id = Unit::where('title',$r->unit_id)->value('id');
-		$user->staff_id = $r->staff_id;
 		$user->status = $r->status;
+        $user->employee_type = $r->emp_type;
 
 		if($user->update())
 		{
-			$this->log(Auth::user()->id,
-				'Updated user account; firstname from "'.$pfirstname.'" to "'.$user->firstname.'",
-				lastname from "'.$plastname.'" to "'.$user->lastname.'",
-				email from "'.$pemail.'" to "'.$user->email.'",
-				gender from "'.$pgender.'" to "'.$user->gender.'",
-				account status from "'.$pstatus.'" to "'.$user->status.'",
-				staff ID from "'.$psid.'" to "'.$user->staff_id.'",
-				role from "'.$prole.'" to "'.$user->username.'",
-				unit from "'.$punit.'" to unit with ID "'.$user->unit_id.'",
-				on user id .'.$user->id,
-				$r->path());
+            $manager = UserManager::where('user_id',$user->id)->first();
+            if($manager != null)
+            {
+                $manager->manager_id = User::where('email',$r->manager)->value('id');
+                $manager->update();
+            } else {
+                $manager = new UserManager;
+                $manager->user_id = $user->id;
+                $manager->manager_id = User::where('email',$r->manager)->value('id');
+                $manager->save();
+            }
+			// $this->log(Auth::user()->id,
+			// 	'Updated user account; firstname from "'.$pfirstname.'" to "'.$user->firstname.'",
+			// 	lastname from "'.$plastname.'" to "'.$user->lastname.'",
+			// 	email from "'.$pemail.'" to "'.$user->email.'",
+			// 	gender from "'.$pgender.'" to "'.$user->gender.'",
+			// 	account status from "'.$pstatus.'" to "'.$user->status.'",
+			// 	staff ID from "'.$psid.'" to "'.$user->staff_id.'",
+			// 	role from "'.$prole.'" to "'.$user->username.'",
+			// 	unit from "'.$punit.'" to unit with ID "'.$user->unit_id.'",
+			// 	on user id .'.$user->id,
+			// 	$r->path());
 			return response()->json(array('success' => true, 'message' => $user->firstname.' account updated'), 200);
 		}
 

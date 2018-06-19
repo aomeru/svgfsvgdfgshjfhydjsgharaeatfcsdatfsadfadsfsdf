@@ -8,6 +8,8 @@ use Session;
 
 trait CommonTrait
 {
+    public function echeck() {return response()->json(array('success' => false, 'errors' => ['errors' => ['Got here.']]), 400);}
+    
 	public function get_time()
 	{
 		$date = new \DateTime();
