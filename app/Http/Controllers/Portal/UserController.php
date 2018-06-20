@@ -19,7 +19,6 @@ class UserController extends Controller
     public function index()
     {
 		// $this->log(Auth::user()->id, 'Opened the users page.', Request()->path());
-
         return view('portal.users.index', [
 			'list' => User::whereIn('status',['active','inactive'])->orderBy('firstname')->get(),
             'units' => Unit::orderBy('title')->get(),

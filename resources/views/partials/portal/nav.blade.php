@@ -28,7 +28,7 @@
     <hr class="mb-4">
 
     <ul class="nav flex-column px-2">
-        <li class="nav-item"><a href="{{ route('portal') }}" class="nav-link @if(!isset($nav)) active @endif"><i class="fas fa-desktop fa-fw mr-2"></i>Dashboard</a></li>
+        @if(Laratrust::can('dashboard'))<li class="nav-item"><a href="{{ route('portal') }}" class="nav-link @if(!isset($nav)) active @endif"><i class="fas fa-desktop fa-fw mr-2"></i>Dashboard</a></li>@endif
 
         <li class="nav-item">
             <a class="nav-link has-sub-nav"><i class="far fa-calendar-alt fa-fw mr-2"></i>Leave</a>
@@ -50,15 +50,18 @@
             </ul>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'settings') sub-active @endif"><i class="fas fa-cogs fa-fw mr-2"></i>Settings</a>
-            <ul id="testuser" class="sub-nav flex-column ml-4 pl-4">
-                <li class="sub-nav-item"><a href="{{ route('portal.depts') }}" class="sub-nav-link @if(isset($subnav) && $subnav == 'departments-and-units') active @endif"><i class="fas fa-university fa-fw mr-2"></i>Departments & Units</a></li>
-                <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="fas fa-user-shield fa-fw mr-2"></i>Roles</a></li>
-                <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="fas fa-lock fa-fw mr-2"></i>Permissions</a></li>
-                <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="fas fa-unlock-alt fa-fw mr-2"></i>Grant Access</a></li>
-            </ul>
-        </li>
+        @if(Laratrust::can('settings'))
+            <li class="nav-item">
+                <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'settings') sub-active @endif"><i class="fas fa-cogs fa-fw mr-2"></i>Settings</a>
+                <ul id="testuser" class="sub-nav flex-column ml-4 pl-4">
+                    @if(Laratrust::can('view-depts'))<li class="sub-nav-item"><a href="{{ route('portal.depts') }}" class="sub-nav-link @if(isset($subnav) && $subnav == 'departments-and-units') active @endif"><i class="fas fa-university fa-fw mr-2"></i>Departments & Units</a></li>@endif
+
+                    @if(Laratrust::can('view-roles'))<li class="sub-nav-item"><a href="{{route('roles.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'roles') active @endif"><i class="fas fa-user-shield fa-fw mr-2"></i>Roles</a></li>@endif
+
+                    @if(Laratrust::can('view-permissions'))<li class="sub-nav-item"><a href="{{route('permissions.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'permissions') active @endif"><i class="fas fa-lock fa-fw mr-2"></i>Permissions</a></li>@endif
+                </ul>
+            </li>
+        @endif
 
         <div class="dropdown-divider"></div>
 

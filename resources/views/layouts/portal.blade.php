@@ -24,6 +24,7 @@
         </div>
 
         @yield('page_footer')
+
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/datatables.min.js') }}"></script>
@@ -68,6 +69,11 @@
                     icon :  icon,
                     button : button ? button : false,
                 });
+            }
+
+            function get_slug(t) {
+                slug = t.toLowerCase().replace(/  /g, ' ').replace(/ /g, '-').replace(/&/g, 'and');
+                return slug;
             }
         </script>
 

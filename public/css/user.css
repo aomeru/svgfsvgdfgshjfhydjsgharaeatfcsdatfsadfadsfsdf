@@ -56355,20 +56355,14 @@ body {
 
 #portal-left .nav .nav-item .nav-link.active:hover {
   color: #fff;
-  padding-left: 1.5rem;
 }
 
 #portal-left .nav .nav-item .nav-link.sub-active {
   color: #03a9f4;
 }
 
-#portal-left .nav .nav-item .nav-link.sub-active:hover {
-  padding-left: 1.5rem;
-}
-
 #portal-left .nav .nav-item .nav-link:hover {
   color: #03a9f4;
-  padding-left: 2rem;
 }
 
 #portal-left .nav .nav-item .has-sub-nav {
@@ -56399,12 +56393,10 @@ body {
 
 #portal-left .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link.active:hover {
   color: #fff;
-  padding-left: 1rem;
 }
 
 #portal-left .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link:hover {
   color: #03a9f4;
-  padding-left: 1.5rem;
   text-decoration: none;
 }
 

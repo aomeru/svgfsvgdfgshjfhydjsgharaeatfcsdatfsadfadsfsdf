@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Session;
 
 class Handler extends ExceptionHandler
 {
@@ -34,6 +35,11 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        if($exception instanceof ForbiddenHttpException)
+        {
+            Session::flash('access_denied','You are not authorized to perform that operation');
+            return response()->route('portal');
+        }
         parent::report($exception);
     }
 
@@ -46,6 +52,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof ForbiddenHttpException)
+        {
+            Session::flash('access_denied','You are not authorized to perform that operation');
+            return response()->route('portal');
+        }
         return parent::render($request, $exception);
     }
 }

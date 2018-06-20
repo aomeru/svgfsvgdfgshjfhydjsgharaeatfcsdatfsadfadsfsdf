@@ -7,7 +7,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{route('portal')}}">Dashboard</a></li>
             <li class="breadcrumb-item">Users</li>
-            <li class="breadcrumb-item active" aria-current="page">All Userss</li>
+            <li class="breadcrumb-item active" aria-current="page">All Users</li>
         </ol>
     </nav>
 @endSection
@@ -118,14 +118,14 @@
                             <div class="form-group input_field_sections">
                                 <label for="staff-id-edit" class="form-control-label sr-onlyy">Staff ID</label>
 
-                                <input type="text" id="staff-id-edit" class="form-control" placeholder="Enter staff ID" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen">
+                                <input type="text" id="staff-id-edit" class="form-control" placeholder="Enter staff ID" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" readonly>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group input_field_sections">
                                 <label for="doh-edit" class="form-control-label sr-onlyy">Date of Employement</label>
 
-                                <input type="date" id="doh-edit" class="form-control" placeholder="Enter Employment Date" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen">
+                                <input type="date" id="doh-edit" class="form-control" placeholder="Enter Employment Date" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" readonly>
                             </div>
                         </div>
                     </div>

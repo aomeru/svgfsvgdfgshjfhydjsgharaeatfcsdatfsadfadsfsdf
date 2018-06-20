@@ -19,7 +19,7 @@
 
         <div class="col-sm-6">
             <div class="card">
-                <h5 class="card-header bgc-555 c-fff">Departments</h5>
+                <h5 class="card-header bg-dark c-fff">Departments</h5>
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-end">
                         <button class="btn btn-primary btn-sm no-margin" title="Add new department" data-toggle="modal" data-target="#add-dept-modal"><i class="fa fa-plus"></i></button>
@@ -102,7 +102,7 @@
 
         <div class="col-sm-6">
             <div class="card">
-                <h5 class="card-header bgc-555 c-fff">Units</h5>
+                <h5 class="card-header bg-dark c-fff">Units</h5>
                 <div class="card-body">
                     <div class="mb-3 d-flex justify-content-end">
                         <button class="btn btn-primary btn-sm no-margin" title="Add new sub unit" data-toggle="modal" data-target="#add-unit-modal"><i class="fa fa-plus"></i></button>
@@ -182,7 +182,7 @@
 			<form method="post">
 
 				<div class="modal-header">
-					<h5 class="modal-title font-weight-bold">Add Department</h5>
+					<h5 class="modal-title ml-2">Add Department</h5>
 				</div>
 
 				<div class="modal-body">
@@ -236,7 +236,7 @@
 			<form method="post">
 
 				<div class="modal-header">
-					<h5 class="modal-title font-weight-bold">Edit Department</h5>
+					<h5 class="modal-title ml-2">Edit Department</h5>
 				</div>
 
 				<div class="modal-body">
@@ -309,7 +309,7 @@
 			<form method="post">
 
 				<div class="modal-header mh-override">
-					<h5 class="modal-title font-weight-bold">Add Sub Unit</h5>
+					<h5 class="modal-title ml-2">Add Sub Unit</h5>
 				</div>
 
 				<div class="modal-body">
@@ -365,7 +365,7 @@
 			<form method="post">
 
 				<div class="modal-header mh-override">
-					<h5 class="modal-title font-weight-bold">Edit Sub Unit</h5>
+					<h5 class="modal-title ml-2">Edit Sub Unit</h5>
 				</div>
 
 				<div class="modal-body">
