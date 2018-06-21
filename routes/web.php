@@ -21,34 +21,31 @@ Route::get('/test', 'App\AppController@process');
 Route::prefix('portal')->middleware('auth')->group(function(){
     Route::get('/', 'Portal\DashboardController@index')->middleware('permission:dashboard')->name('portal');
 
-    Route::group(['prefix' => 'departments-and-units', 'middleware' => 'permission:settings'], function () {
+    Route::group(['prefix' => 'departments-and-units'], function () {
 		$con = 'Portal\DepartmentController@';
 		$rkey = 'portal.depts';
 		Route::get('/', $con.'index')->name($rkey);
-		Route::post('/add', $con.'storeDept')->middleware('permission:create-department')->name($rkey.'.add');
-		Route::post('/edit', $con.'updateDept')->middleware('permission:update-department')->name($rkey.'.update');
-		Route::post('/delete', $con.'deleteDept')->middleware('permission:delete-department')->name($rkey.'.delete');
-		Route::get('/view/department/{id}', $con.'showDept')->middleware('permission:read-department')->name($rkey.'.show');
-		Route::post('/add-unit', $con.'storeUnit')->middleware('permission:create-unit')->name($rkey.'.add.unit');
-		Route::post('/update-unit', $con.'updateUnit')->middleware('permission:update-unit')->name($rkey.'.update.unit');
-		Route::post('/delete-unit', $con.'deleteUnit')->middleware('permission:delete-unit')->name($rkey.'.delete.unit');
-		Route::get('/view/unit/{id}', $con.'showUnit')->middleware('permission:read-unit')->name($rkey.'.show.unit');
+		Route::post('/add', $con.'storeDept')->name($rkey.'.add');
+		Route::post('/edit', $con.'updateDept')->name($rkey.'.update');
+		Route::post('/delete', $con.'deleteDept')->name($rkey.'.delete');
+		Route::get('/view/department/{id}', $con.'showDept')->name($rkey.'.show');
+		Route::post('/add-unit', $con.'storeUnit')->name($rkey.'.add.unit');
+		Route::post('/update-unit', $con.'updateUnit')->name($rkey.'.update.unit');
+		Route::post('/delete-unit', $con.'deleteUnit')->name($rkey.'.delete.unit');
+		Route::get('/view/unit/{id}', $con.'showUnit')->name($rkey.'.show.unit');
     });
 
     Route::group(['prefix' => 'users'], function () {
 		$con = 'Portal\UserController@';
 		$rkey = 'portal.users';
-		Route::get('/', $con.'index')->middleware('permission:view-users')->name($rkey);
-		Route::post('/add', $con.'store')->middleware('permission:create-user')->name($rkey.'.add');
-		Route::post('/update', $con.'update')->middleware('permission:update-user')->name($rkey.'.update');
-		Route::post('/delete', $con.'delete')->middleware('permission:delete-user')->name($rkey.'.delete');
-		Route::get('/view/{id}', $con.'show')->middleware('permission:read-user')->name($rkey.'.show');
+		Route::get('/', $con.'index')->name($rkey);
+		Route::post('/add', $con.'store')->name($rkey.'.add');
+		Route::post('/update', $con.'update')->name($rkey.'.update');
+		Route::post('/delete', $con.'delete')->name($rkey.'.delete');
+		Route::get('/view/{id}', $con.'show')->name($rkey.'.show');
     });
 
-    Route::resource('roles','Portal\RoleController')->except(['edit','create'])->middleware([
-        'index' => 'permission:create-permission',
-        'create' => 'permission:create-permission'
-    ]);
+    Route::resource('roles','Portal\RoleController')->except(['edit','create']);
 
     Route::group(['prefix' => 'roles'], function () {
 		$con = 'Portal\RoleController@';

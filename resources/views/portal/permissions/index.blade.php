@@ -16,9 +16,11 @@
 
 <div class="card">
     <div class="card-body">
+        @if(Laratrust::can('create-permission'))
         <div class="mb-3 d-flex justify-content-end">
             <button class="btn btn-primary btn-sm no-margin" title="Create new permission" data-toggle="modal" data-target="#add-modal"><i class="fas fa-plus"></i></button>
         </div>
+        @endif
 
         @if ($list->count() == 0)
             <div class="alert alert-info" role="role">No permission record found.</div>
@@ -37,7 +39,7 @@
                             <th>Description</th>
                             <th class="text-center">Users</th>
                             <th class="text-center">Roles</th>
-                            <th class="text-right">Actions</th>
+                            @if(Laratrust::can('read-permission|delete-permission'))<th class="text-right">Actions</th>@endif
                         </tr>
                     </thead>
 
@@ -63,11 +65,13 @@
 
                                 <td class="text-center">{!! $item->roles->count() == 0 ? '<span class="c-999">0</span>' : $item->roles->count() !!}</td>
 
+                                @if(Laratrust::can('read-permission|delete-permission'))
                                 <td class="text-right">
-                                    <a href="{{route('permissions.show',Crypt::encrypt($item->id))}}" class="btn btn-light btn-sm" title="View {{ $item->display_name }}"><i class="far fa-eye"></i></a>
+                                    @if(Laratrust::can('read-permission'))<a href="{{route('permissions.show',Crypt::encrypt($item->id))}}" class="btn btn-light btn-sm" title="View {{ $item->display_name }}"><i class="far fa-eye"></i></a>@endif
 
-                                    <button class="btn btn-danger btn-sm" title="Delete {{ $item->display_name }}" data-toggle="modal" data-target="#delete-modal"><i class="far fa-trash-alt"></i></button>
+                                    @if(Laratrust::can('delete-permission'))<button class="btn btn-danger btn-sm" title="Delete {{ $item->display_name }}" data-toggle="modal" data-target="#delete-modal"><i class="far fa-trash-alt"></i></button>@endif
                                 </td>
+                                @endif
 
                             </tr>
 
@@ -94,6 +98,7 @@
 
 @section('page_footer')
 
+@if(Laratrust::can('create-permission'))
 <div class="modal fade" id="add-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog sm-w500" role="document">
 		<div class="modal-content">
@@ -129,7 +134,7 @@
                             <div class="form-group">
                                 <label for="descrip" class="form-control-label sr-onlyy">Description</label>
 
-                                <input type="text" id="descrip" class="form-control" placeholder="Enter role description" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9- ]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen">
+                                <input type="text" id="descrip" class="form-control" placeholder="Enter permission description" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9- ]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen">
                             </div>
                         </div>
 
@@ -165,7 +170,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('delete-permission'))
 <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -182,6 +189,7 @@
 		</div>
 	</div>
 </div>
+@endif
 
 @endsection
 
@@ -246,6 +254,7 @@
             console.log($('#permmode').val());
         });
 
+        @if(Laratrust::can('create-permission'))
         $(document).on('click', '#add-btn', function(e){
 
 			e.preventDefault();
@@ -293,7 +302,9 @@
 				}
 			});
         });
+        @endif
 
+        @if(Laratrust::can('delete-permission'))
         $('#delete-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -342,6 +353,8 @@
 				}
 			});
         });
+        @endif
+
     });
 
 </script>

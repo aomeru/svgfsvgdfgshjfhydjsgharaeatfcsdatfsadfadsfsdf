@@ -16,9 +16,11 @@
 
 <div class="card">
     <div class="card-body">
+        @if(Laratrust::can('create-role'))
         <div class="mb-3 d-flex justify-content-end">
             <button class="btn btn-primary btn-sm no-margin" title="Add new role" data-toggle="modal" data-target="#add-modal"><i class="fas fa-plus"></i></button>
         </div>
+        @endif
 
         @if ($roles->count() == 0)
             <div class="alert alert-info" role="role">No role record found.</div>
@@ -36,7 +38,7 @@
                             <th>Description</th>
                             <th class="text-center">Users</th>
                             <th class="text-center">Permissions</th>
-                            <th class="text-right">Actions</th>
+                            @if(Laratrust::can('read-role|delete-role'))<th class="text-right">Actions</th>@endif
                         </tr>
                     </thead>
 
@@ -60,11 +62,13 @@
 
                                 <td class="text-center">{!! $item->permissions->count() == 0 ? '<span class="c-999">0</span>' : $item->permissions->count() !!}</td>
 
+                                @if(Laratrust::can('read-role|delete-role'))
                                 <td class="text-right">
-                                    <a href="{{route('roles.show',Crypt::encrypt($item->id))}}" class="btn btn-light btn-sm" title="View {{ $item->display_name }}"><i class="far fa-eye"></i></a>
+                                    @if(Laratrust::can('read-role'))<a href="{{route('roles.show',Crypt::encrypt($item->id))}}" class="btn btn-light btn-sm" title="View {{ $item->display_name }}"><i class="far fa-eye"></i></a>@endif
 
-                                    <button class="btn btn-danger btn-sm" title="Delete {{ $item->display_name }}" data-toggle="modal" data-target="#delete-modal"><i class="far fa-trash-alt"></i></button>
+                                    @if(Laratrust::can('delete-role'))<button class="btn btn-danger btn-sm" title="Delete {{ $item->display_name }}" data-toggle="modal" data-target="#delete-modal"><i class="far fa-trash-alt"></i></button>@endif
                                 </td>
+                                @endif
 
                             </tr>
 
@@ -91,6 +95,7 @@
 
 @section('page_footer')
 
+@if(Laratrust::can('create-role'))
 <div class="modal fade" id="add-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -127,7 +132,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('delete-role'))
 <div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -144,6 +151,7 @@
 		</div>
 	</div>
 </div>
+@endif
 
 @endsection
 
@@ -178,8 +186,9 @@
                 $('#slug').text(get_slug($(this).val()));
                 $('#slugh').val(get_slug($(this).val()));
             }
-		});
-
+        });
+        
+        @if(Laratrust::can('create-role'))
         $(document).on('click', '#add-btn', function(e){
 
 			e.preventDefault();
@@ -219,8 +228,9 @@
 				}
 			});
         });
+        @endif
 
-
+        @if(Laratrust::can('delete-role'))
         $('#delete-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -269,6 +279,7 @@
 				}
 			});
         });
+        @endif
     });
 
 </script>

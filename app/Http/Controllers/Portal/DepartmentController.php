@@ -10,13 +10,27 @@ use App\User;
 use Session;
 use Crypt;
 use Illuminate\Support\Facades\Validator;
+use Auth;
+use App\Traits\CommonTrait;
 
 class DepartmentController extends Controller
 {
+    use CommonTrait;
+
+    public function __construct()
+    {
+        $this->middleware('permission:create-department', ['only' => ['storeDept']]);
+        $this->middleware('permission:read-department|read-unit', ['only' => ['index']]);
+        $this->middleware('permission:update-department', ['only' => ['updateDept']]);
+        $this->middleware('permission:delete-department', ['only' => ['deleteDept']]);
+
+        $this->middleware('permission:create-unit', ['only' => ['storeUnit']]);
+        $this->middleware('permission:update-unit', ['only' => ['updateUnit']]);
+        $this->middleware('permission:delete-unit', ['only' => ['deleteUnit']]);
+    }
     public function index()
 	{
-
-		// $this->log(Auth::user()->id, 'Opened the departments and units page.', Request()->path());
+		$this->log(Auth::user()->id, 'Opened the departments and units page.', Request()->path());
         return view('portal.departments.index', [
             'depts' => Department::orderby('title')->get(),
             'units' => Unit::orderby('title')->get(),
@@ -53,11 +67,12 @@ class DepartmentController extends Controller
 
 
 		if($item->save()) {
-            // $this->log(Auth::user()->id, 'Created '.$item->title.' department with id .'.$item->id, $r->path());
             $unit = new Unit();
             $unit->title = $item->title;
             $unit->department_id = $item->id;
+            if(isset($user_id)) $unit->manager_id = $user_id;
             $unit->save();
+            $this->log(Auth::user()->id, 'Created '.$item->title.' department and unit with id .'.$item->id, $r->path(), 'action');
             return response()->json(array('success' => true, 'message' => 'Department & Unit created'), 200);
         }
 
@@ -97,7 +112,7 @@ class DepartmentController extends Controller
         }
 
 		if($dept->update()) {
-            // $this->log(Auth::user()->id, 'Updated department title from '.$ptitle.' to '.$dept->title.' with id .'.$dept->id, $r->path());
+            $this->log(Auth::user()->id, 'Updated department title from '.$ptitle.' to '.$dept->title.' with id .'.$dept->id, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => $dept->title.' department updated'), 200);
         }
 
@@ -117,7 +132,7 @@ class DepartmentController extends Controller
 		$dtitle = $dept->title;
 
 		if($dept->delete()){
-            // $this->log(Auth::user()->id, 'Deleted '.$dtitle.' department with id .'.$did, $r->path());
+            $this->log(Auth::user()->id, 'Deleted '.$dtitle.' department with id .'.$did, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Department deleted'), 200);
         }
 
@@ -157,7 +172,7 @@ class DepartmentController extends Controller
         }
 
         if($item->save()){
-            // $this->log(Auth::user()->id, 'Created '.$item->title.' unit with id .'.$item->id, $r->path());
+            $this->log(Auth::user()->id, 'Created '.$item->title.' unit with id .'.$item->id, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Unit created'), 200);
         }
 
@@ -185,8 +200,8 @@ class DepartmentController extends Controller
 			], 400);
 		}
 
-		// $putitle = $unit->title;
-		// $pdtitle = $unit->department->title;
+		$putitle = $unit->title;
+		$pdtitle = $unit->department->title;
 
 		$unit->title = ucwords($r->unit_name);
         $unit->department_id = $dept->id;
@@ -199,7 +214,7 @@ class DepartmentController extends Controller
         } else $unit->manager_id = null;
 
 		if($unit->update()){
-            // $this->log(Auth::user()->id, 'Updated unit title from '.$putitle.' to '.$unit->title.' and parent deparment from '.$putitle.' to '.$unit->department->title, $r->path());
+            $this->log(Auth::user()->id, 'Updated unit title from '.$putitle.' to '.$unit->title.' and parent deparment from '.$putitle.' to '.$unit->department->title, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => $unit->title.' unit updated'), 200);
         }
 
@@ -215,17 +230,15 @@ class DepartmentController extends Controller
 
 		if($unit->users->count() > 0) return response()->json(array('success' => false, 'errors' => ['errors' => ['Please delete '.$unit->title.' users first.']]), 400);
 
-		// $did = $unit->id;
-		// $dtitle = $unit->title;
+		$did = $unit->id;
+		$dtitle = $unit->title;
 
 		if($unit->delete()){
-            // $this->log(Auth::user()->id, 'Deleted '.$dtitle.' unit with id .'.$did, $r->path());
+            $this->log(Auth::user()->id, 'Deleted '.$dtitle.' unit with id .'.$did, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Unit deleted'), 200);
         }
 
 		return response()->json(array('success' => false, 'errors' => ['errors' => ['Oops, something went wrong please try again']]), 400);
 	}
-
-
 
 }

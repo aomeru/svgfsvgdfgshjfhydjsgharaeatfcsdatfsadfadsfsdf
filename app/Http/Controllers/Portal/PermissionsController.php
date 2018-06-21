@@ -10,9 +10,23 @@ use App\User;
 use Illuminate\Support\Facades\Validator;
 use Crypt;
 use Session;
+use Auth;
+use Laratrust;
+use App\Traits\CommonTrait;
+
 
 class PermissionsController extends Controller
 {
+    use CommonTrait;
+
+    public function __construct()
+    {
+        $this->middleware('permission:create-permission', ['only' => ['store']]);
+        $this->middleware('permission:read-permission');
+        $this->middleware('permission:update-permission', ['only' => ['edit_description']]);
+        $this->middleware('permission:assign-remove-role|permission:assign-remove-permission', ['only' => ['update']]);
+        $this->middleware('permission:delete-permission', ['only' => ['delete']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,6 +34,7 @@ class PermissionsController extends Controller
      */
     public function index()
     {
+        $this->log(Auth::user()->id, 'Opened the permissions page.', Request()->path());
         return view('portal.permissions.index', [
 			'list' => Permission::orderBy('display_name')->get(),
             'nav' => 'settings',
@@ -67,9 +82,9 @@ class PermissionsController extends Controller
             $item->description = $r->description;
 
             if($item->save()) {
+                $this->log(Auth::user()->id, 'Created '.$item->display_name.' permission with id .'.$item->id, $r->path(),'action');
                 $role = Role::where('display_name','System Administrator')->first();
                 $role->attachPermission($item);
-                // $this->log(Auth::user()->id, 'Created '.$item->title.' department with id .'.$item->id, $r->path());
                 return response()->json(array('success' => true, 'message' => 'Permission created'), 200);
             }
         } else {
@@ -100,6 +115,7 @@ class PermissionsController extends Controller
                         $perm->description = 'Has ability to '.$a.' '.$r->module_crud;
                         if($perm->save())
                         {
+                            $this->log(Auth::user()->id, 'Created '.$perm->display_name.' permission with id .'.$perm->id, $r->path(),'action');
                             $role = Role::where('display_name','System Administrator')->first();
                             $role->attachPermission($perm);
                         }
@@ -130,6 +146,7 @@ class PermissionsController extends Controller
             Session::flash('error','This Permission does not exist, please confirm and try again');
             return redirect()->back();
         }
+        $this->log(Auth::user()->id, 'Opened the '.$item->display_name.' permission page', Request()->path());
         return view('portal.permissions.show', [
 			'perm' => $item,
 			'users' => User::get(),
@@ -195,7 +212,11 @@ class PermissionsController extends Controller
                     $role = Role::where('name',$p)->first();
                     if($role != null)
                     {
-                        if(!$role->hasPermission($perm->name)) $role->attachPermission($perm);
+                        if(!$role->hasPermission($perm->name))
+                        { 
+                            $role->attachPermission($perm);
+                            $this->log(Auth::user()->id, 'Attached the "'.$perm->display_name.'" permission to '.$role->display_name.' role', $r->path(),'action');
+                        }
                         array_push($new_list,$role->id);
                     }
                     $x++;
@@ -204,6 +225,7 @@ class PermissionsController extends Controller
             foreach($perm->roles()->whereNotIn('id',$new_list)->get() as $rm)
             {
                 $rm->detachPermission($perm);
+                $this->log(Auth::user()->id, 'Removed the "'.$perm->display_name.'" permission from "'.$rm->display_name.'" role', $r->path(),'action');
             }
             $msg = 'Permission Roles updated';
             $emsg = 'Unable to assigned permission to some selected roles';
@@ -226,13 +248,11 @@ class PermissionsController extends Controller
 
         if($item == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['This permission does not exist.']]), 400);
 
-		// if($item->units->count() > 0) return response()->json(array('success' => false, 'errors' => ['errors' => ['Please delete '.$dept->title.' sub-units first.']]), 400);
-
-		// $did = $item->id;
-		// $dtitle = $item->title;
+		$did = $item->id;
+		$dtitle = $item->display_name;
 
 		if($item->delete()){
-            // $this->log(Auth::user()->id, 'Deleted '.$dtitle.' department with id .'.$did, $r->path());
+            $this->log(Auth::user()->id, 'Deleted '.$dtitle.' permission with id .'.$did, $r->path());
             return response()->json(array('success' => true, 'message' => 'Permission deleted'), 200);
         }
 
@@ -271,6 +291,7 @@ class PermissionsController extends Controller
             $u->detachPermission($perm->name);
         }
         Session::flash('success',$perm->display_name.' removed from all users');
+        $this->log(Auth::user()->id, 'Removed '.$perm->display_name.' permission from all users', $r->path(),'action');
         return redirect()->route('permissions.show',Crypt::encrypt($perm->id));
     }
 
@@ -287,6 +308,7 @@ class PermissionsController extends Controller
             $r->detachPermission($perm->name);
         }
         Session::flash('success',$perm->display_name.' removed from all roles');
+        $this->log(Auth::user()->id, 'Removed '.$perm->display_name.' permission from all roles', $r->path(),'action');
         return redirect()->route('permissions.show',Crypt::encrypt($perm->id));
     }
 
@@ -303,6 +325,7 @@ class PermissionsController extends Controller
             if(!$r->hasPermission($perm->name)) $r->attachPermission($perm);
         }
         Session::flash('success',$perm->display_name.' assigned to all roles');
+        $this->log(Auth::user()->id, 'Assigned '.$perm->display_name.' permission to all roles', $r->path(),'action');
         return redirect()->route('permissions.show',Crypt::encrypt($perm->id));
     }
 
@@ -319,10 +342,11 @@ class PermissionsController extends Controller
 				'success' => false,
 				'errors' => $validator->errors()
 			], 400);
-		}
+        }
+        $pdes = $perm->description;
         $perm->description = $r->description;
 		if($perm->update()) {
-            // $this->log(Auth::user()->id, 'Created '.$item->title.' department with id .'.$item->id, $r->path());
+            $this->log(Auth::user()->id, 'Updated '.$perm->display_name.' description from '.$pdes.' to '.$perm->description, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Permission updated'), 200);
         }
 		return response()->json(array('success' => false, 'errors' => ['errors' => ['Oops, something went wrong please try again']]), 400);

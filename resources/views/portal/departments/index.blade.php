@@ -17,21 +17,24 @@
 
    <div id="loadDiv" class="row">
 
+		@if(Laratrust::can('read-department'))
         <div class="col-sm-6">
             <div class="card">
                 <h5 class="card-header bg-dark c-fff">Departments</h5>
                 <div class="card-body">
+					@if(Laratrust::can('create-department'))
                     <div class="mb-3 d-flex justify-content-end">
                         <button class="btn btn-primary btn-sm no-margin" title="Add new department" data-toggle="modal" data-target="#add-dept-modal"><i class="fa fa-plus"></i></button>
-                    </div>
+					</div>
+					@endif
 
                     @if ($depts->count() == 0)
                         <p class="alert alert-info">No department record found.</p>
                     @else
 
-                        <div class="table-responsive">
+                        <div class="table-responsivee">
 
-                            <table id="dept-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="25">
+                            <table id="dept-table" class="data-table table table-striped table-bordered table-hover nowwrap" width="100%" data-page-length="25">
 
                                 <thead>
                                     <tr class="active">
@@ -40,7 +43,7 @@
                                         <th class="text-center">ED / GM</th>
                                         <th class="text-center">Units</th>
                                         <th class="text-center">Staff</th>
-                                        <th class="text-center">Actions</th>
+                                        @if(Laratrust::can('update-department|delete-department'))<th class="text-center">Actions</th>@endif
                                     </tr>
                                 </thead>
 
@@ -58,7 +61,7 @@
                                         <tr id="row-{{$item->id}}" data-hrid="{{$item->id}}" data-item-id="{{Crypt::encrypt($item->id)}}" data-item-title="{{$item->title}}" data-item-head-type="{{$type}}" data-item-head="{{$head == '' ? '' : $head}}">
                                             <td>{{ $row_count }}</td>
                                             <td>
-                                                <u><a href="{{route('portal.depts.show', Crypt::encrypt($item->id))}}" class="c-06f">{{ $item->title }}</a></u>
+                                                <u><a @if(Laratrust::can('read-department'))href="{{route('portal.depts.show', Crypt::encrypt($item->id))}}"@endif class="c-06f">{{ $item->title }}</a></u>
                                             </td>
                                             <td>
                                                 @if($item->gm != null)
@@ -79,11 +82,13 @@
                                                 }
                                                 ?>
                                                 {{$ds_count}}
-                                            </td>
+											</td>
+											@if(Laratrust::can('update-department|delete-department'))
                                             <td class="text-center">
-                                                <button class="edit-dept-btn btn btn-primary btn-sm" title="Edit {{ $item->title }}" data-toggle="modal" data-target="#edit-dept-modal"><i class="fas fa-pencil-alt"></i></button>
-                                                <button class="btn btn-danger btn-sm" title="Delete {{ $item->title }}" data-toggle="modal" data-target="#delete-dept-modal"><i class="far fa-trash-alt"></i></button>
-                                            </td>
+                                                @if(Laratrust::can('update-department'))<button class="edit-dept-btn btn btn-primary btn-sm" title="Edit {{ $item->title }}" data-toggle="modal" data-target="#edit-dept-modal"><i class="fas fa-pencil-alt"></i></button>@endif
+                                                @if(Laratrust::can('delete-department'))<button class="btn btn-danger btn-sm" title="Delete {{ $item->title }}" data-toggle="modal" data-target="#delete-dept-modal"><i class="far fa-trash-alt"></i></button>@endif
+											</td>
+											@endif
                                         </tr>
 
                                         @php $row_count++ @endphp
@@ -98,23 +103,27 @@
                     @endif
                 </div>
             </div>
-        </div>
+		</div>
+		@endif
 
+		@if(Laratrust::can('read-unit'))
         <div class="col-sm-6">
             <div class="card">
                 <h5 class="card-header bg-dark c-fff">Units</h5>
                 <div class="card-body">
+					@if(Laratrust::can('create-unit'))
                     <div class="mb-3 d-flex justify-content-end">
                         <button class="btn btn-primary btn-sm no-margin" title="Add new sub unit" data-toggle="modal" data-target="#add-unit-modal"><i class="fa fa-plus"></i></button>
-                    </div>
+					</div>
+					@endif
 
                     @if ($units->count() == 0)
                         <p class="alert alert-info">No sub unit record found.</p>
                     @else
 
-                        <div class="table-responsive">
+                        <div class="table-responsivee">
 
-                            <table id="unit-table" class="data-table table table-striped table-bordered table-hover nowrap" width="100%" data-page-length="25">
+                            <table id="unit-table" class="data-table table table-striped table-bordered table-hover nowwrap" width="100%" data-page-length="25">
 
                                 <thead>
                                     <tr class="actiive">
@@ -123,7 +132,7 @@
                                         <th>Department</th>
                                         <th>Manager</th>
                                         <th class="text-center">Staff</th>
-                                        <th class="text-center">Actions</th>
+                                        @if(Laratrust::can('update-unit|delete-unit'))<th class="text-center">Actions</th>@endif
                                     </tr>
                                 </thead>
 
@@ -135,7 +144,7 @@
 
                                         <tr id="urow-{{$unit->id}}" data-hrid="{{$unit->id}}" data-item-id="{{Crypt::encrypt($unit->id)}}" data-item-title="{{$unit->title}}" data-item-dtitle="{{$unit->department->title}}" data-item-manager="{{$unit->manager == null ? '' : $unit->manager->email}}">
                                             <td>{{ $row_count }}</td>
-                                            <td><u><a href="{{route('portal.depts.show.unit', Crypt::encrypt($unit->id))}}" class="c-06f">{{ $unit->title }}</a></u></td>
+                                            <td><u><a @if(Laratrust::can('read-unit'))href="{{route('portal.depts.show.unit', Crypt::encrypt($unit->id))}}"@endif class="c-06f">{{ $unit->title }}</a></u></td>
                                             <td>{{ $unit->department->title }}</td>
                                             <td>
                                                 @if($unit->manager != null)
@@ -144,11 +153,13 @@
                                                     <em class="c-666">Null</em>
                                                 @endif
                                             </td>
-                                            <td class="text-center">{{ $unit->users->count() }}</td>
+											<td class="text-center">{{ $unit->users->count() }}</td>
+											@if(Laratrust::can('update-unit|delete-unit'))
                                             <td class="text-center">
-                                                <button class="btn btn-primary btn-sm" title="Edit {{ $unit->title }}" data-toggle="modal" data-target="#edit-unit-modal"><i class="fas fa-pencil-alt"></i></button>
-                                                <button class="btn btn-danger btn-sm" title="Delete {{ $unit->title }}" data-toggle="modal" data-target="#delete-unit-modal"><i class="far fa-trash-alt"></i></button>
-                                            </td>
+                                                @if(Laratrust::can('update-unit'))<button class="btn btn-primary btn-sm" title="Edit {{ $unit->title }}" data-toggle="modal" data-target="#edit-unit-modal"><i class="fas fa-pencil-alt"></i></button>@endif
+                                                @if(Laratrust::can('delete-unit'))<button class="btn btn-danger btn-sm" title="Delete {{ $unit->title }}" data-toggle="modal" data-target="#delete-unit-modal"><i class="far fa-trash-alt"></i></button>@endif
+											</td>
+											@endif
                                         </tr>
 
                                         @php $row_count++ @endphp
@@ -164,7 +175,8 @@
 
                 </div>
             </div>
-        </div>
+		</div>
+		@endif
 
     </div>
 
@@ -176,6 +188,8 @@
 
 
 @section('page_footer')
+
+@if(Laratrust::can('create-department'))
 <div class="modal fade" id="add-dept-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -229,7 +243,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('update-department'))
 <div class="modal fade" id="edit-dept-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -285,7 +301,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('delete-department'))
 <div class="modal fade" id="delete-dept-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -302,7 +320,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('create-unit'))
 <div class="modal fade" id="add-unit-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -358,7 +378,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('update-unit'))
 <div class="modal fade" id="edit-unit-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -416,7 +438,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('delete-unit'))
 <div class="modal fade" id="delete-unit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
@@ -436,6 +460,8 @@
 		</div>
 	</div>
 </div>
+@endif
+
 @endsection
 
 
@@ -453,7 +479,7 @@
         $('.select-ns').select2({
             minimumResultsForSearch: Infinity,
         });
-
+		@if(Laratrust::can('create-department'))
         $(document).on('click', '#add-dept-btn', function(e){
 
 			e.preventDefault();
@@ -492,8 +518,10 @@
                     swal_alert('Failed to Create Department',error,'error','Go Back');
 				}
 			});
-        });
+		});
+		@endif
 
+		@if(Laratrust::can('update-department'))
         $('#edit-dept-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -555,8 +583,10 @@
                     swal_alert('Failed to Update Department',error,'error','Go Back');
 				}
 			});
-        });
+		});
+		@endif
 
+		@if(Laratrust::can('delete-department'))
         $('#delete-dept-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -603,8 +633,10 @@
 					swal_alert('Failed to Delete Department',error,'error','Go Back');
 				}
 			});
-        });
+		});
+		@endif
 
+		@if(Laratrust::can('create-unit'))
         $(document).on('click', '#add-unit-btn', function(e){
 
 			e.preventDefault();
@@ -642,7 +674,9 @@
 				}
 			});
 		});
+		@endif
 
+		@if(Laratrust::can('update-unit'))
 		$('#edit-unit-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -702,7 +736,9 @@
 				}
 			});
 		});
+		@endif
 
+		@if(Laratrust::can('delete-unit'))
 		$('#delete-unit-modal').on('show.bs.modal', function (e) {
 			var btn = $(e.relatedTarget),
 				tr = btn.closest('tr'),
@@ -750,6 +786,8 @@
 				}
 			});
 		});
+		@endif
+
     });
 
 </script>

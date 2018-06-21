@@ -88,7 +88,7 @@ class LoginController extends Controller
         // ]);
         if($user->status != 'active') return $this->kill_process($r,'denied',"You are not permitted to use the ERP Portal.");
         Auth::login($user);
-        $this->log(Auth::user()->id,'User Logged into the ERP Portal',$r->path());
+        $this->log(Auth::user()->id,'User Logged into the ERP Portal',$r->path(),'auth');
         return redirect()->route('portal');
     }
 
@@ -222,7 +222,7 @@ class LoginController extends Controller
 
     public function logout(Request $r)
     {
-        $this->log(Auth::user()->id,'User Logged out of the ERP Portal',$r->path());
+        $this->log(Auth::user()->id,'User Logged out of the ERP Portal',$r->path(),'auth');
         Auth::logout();
         $r->session()->flush();
         return $this->kill_process($r, 'success', 'Logout Successful');

@@ -40,7 +40,7 @@
                             <th>Employee Type</th>
                             <th>Employee Since</th>
                             <th>Status</th>
-                            <th class="text-right">Actions</th>
+                            @if(Laratrust::can('update-user'))<th class="text-right">Actions</th>@endif
                         </tr>
                     </thead>
 
@@ -72,11 +72,13 @@
 
                                 <td>{{ $item->status }}</td>
 
+                                @if(Laratrust::can('update-user'))
                                 <td class="text-right">
                                     <button class="btn btn-primary btn-sm" title="Edit {{ $item->firstname }}" data-toggle="modal" data-target="#edit-user-modal"><i class="fas fa-pencil-alt"></i></button>
 
                                     {{-- <button class="btn btn-danger btn-sm" title="Delete {{ $item->firstname }}" data-toggle="modal" data-target="#delete-user-modal"><i class="far fa-trash-alt"></i></button> --}}
                                 </td>
+                                @endif
 
                             </tr>
 
@@ -102,6 +104,8 @@
 
 
 @section('page_footer')
+
+@if(Laratrust::can('update-user'))
 <div class="modal fade" id="edit-user-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog w400 sm-w600" role="document">
         <div class="modal-content">
@@ -118,14 +122,14 @@
                             <div class="form-group input_field_sections">
                                 <label for="staff-id-edit" class="form-control-label sr-onlyy">Staff ID</label>
 
-                                <input type="text" id="staff-id-edit" class="form-control" placeholder="Enter staff ID" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" readonly>
+                                <input type="text" id="staff-id-edit" class="form-control" placeholder="Enter staff ID" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" @if(!Laratrust::can('update-override')) readonly @endif>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group input_field_sections">
                                 <label for="doh-edit" class="form-control-label sr-onlyy">Date of Employement</label>
 
-                                <input type="date" id="doh-edit" class="form-control" placeholder="Enter Employment Date" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" readonly>
+                                <input type="date" id="doh-edit" class="form-control" placeholder="Enter Employment Date" data-validation="custom required" data-validation-regexp="^([a-zA-Z0-9-]*)$" data-validation-error-msg="Please use aplhanumeric characters only and hypen" @if(!Laratrust::can('update-override')) readonly @endif>
                             </div>
                         </div>
                     </div>
@@ -134,7 +138,7 @@
                         <div class="col-6">
                             <div class="form-group input_field_sections">
                                 <label for="unit-edit" class="form-control-label sr-onlyy">Unit / Department</label> <br>
-                                <select id="unit-edit" class="form-control select" style="width: 100%;">
+                                <select id="unit-edit" class="form-control select" style="width: 100%;" @if(!Laratrust::can('update-unit')) disabled @endif>
                                     <option value="">Select Unit</option>
                                     @foreach($units as $item)
                                         <option value="{{$item->title}}">{{$item->title}} / {{$item->department->title}}</option>
@@ -145,7 +149,7 @@
                         <div class="col-6">
                             <div class="form-group input_field_sections">
                                 <label for="manager-edit" class="form-control-label sr-onlyy">Manager</label>
-                                <select id="manager-edit" class="form-control select" style="width: 100%;">
+                                <select id="manager-edit" class="form-control select" style="width: 100%;" @if(!Laratrust::can('update-manager')) disabled @endif>
                                     <option value="">Select Manager</option>
                                     @foreach($list as $user)
                                         <option value="{{$user->email}}">{{$user->firstname.' '.$user->lastname}}</option>
@@ -192,6 +196,8 @@
         </div>
     </div>
 </div>
+@endif
+
 @endsection
 
 

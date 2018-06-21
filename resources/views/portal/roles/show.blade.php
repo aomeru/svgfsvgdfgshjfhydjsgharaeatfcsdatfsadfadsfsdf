@@ -31,9 +31,11 @@
                 <div class="row mb-3"><div class="col-5"><strong>Users</strong></div><div class="col-7">{{$role->users->count()}}</div></div>
                 <div class="row"><div class="col-5"><strong>Permissions</strong></div><div class="col-7">{{$role->permissions->count()}}</div></div>
             </div>
+            @if(Laratrust::can('update-role'))
             <div class="card-footer">
                 <button class="btn btn-primary btn-sm" title="Edit {{ $role->display_name }} description" data-toggle="modal" data-target="#edit-role-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
             </div>
+            @endif
         </div>
     </div>
     <div class="col-sm-9">
@@ -54,9 +56,11 @@
                     <div class="tab-pane fade show active text-left" id="{{$role->name}}-permissions" role="tabpanel" aria-labelledby="{{$role->name}}-permissions-tab">
                         <div class="d-flex justify-content-between">
                             <h5>{{$role->display_name}} Permissions</h5>
+                            @if(Laratrust::can('assign-remove-permission'))
                             <div class="text-right">
                                 <button class="btn btn-primary btn-sm" title="Edit {{ $role->display_name }} permissions" data-toggle="modal" data-target="#perm-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
                             </div>
+                            @endif
                         </div>
 
                         <hr class="my-3">
@@ -71,11 +75,13 @@
                     <div class="tab-pane fade text-left" id="{{$role->name}}-users" role="tabpanel" aria-labelledby="{{$role->name}}-users-tab">
                         <div class="d-flex justify-content-between">
                             <h5>{{$role->display_name}} Users</h5>
+                            @if(Laratrust::can('assign-remove-role'))
                             <div class="text-right">
                                 <button class="btn btn-primary btn-sm" title="Edit {{ $role->display_name }} users" data-toggle="modal" data-target="#users-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
                                 <a href="{{route('roles.tousers', $role->name)}}" class="btn btn-secondary btn-sm ml-1" title="Assign {{ $role->display_name }} to all users"><i class="fas fa-user-plus mr-2"></i>To all Users</a>
                                 <a href="{{route('roles.fromusers', $role->name)}}" class="btn btn-secondary btn-sm ml-1" title="Remove {{ $role->display_name }} from all users"><i class="fas fa-user-minus mr-2"></i>From all Users</a>
                             </div>
+                            @endif
                         </div>
 
                         <hr class="my-3">
@@ -102,6 +108,7 @@
 
 @section('page_footer')
 
+@if(Laratrust::can('assign-remove-role'))
 <div class="modal fade" id="users-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog modal-lg w5000" role="document">
 		<div class="modal-content">
@@ -134,7 +141,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('assign-remove-permission'))
 <div class="modal fade" id="perm-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w500" role="document">
 		<div class="modal-content">
@@ -167,7 +176,9 @@
 		</div>
 	</div>
 </div>
+@endif
 
+@if(Laratrust::can('update-role'))
 <div class="modal fade" id="edit-role-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog w500" role="document">
 		<div class="modal-content">
@@ -193,6 +204,7 @@
 		</div>
 	</div>
 </div>
+@endif
 
 @endsection
 
@@ -210,7 +222,7 @@
         $('.data-table').DataTable();
         $('.select').select2();
 
-
+        @if(Laratrust::can('assign-remove-role'))
         $(document).on('click', '#role-users-btn', function(e){
 
 			e.preventDefault();
@@ -248,8 +260,9 @@
 				}
 			});
         });
+        @endif
 
-
+        @if(Laratrust::can('assign-remove-permission'))
         $(document).on('click', '#role-perm-btn', function(e){
 
 			e.preventDefault();
@@ -287,8 +300,9 @@
 				}
 			});
         });
+        @endif
 
-
+        @if(Laratrust::can('update-role'))
         $(document).on('click', '#edit-role-btn', function(e){
 
 			e.preventDefault();
@@ -328,7 +342,7 @@
 				}
 			});
         });
-
+        @endif
     });
 
 </script>

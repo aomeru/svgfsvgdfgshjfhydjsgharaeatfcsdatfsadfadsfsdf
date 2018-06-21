@@ -9,7 +9,7 @@ use Session;
 trait CommonTrait
 {
     public function echeck() {return response()->json(array('success' => false, 'errors' => ['errors' => ['Got here.']]), 400);}
-    
+
 	public function get_time()
 	{
 		$date = new \DateTime();
@@ -77,10 +77,11 @@ trait CommonTrait
 		return $val;
 	}
 
-	public function log($user_id, $descrip, $path)
+	public function log($user_id, $descrip, $path, $type='')
 	{
 		$log = new Log();
-		$log->user_id = $user_id;
+        $log->user_id = $user_id;
+        if($type) $log->type = $type;
 		$log->page_url = $path;
 		$log->descrip = $descrip;
 		$log->save();
