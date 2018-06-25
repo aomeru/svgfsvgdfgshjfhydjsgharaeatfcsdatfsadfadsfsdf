@@ -5,6 +5,6 @@
 
 @section('content')
 
-<p>Welcome back to the ERP Portal</p>
+<p>Welcome back to the ERP Portal. {{config('app.timezone')}}</p>
 
 @endsection

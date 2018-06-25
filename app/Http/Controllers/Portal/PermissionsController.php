@@ -90,6 +90,7 @@ class PermissionsController extends Controller
         } else {
             $rules = array(
                 'module_crud' => 'required|min:3|max:100',
+                'cname' => 'required|max:100|alpha_dash',
                 'crud' => 'required',
             );
             $validator = Validator::make($r->all(), $rules);
@@ -105,8 +106,9 @@ class PermissionsController extends Controller
             {
                 if(in_array($a,$ca))
                 {
-                    $t = $a.'-'.strtolower($r->module_crud);
-                    if(Permission::where('id',$t)->first() == null)
+                    $t = $a.'-'.$r->cname;
+                    // $t = $a.'-'.strtolower($this->clean_string($r->module_crud));
+                    if(Permission::where('name',$t)->first() == null)
                     {
                         $perm = new Permission;
                         $perm->display_name = ucwords($a).' '.ucwords($r->module_crud);
@@ -119,6 +121,8 @@ class PermissionsController extends Controller
                             $role = Role::where('display_name','System Administrator')->first();
                             $role->attachPermission($perm);
                         }
+                    } else {
+                        return response()->json(array('success' => false, 'errors' => ['errors' => ['The permission "'.$t.'" already exists']]), 400);
                     }
                 }
             }
@@ -213,7 +217,7 @@ class PermissionsController extends Controller
                     if($role != null)
                     {
                         if(!$role->hasPermission($perm->name))
-                        { 
+                        {
                             $role->attachPermission($perm);
                             $this->log(Auth::user()->id, 'Attached the "'.$perm->display_name.'" permission to '.$role->display_name.' role', $r->path(),'action');
                         }

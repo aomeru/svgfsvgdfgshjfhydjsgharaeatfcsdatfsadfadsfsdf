@@ -268,6 +268,7 @@
 				descrip = $("#descrip").val(),
 				permmode = $("#permmode").val(),
 				name = $("#slugh").val(),
+				cname = $("#slugch").val(),
 				token ='{{ Session::token() }}',
 				url = "{{route('permissions.store')}}";
 
@@ -276,6 +277,7 @@
 				url: url,
 				data: {
 					name: name,
+					cname: cname,
 					display_name: display_name,
 					moduleb: moduleb,
 					description: descrip,

@@ -30,15 +30,18 @@
     <ul class="nav flex-column px-2">
         @if(Laratrust::can('dashboard'))<li class="nav-item"><a href="{{ route('portal') }}" class="nav-link @if(!isset($nav)) active @endif"><i class="fas fa-desktop fa-fw mr-2"></i>Dashboard</a></li>@endif
 
+        @if(Laratrust::can('*leave*'))
         <li class="nav-item">
-            <a class="nav-link has-sub-nav"><i class="far fa-calendar-alt fa-fw mr-2"></i>Leave</a>
+            <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'leave') sub-active @endif"><i class="far fa-calendar-alt fa-fw mr-2"></i>Leave</a>
             <ul id="testleave" class="sub-nav flex-column ml-4 pl-4">
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-plus fa-fw mr-2"></i>Apply for Leave</a></li>
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-alt fa-fw mr-2"></i>My Leave</a></li>
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-check fa-fw mr-2"></i>Leave Approvals</a></li>
-                <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar fa-fw mr-2"></i>Leave Management</a></li>
+                @if(Laratrust::can('read-leave-allocation'))<li class="sub-nav-item"><a href="{{route('leave-allocation.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-allocation') active @endif"><i class="fas fa-calendar fa-fw mr-2"></i>Leave Allocation</a></li>@endif
+                @if(Laratrust::can('read-leave-type'))<li class="sub-nav-item"><a href="{{route('leave-type.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-type') active @endif"><i class="far fa-calendar fa-fw mr-2"></i>Leave Types</a></li>@endif
             </ul>
         </li>
+        @endif
 
         <li class="nav-item"><a href="" class="nav-link"><i class="fas fa-chart-line fa-fw mr-2"></i>KPI Objectives</a></li>
 

@@ -211,6 +211,7 @@ return [
 
     ],
 
+
     'oauth_app_id' => env('OAUTH_APP_ID'),
     'oauth_app_password' => env('OAUTH_APP_PASSWORD'),
     'oauth_redirect_uri' => env('OAUTH_REDIRECT_URI'),
@@ -218,5 +219,8 @@ return [
     'oauth_authority' => env('OAUTH_AUTHORITY'),
     'oauth_authorize_endpoint' => env('OAUTH_AUTHORIZE_ENDPOINT'),
     'oauth_token_endpoint' => env('OAUTH_TOKEN_ENDPOINT'),
+
+
+    'leave_year' => env('LEAVE_YEAR'),
 
 ];

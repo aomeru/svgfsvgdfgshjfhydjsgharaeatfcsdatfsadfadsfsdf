@@ -1,12 +1,18 @@
 require('./bootstrap');
+var Vue = require('vue');
+window.Vue = Vue;
+var Slug = require('slug');
+Slug.defaults.mode = 'rfc3986';
 
-window.Vue = require('vue');
+// Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-
-const app = new Vue({
-    el: '#app'
-});
+// const app = new Vue({
+//     el: '#app',
+//     created()
+//     {
+//         console.log('created');
+//     }
+// });
 
 $(function(){
     //console.log('hello world')

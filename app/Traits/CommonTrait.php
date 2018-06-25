@@ -10,11 +10,27 @@ trait CommonTrait
 {
     public function echeck() {return response()->json(array('success' => false, 'errors' => ['errors' => ['Got here.']]), 400);}
 
-	public function get_time()
+	public function get_datetime()
 	{
 		$date = new \DateTime();
 		return $date->format('Y-m-d H:i:s');
-	}
+    }
+
+    public function get_date()
+	{
+		$date = new \DateTime();
+		return $date->format('Y-m-d');
+    }
+
+    public function clean_string($string)
+    {
+        $replace = [' ','"','_','&'];
+        foreach($replace as $x)
+        {
+            if($x == '&') $string = str_replace($x,'and',$string); else $string = str_replace($x,'-',$string);
+        }
+        return $string;
+    }
 
 	public function generate_code($table, $col, $l)
 	{

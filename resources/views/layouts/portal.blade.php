@@ -63,11 +63,12 @@
 
             function swal_alert(title,message,icon,button='')
             {
-                swal(title,message,icon, {
+                swal({
                     title :  title,
                     text :  message,
                     icon :  icon,
                     button : button ? button : false,
+                    animation : false,
                 });
             }
 

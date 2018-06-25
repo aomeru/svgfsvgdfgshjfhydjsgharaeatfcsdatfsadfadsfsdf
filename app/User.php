@@ -47,5 +47,35 @@ class User extends Authenticatable
     public function logs()
 	{
 		return $this->hasMany(Models\Log::class);
-	}
+    }
+
+    public function leave_type()
+	{
+		return $this->hasMany(Models\LeaveType::class);
+    }
+
+    public function leave_allocation()
+	{
+		return $this->hasOne(Models\LeaveAllocation::class);
+    }
+
+    public function leave()
+	{
+		return $this->hasMany(Models\Leave::class);
+    }
+
+    public function rleave()
+	{
+		return $this->hasMany(Models\Leave::class, 'rstaff_id');
+    }
+
+    public function mleave()
+	{
+		return $this->hasMany(Models\Leave::class, 'manager_id');
+    }
+
+    public function hleave()
+	{
+		return $this->hasMany(Models\Leave::class, 'hr_id');
+    }
 }

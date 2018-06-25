@@ -27,6 +27,10 @@ class LoginController extends Controller
 
     public function login()
     {
+        // Auth::loginUsingId('18031680');
+        // Auth::loginUsingId('18031748');
+        // return redirect()->route('portal');
+
         $oauthClient = $this->get_custom_client();
         $authorizationUrl = $oauthClient->getAuthorizationUrl();
         Session::put('oauth_state', $oauthClient->getState());

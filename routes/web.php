@@ -16,7 +16,7 @@ Route::get('/login', 'App\LoginController@login')->name('login');
 Route::get('/authorize', 'App\LoginController@get_token');
 Route::get('/process', 'App\LoginController@auth_login')->name('process_login');
 Route::get('/logout', 'App\LoginController@logout')->name('logout');
-Route::get('/test', 'App\AppController@process');
+Route::get('/test', 'App\AppController@test');
 
 Route::prefix('portal')->middleware('auth')->group(function(){
     Route::get('/', 'Portal\DashboardController@index')->middleware('permission:dashboard')->name('portal');
@@ -53,6 +53,13 @@ Route::prefix('portal')->middleware('auth')->group(function(){
 		Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
 		Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
 		Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
+    });
+
+    Route::group(['prefix' => 'leave'], function () {
+		$con = 'Portal\Leave\LeaveTypeController@';
+        $rkey = 'leaves';
+		Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
+		Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
     });
 
     Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);
