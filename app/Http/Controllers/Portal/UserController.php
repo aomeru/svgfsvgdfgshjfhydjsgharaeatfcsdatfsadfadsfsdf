@@ -73,24 +73,26 @@ class UserController extends Controller
             $user->date_of_hire = $r->doh;
         }
 
-		$user->unit_id = Unit::where('title',$r->unit_id)->value('id');
+		if($r->unit_id != null) $user->unit_id = Unit::where('title',$r->unit_id)->value('id');
 		$user->status = $r->status;
         $user->employee_type = $r->emp_type;
 
 		if($user->update())
 		{
-            $manager = UserManager::where('user_id',$user->id)->first();
-            if($manager != null)
+            if($r->manager != null)
             {
-                $manager->manager_id = User::where('email',$r->manager)->value('id');
-                $manager->update();
-            } else {
-                $manager = new UserManager;
-                $manager->user_id = $user->id;
-                $manager->manager_id = User::where('email',$r->manager)->value('id');
-                $manager->save();
+                $manager = UserManager::where('user_id',$user->id)->first();
+                if($manager != null)
+                {
+                    $manager->manager_id = User::where('email',$r->manager)->value('id');
+                    $manager->update();
+                } else {
+                    $manager = new UserManager;
+                    $manager->user_id = $user->id;
+                    $manager->manager_id = User::where('email',$r->manager)->value('id');
+                    $manager->save();
+                }
             }
-
 
             $umsg = 'Updated user account:';
             if($psid != $user->staff_id) $umsg .= ' changed staffID from '.$psid.' to '.$user->staff_id;

@@ -42,7 +42,8 @@ Route::prefix('portal')->middleware('auth')->group(function(){
 		Route::post('/add', $con.'store')->name($rkey.'.add');
 		Route::post('/update', $con.'update')->name($rkey.'.update');
 		Route::post('/delete', $con.'delete')->name($rkey.'.delete');
-		Route::get('/view/{id}', $con.'show')->name($rkey.'.show');
+        Route::get('/view/{id}', $con.'show')->name($rkey.'.show');
+        Route::resource('managers','Portal\ManagerController')->except(['edit','create']);
     });
 
     Route::resource('roles','Portal\RoleController')->except(['edit','create']);

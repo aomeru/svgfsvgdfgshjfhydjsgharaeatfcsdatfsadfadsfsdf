@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Portal;
 
+use Auth;
+use Crypt;
+use Session;
+use App\Role;
+use App\User;
+use App\Models\Unit;
+use App\Models\Department;
+use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Unit;
-use App\User;
-use Session;
-use Crypt;
 use Illuminate\Support\Facades\Validator;
-use Auth;
-use App\Traits\CommonTrait;
 
 class DepartmentController extends Controller
 {
@@ -60,9 +61,18 @@ class DepartmentController extends Controller
         $item->title = ucwords($r->dept_name);
         if($r->head_value != null)
         {
-            $user_id = User::where('email',$r->head_value)->value('id');
-            if($user_id == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The user selected does not exist.']]), 400);
-            if($r->head_type == 'ed') $item->ed_id = $user_id; else $item->gm_id = $user_id;
+            $user = User::where('email',$r->head_value)->first();
+            if($user == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The user selected does not exist.']]), 400);
+            if($r->head_type == 'ed')
+            {
+                $item->ed_id = $user->id;
+                $ed = Role::where('display_name','Executive Director')->first();
+                if($ed != null) if(!$user->hasRole($ed->name)) $user->attachRole($ed);
+            } else {
+                $item->gm_id = $user->id;
+                $gm = Role::where('display_name','General Manager')->first();
+                if($gm != null) if(!$user->hasRole($gm->name)) $user->attachRole($gm);
+            }
         }
 
 
@@ -70,8 +80,17 @@ class DepartmentController extends Controller
             $unit = new Unit();
             $unit->title = $item->title;
             $unit->department_id = $item->id;
-            if(isset($user_id)) $unit->manager_id = $user_id;
-            $unit->save();
+            if($user != null){
+                $unit->manager_id = $user->id;
+                $mg = Role::where('display_name','Manager')->first();
+                if($mg != null) if(!$user->hasRole($mg)) $user->attachRole($mg);
+            }
+            if($unit->save()){
+                if($user != null){
+                    $user->unit_id = $unit->id;
+                    $user->update();
+                }
+            }
             $this->log(Auth::user()->id, 'Created '.$item->title.' department and unit with id .'.$item->id, $r->path(), 'action');
             return response()->json(array('success' => true, 'message' => 'Department & Unit created'), 200);
         }
@@ -103,9 +122,17 @@ class DepartmentController extends Controller
         $dept->title = ucwords($r->dept_name);
         if($r->head_value != null)
         {
-            $user_id = User::where('email',$r->head_value)->value('id');
-            if($user_id == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The user selected does not exist.']]), 400);
-            if($r->head_type == 'ed') $dept->ed_id = $user_id; else $dept->gm_id = $user_id;
+            $user = User::where('email',$r->head_value)->first();
+            if($user == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The user selected does not exist.']]), 400);
+            if($r->head_type == 'ed'){
+                $dept->ed_id = $user->id;
+                $ed = Role::where('display_name','Executive Director')->first();
+                if($ed != null) if(!$user->hasRole($ed->name)) $user->attachRole($ed);
+            } else {
+                $dept->gm_id = $user->id;
+                $gm = Role::where('display_name','General Manager')->first();
+                if($gm != null) if(!$user->hasRole($gm->name)) $user->attachRole($gm);
+            }
         } else {
             $dept->gm_id = null;
             $dept->ed_id = null;
@@ -166,12 +193,18 @@ class DepartmentController extends Controller
 
         if($r->unit_manager != null)
         {
-            $user_id = User::where('email',$r->unit_manager)->value('id');
-            if($user_id == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The manager selected does not exist.']]), 400);
-            $item->manager_id = $user_id;
+            $user = User::where('email',$r->unit_manager)->first();
+            if($user == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The manager selected does not exist.']]), 400);
+            $item->manager_id = $user->id;
+            $m = Role::where('display_name','Manager')->first();
+            if($m != null) if(!$user->hasRole($m->name)) $user->attachRole($m);
         }
 
         if($item->save()){
+            if($user != null) {
+                $user->unit_id = $item->id;
+                $user->update();
+            }
             $this->log(Auth::user()->id, 'Created '.$item->title.' unit with id .'.$item->id, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Unit created'), 200);
         }
@@ -208,9 +241,13 @@ class DepartmentController extends Controller
 
         if($r->unit_manager != null)
         {
-            $user_id = User::where('email',$r->unit_manager)->value('id');
-            if($user_id == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The manager selected does not exist.']]), 400);
-            $unit->manager_id = $user_id;
+            $user = User::where('email',$r->unit_manager)->first();
+            if($user == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['The manager selected does not exist.']]), 400);
+            $unit->manager_id = $user->id;
+            $m = Role::where('display_name','Manager')->first();
+            if($m != null) if(!$user->hasRole($m->name)) $user->attachRole($m);
+            $user->unit_id = $unit->id;
+            $user->update();
         } else $unit->manager_id = null;
 
 		if($unit->update()){

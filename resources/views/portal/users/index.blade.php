@@ -50,7 +50,7 @@
 
                         @foreach($list as $item)
 
-                            <tr id="row-{{$item->id}}" data-hrid="{{$item->id}}" data-id="{{Crypt::encrypt($item->id)}}" data-doh="{{$item->date_of_hire}}" data-emp-type="{{$item->employee_type}}" data-staff-id="{{$item->staff_id}}" data-unit-id="{{$item->unit == null ? '' : $item->unit->title}}" data-manager="{{$item->manager == null ? '' : $item->manager->manager->email}}" data-status="{{$item->status}}">
+                            <tr id="row-{{$item->id}}" data-hrid="{{$item->id}}" data-id="{{Crypt::encrypt($item->id)}}" data-fullname="{{$item->firstname.' '.$item->lastname}}" data-doh="{{$item->date_of_hire}}" data-emp-type="{{$item->employee_type}}" data-staff-id="{{$item->staff_id}}" data-unit-id="{{$item->unit == null ? '' : $item->unit->title}}" data-manager="{{$item->manager == null ? '' : $item->manager->manager->email}}" data-status="{{$item->status}}">
 
                                 <td>{{ $row_count }}</td>
 
@@ -112,7 +112,7 @@
             <form method="post">
 
                 <div class="modal-header mh-override">
-                    <h5 class="modal-title">Update User Account</h5>
+                    <h5 class="modal-title">Update User <span class="text-primary" id="user-title">""</span> Account</h5>
                 </div>
 
                 <div class="modal-body">
@@ -225,9 +225,11 @@
 				unit_id = tr.data('unit-id'),
 				emp_type = tr.data('emp-type'),
 				manager = tr.data('manager'),
+				fullname = tr.data('fullname'),
 				user_id = tr.data('id'),
 				hrid = tr.data('hrid');
 
+            $("#user-title").text('"' + fullname + '"');
             $("#staff-id-edit").val(staff_id);
             $("#doh-edit").val(doh).trigger('change');
 			$("#status-edit").val(status).trigger('change');

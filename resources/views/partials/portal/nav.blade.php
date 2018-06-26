@@ -37,8 +37,8 @@
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-plus fa-fw mr-2"></i>Apply for Leave</a></li>
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-alt fa-fw mr-2"></i>My Leave</a></li>
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-check fa-fw mr-2"></i>Leave Approvals</a></li>
-                @if(Laratrust::can('read-leave-allocation'))<li class="sub-nav-item"><a href="{{route('leave-allocation.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-allocation') active @endif"><i class="fas fa-calendar fa-fw mr-2"></i>Leave Allocation</a></li>@endif
-                @if(Laratrust::can('read-leave-type'))<li class="sub-nav-item"><a href="{{route('leave-type.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-type') active @endif"><i class="far fa-calendar fa-fw mr-2"></i>Leave Types</a></li>@endif
+                @if(Laratrust::can('*-leave-allocation'))<li class="sub-nav-item"><a href="{{route('leave-allocation.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-allocation') active @endif"><i class="fas fa-calendar fa-fw mr-2"></i>Leave Allocation</a></li>@endif
+                @if(Laratrust::can('*-leave-type'))<li class="sub-nav-item"><a href="{{route('leave-type.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-type') active @endif"><i class="far fa-calendar fa-fw mr-2"></i>Leave Types</a></li>@endif
             </ul>
         </li>
         @endif
@@ -50,7 +50,7 @@
             <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'users') sub-active @endif"><i class="far fa-user-circle fa-fw mr-2"></i>Users</a>
             <ul id="testuser" class="sub-nav flex-column ml-4 pl-4">
                 @if(Laratrust::can('*-user'))<li class="sub-nav-item"><a href="{{route('portal.users')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'all-users') active @endif"><i class="fas fa-users fa-fw mr-2"></i>All Users</a></li>@endif
-                @if(Laratrust::can('*-manager'))<li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="fas fa-user-tie fa-fw mr-2"></i>Managers</a></li>@endif
+                @if(Laratrust::can('*-manager'))<li class="sub-nav-item"><a href="{{route('managers.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'managers') active @endif"><i class="fas fa-user-tie fa-fw mr-2"></i>Managers</a></li>@endif
             </ul>
         </li>
         @endif
