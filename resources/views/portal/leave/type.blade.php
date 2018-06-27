@@ -38,6 +38,7 @@
                             <th>Type</th>
                             <th class="text-center">Allowed</th>
                             <th class="text-center">Last Modified</th>
+                            <th class="text-center">Status</th>
                             @if(Laratrust::can('update-leave-type|delete-leave-type'))<th class="text-right">Actions</th>@endif
                         </tr>
                     </thead>
@@ -48,7 +49,7 @@
 
                         @foreach($list as $item)
 
-                            <tr id="row-{{$item->id}}" data-hrid="{{$item->id}}" data-id="{{Crypt::encrypt($item->id)}}" data-year="{{ substr($item->title,-4) }}" data-title="{{str_replace(substr($item->title,-4),'',$item->title).substr($item->title,-4)}}" data-type="{{$item->type}}" data-allowed="{{$item->allowed}}">
+                            <tr id="row-{{$item->id}}" data-hrid="{{$item->id}}" data-id="{{Crypt::encrypt($item->id)}}" data-year="{{ substr($item->title,-4) }}" data-title="{{str_replace(substr($item->title,-4),'',$item->title).substr($item->title,-4)}}" data-type="{{$item->type}}" data-allowed="{{$item->type == 'static'? round($item->allowed) : $item->allowed}}" data-status="{{$item->status}}">
 
                                 <td>{{ $row_count }}</td>
 
@@ -61,6 +62,8 @@
                                 <td class="text-center">{{ $item->type == 'calculated' ? 'M * '.$item->allowed : round($item->allowed).' day(s)' }}</td>
 
                                 <td class="text-center">{{ date('jS M Y, h:ia',strtotime($item->updated_at)) }} | <span class="text-muted">{{ $item->user->firstname.' '.$item->user->lastname }}</span></td>
+
+                                <td class="text-capitalize text-center">{{ $item->status }}</td>
 
                                 @if(Laratrust::can('update-leave-type|delete-leave-type'))
                                 <td class="text-right">
@@ -104,7 +107,15 @@
 
 				<div class="modal-body">
                     <div class="row">
-                        <div class="col-4 offset-8">
+                        <div class="col-4 offset-4">
+                            <div class="form-group">
+                                <select name="status" id="status" class="select" style="width: 100%">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
                             <div class="form-group">
                                 <select name="year" id="year" class="select" style="width: 100%">
                                     @for($x=2017;$x<=2050;$x++)
@@ -183,7 +194,15 @@
 
 				<div class="modal-body">
                     <div class="row">
-                        <div class="col-4 offset-8">
+                        <div class="col-4 offset-4">
+                            <div class="form-group">
+                                <select name="status_edit" id="status-edit" class="form-control select" style="width: 100%">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
                             <div class="form-group">
                                 <select name="year-edit" id="year-edit" class="select" style="width: 100%">
                                     @for($x=2017;$x<=2050;$x++)
@@ -215,7 +234,7 @@
                             <div class="form-group">
                                 <label for="allowed-edit" class="form-control-label">Allowed</label>
 
-                                <select id="allowed-edit" class="select" style="width: 100%">
+                                <select id="allowed-edit" class="form-control select" style="width: 100%">
                                     @for($x=1;$x<=60;$x++)
                                         <option value="{{$x}}">{{$x}}</option>
                                     @endfor
@@ -328,6 +347,7 @@
 				type = $("#type").val(),
 				allowed = $("#allowed").val(),
 				callowed = $("#callowed").val(),
+				status = $("#status").val(),
 				token ='{{ Session::token() }}',
 				url = "{{route('leave-type.store')}}";
 
@@ -340,6 +360,7 @@
 					type: type,
 					allowed: allowed,
 					callowed: callowed,
+					status: status,
 					_token: token
 				},
 				beforeSend: function () {
@@ -371,12 +392,14 @@
 				title = tr.data('title'),
 				type = tr.data('type'),
 				allowed = tr.data('allowed'),
+				status = tr.data('status'),
 				hrid = tr.data('hrid'),
                 item_id = tr.data('id');
 
 			$("#year-edit").val(year).trigger('change');
 			$("#title-edit").val(title);
 			$("#type-edit").val(type).trigger('change');
+			$("#status-edit").val(status).trigger('change');
             if(type != 'calculated') $("#allowed-edit").val(allowed).trigger('change'); else $("#callowed-edit").val(allowed);
 			$("#type-id-edit").val(item_id);
 			$("#type-row-id").val(hrid);
@@ -389,6 +412,7 @@
 
 			var btn = $(this),
 				btn_text = btn.html(),
+				status = $("#status-edit").val(),
 				year = $("#year-edit").val(),
 				title = $("#title-edit").val(),
 				type = $("#type-edit").val(),
@@ -403,6 +427,7 @@
 				type: "PUT",
 				url: url,
 				data: {
+					status: status,
 					year: year,
 					title: title,
 					type: type,
@@ -417,6 +442,7 @@
 					btn.html(btn_text);
 					swal_alert('Unit Updated', '', 'success', 'continue');
 					$('#edit-modal').modal('hide');
+					$(load_element).data('status',status);
 					$(load_element).data('year',year);
 					$(load_element).data('title',title);
 					$(load_element).data('type',type);

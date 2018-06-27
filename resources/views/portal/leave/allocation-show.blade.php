@@ -1,14 +1,14 @@
 @extends('layouts.portal')
-@section('page_title','Manager: '.$manager->firstname.' '.$manager->lastname.' - ')
-@section('portal_page_title') <i class="fas fa-user-tie mr-3"></i>Manager: {{$manager->firstname.' '.$manager->lastname}} @endSection
+@section('page_title','Leave Allocation: '.$user->firstname.' '.$user->lastname.' - ')
+@section('portal_page_title') <i class="fas fa-calendar mr-3"></i>Leave Allocation: {{$user->firstname.' '.$user->lastname}} @endSection
 
 @section('bc')
     <nav aria-label="breadcrumb" class="d-none d-md-block">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{route('portal')}}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{route('portal.users')}}">Users</a></li>
-            <li class="breadcrumb-item"><a href="{{route('managers.index')}}">Managers</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ $manager->firstname.' '.$manager->lastname }}</li>
+            <li class="breadcrumb-item">Leave</li>
+            <li class="breadcrumb-item"><a href="{{route('leave-allocation.index')}}">Allocation</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{$user->firstname.' '.$user->lastname}}</li>
         </ol>
     </nav>
 @endSection
@@ -24,15 +24,14 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-6 offset-3 col-sm-8 offset-sm-2">
-                        <img src="@if(!$manager->photo) {{ asset('images/user.png') }} @else data:image.jpg;base64,{{$manager->photo}} @endif" class="img-fluid rounded-circle" alt="" width="auto" height="100%">
+                        <img src="@if(!$user->photo) {{ asset('images/user.png') }} @else data:image.jpg;base64,{{$user->photo}} @endif" class="img-fluid rounded-circle" alt="" width="auto" height="100%">
                     </div>
                 </div>
                 <p class="text-center">
-                    {{$manager->firstname.' '.$manager->lastname}}{!! $manager->job_title != null ? '<span class="text-muted">, '.$manager->job_title.'</span>' : '' !!}
+                    {{$user->firstname.' '.$user->lastname}}{!! $user->job_title != null ? '<span class="text-muted">, '.$user->job_title.'</span>' : '' !!}
                     <br>
-                    <small class="text-muted">{{ $manager->unit == null ? '' : $manager->unit->title.', '.$manager->unit->department->title }}</small>
+                    <small class="text-muted">{{ $user->unit == null ? '' : $user->unit->title.', '.$user->unit->department->title }}</small>
                 </p>
-                <p class="text-center">{{$manager->users->count()}} Subordinates.</p>
             </div>
         </div>
     </div>
@@ -44,8 +43,8 @@
                 <h5 class="card-title mb-0">Subordinates</h5>
             </div>
             <div class="card-body">
-                @if($manager->users->count() > 0)
-                    @foreach($manager->users as $u)
+                @if($user->users->count() > 0)
+                    @foreach($user->users as $u)
                         <button class="btn btn-info btn-sm mr-1 mb-1" disabled>{{$u->user->firstname.' '.$u->user->lastname}}</button>
                     @endforeach
                 @else
@@ -53,7 +52,7 @@
                 @endif
             </div>
             <div class="card-footer">
-                <button class="btn btn-primary btn-sm" title="Edit {{ $manager->firstname.' '.$manager->lastname }} subordinates" data-toggle="modal" data-target="#edit-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
+                <button class="btn btn-primary btn-sm" title="Edit {{ $user->firstname.' '.$user->lastname }} subordinates" data-toggle="modal" data-target="#edit-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
             </div>
         </div>
     </div>
@@ -75,7 +74,7 @@
 			<form method="post">
 
 				<div class="modal-header">
-                    <h5 class="modal-title">Update <span class="text-primary">{{$manager->firstname.' '.$manager->lastname}}</span> Subordinates</h5>
+                    <h5 class="modal-title">Update <span class="text-primary">{{$user->firstname.' '.$user->lastname}}</span> Subordinates</h5>
 				</div>
 
 				<div class="modal-body">
@@ -88,7 +87,7 @@
                         <select name="users[]" id="users" class="form-control select" multiple="multiple" style="width: 100%;">
                             <?php
                             $x = array();
-                            foreach($manager->users as $u)
+                            foreach($user->users as $u)
                             {
                                 array_push($x,$u->user->email);
                             }
@@ -138,7 +137,7 @@
                 user_unit = $("#user-unit").is(':checked'),
 				token ='{{ Session::token() }}',
 				url = "{{route('managers.update', ':id')}}";
-                url = url.replace(':id',"{{Crypt::encrypt($manager->id)}}");
+                url = url.replace(':id',"{{Crypt::encrypt($user->id)}}");
 
 			$.ajax({
 				type: "PUT",
@@ -156,7 +155,7 @@
                     $('#edit-modal').modal('hide');
 					swal_alert('Manager subordinates updated','','success','Continue');
                     window.setTimeout(function(){
-                        window.location.href = "{{route('managers.show',Crypt::encrypt($manager->id))}}";
+                        window.location.href = "{{route('managers.show',Crypt::encrypt($user->id))}}";
                     },1000);
 				},
 				error: function(jqXHR, exception){

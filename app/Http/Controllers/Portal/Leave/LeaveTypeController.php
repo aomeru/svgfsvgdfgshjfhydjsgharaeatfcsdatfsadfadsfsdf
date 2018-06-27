@@ -62,6 +62,7 @@ class LeaveTypeController extends Controller
             'type' => 'sometimes|in:calculated,static',
             'allowed' => 'sometimes|numeric',
             'callowed' => 'sometimes',
+            'status' => 'in:active,inactive',
         );
         $validator = Validator::make($r->all(), $rules);
         if ($validator->fails()) {
@@ -75,6 +76,7 @@ class LeaveTypeController extends Controller
         $item->title = strtoupper($r->title);
         $item->type = $r->type;
         $item->allowed = $r->type == 'static' ? $r->allowed : $r->callowed;
+        $item->status = $r->status;
 
         if($item->save()) {
             $this->log(Auth::user()->id, 'Created '.$item->title.' leave type with id .'.$item->id, $r->path(),'action');
@@ -125,6 +127,7 @@ class LeaveTypeController extends Controller
             'type' => 'sometimes|in:calculated,static',
             'allowed' => 'sometimes|numeric',
             'callowed' => 'sometimes',
+            'status' => 'in:active,inactive',
         );
         $validator = Validator::make($r->all(), $rules);
         if ($validator->fails()) {
@@ -138,6 +141,7 @@ class LeaveTypeController extends Controller
         $item->title = strtoupper($r->title);
         $item->type = $r->type;
         $item->allowed = $r->type == 'static' ? $r->allowed : $r->callowed;
+        $item->status = $r->status;
 
         if($item->update()) {
             $this->log(Auth::user()->id, 'Updated '.$item->title.' leave type with id .'.$item->id, $r->path(),'action');

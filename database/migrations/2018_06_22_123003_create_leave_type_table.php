@@ -20,6 +20,7 @@ class CreateLeaveTypeTable extends Migration
             $table->string('title',100)->unique();
             $table->enum('type',['calculated','static'])->default('static');
             $table->decimal('allowed',11,2)->default(0);
+            $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });
     }

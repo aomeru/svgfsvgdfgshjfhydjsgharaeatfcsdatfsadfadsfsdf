@@ -57,8 +57,7 @@ Route::prefix('portal')->middleware('auth')->group(function(){
     });
 
     Route::group(['prefix' => 'leave'], function () {
-		$con = 'Portal\Leave\LeaveTypeController@';
-        $rkey = 'leaves';
+		Route::resource('leave-record','Portal\Leave\LeaveTypeController');
 		Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
 		Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
     });
