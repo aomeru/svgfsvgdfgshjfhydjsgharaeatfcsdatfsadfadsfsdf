@@ -9,7 +9,7 @@ class LeaveRequestLog extends Model
 {
     protected $table = 'leave_request_log';
 
-    public function request()
+    public function leave_request()
     {
         return $this->belongsTo(LeaveRequest::class);
     }

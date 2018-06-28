@@ -167,7 +167,12 @@ class LoginController extends Controller
         if($r->getState() != null) $u->state = $r->getState();
 
         $unit_id = $this->get_unit($r->getDepartment());
-        if($unit_id) $u->unit_id = $unit_id;
+        if($unit_id){
+            if($u->unit_id == null)
+            {
+                $u->unit_id = $unit_id;
+            }
+        }
 
         $photo = $this->get_image($t);
         if($photo) $u->photo = $photo;
@@ -226,7 +231,7 @@ class LoginController extends Controller
 
     public function logout(Request $r)
     {
-        $this->log(Auth::user()->id,'User Logged out of the ERP Portal',$r->path(),'auth');
+        if(Auth::check()) $this->log(Auth::user()->id,'User Logged out of the ERP Portal',$r->path(),'auth');
         Auth::logout();
         $r->session()->flush();
         return $this->kill_process($r, 'success', 'Logout Successful');

@@ -59,7 +59,8 @@ Route::prefix('portal')->middleware('auth')->group(function(){
     Route::group(['prefix' => 'leave'], function () {
 		Route::resource('leave-record','Portal\Leave\LeaveTypeController');
 		Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
-		Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
+        Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
+        Route::post('/allocation/assign-to-all','Portal\Leave\LeaveAllocationController@to_users')->name('leave-allocation.toall');
     });
 
     Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);

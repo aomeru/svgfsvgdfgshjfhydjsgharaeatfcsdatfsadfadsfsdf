@@ -61,7 +61,7 @@
                 return msg;
             }
 
-            function swal_alert(title,message,icon,button='')
+            function swal_alert(title,message,icon,button='',timer='')
             {
                 swal({
                     title :  title,
@@ -69,6 +69,7 @@
                     icon :  icon,
                     button : button ? button : false,
                     animation : false,
+                    timer : timer
                 });
             }
 

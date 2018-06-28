@@ -19,12 +19,12 @@ class Leave extends Model
         return $this->belongsTo(User::class, 'rstaff_id');
     }
 
-    public function type()
+    public function leave_type()
 	{
 		return $this->belongsTo(LeaveType::class);
     }
 
-    public function request()
+    public function leave_request()
 	{
 		return $this->hasOne(LeaveRequest::class);
     }

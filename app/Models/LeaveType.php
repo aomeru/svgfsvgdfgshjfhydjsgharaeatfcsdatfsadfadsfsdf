@@ -15,7 +15,7 @@ class LeaveType extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function leave_allocation()
+    public function allocation()
 	{
 		return $this->hasMany(LeaveAllocation::class);
     }

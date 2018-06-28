@@ -418,7 +418,7 @@
 				type = $("#type-edit").val(),
 				allowed = $("#allowed-edit").val(),
 				callowed = $("#callowed-edit").val(),
-				load_element = "#urow-" + $("#type-row-id").val(),
+				load_element = "#row-" + $("#type-row-id").val(),
 				token ='{{ Session::token() }}',
 				url = "{{route('leave-type.update', ':id')}}";
                 url = url.replace(':id',$('#type-id-edit').val());

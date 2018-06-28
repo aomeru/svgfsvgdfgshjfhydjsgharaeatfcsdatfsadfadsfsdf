@@ -29,6 +29,16 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function getFullNameAttribute()
+    {
+        return ucwords($this->firstname.' '.$this->lastname);
+    }
+
+    public function getUserNameAttribute()
+    {
+        return explode('@',$this->email)[0];
+    }
+
     public function manager()
 	{
         return $this->hasOne(Models\UserManager::class, 'user_id');

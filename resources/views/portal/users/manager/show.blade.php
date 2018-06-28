@@ -17,22 +17,10 @@
 
 <div class="row">
     <div class="col-sm-3">
+        @include('partials.portal.profile',['userdata' => $manager])
         <div class="card">
-            <div class="card-header bg-dark">
-                <h5 class="card-title mb-0 text-white">Information</h5>
-            </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-6 offset-3 col-sm-8 offset-sm-2">
-                        <img src="@if(!$manager->photo) {{ asset('images/user.png') }} @else data:image.jpg;base64,{{$manager->photo}} @endif" class="img-fluid rounded-circle" alt="" width="auto" height="100%">
-                    </div>
-                </div>
-                <p class="text-center">
-                    {{$manager->firstname.' '.$manager->lastname}}{!! $manager->job_title != null ? '<span class="text-muted">, '.$manager->job_title.'</span>' : '' !!}
-                    <br>
-                    <small class="text-muted">{{ $manager->unit == null ? '' : $manager->unit->title.', '.$manager->unit->department->title }}</small>
-                </p>
-                <p class="text-center">{{$manager->users->count()}} Subordinates.</p>
+                <p class="text-center mb-0">{{$manager->users->count()}} Subordinates.</p>
             </div>
         </div>
     </div>

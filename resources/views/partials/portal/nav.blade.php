@@ -12,7 +12,7 @@
     <hr class="mb-4 d-none d-sm-block">
     <div class="d-flex justify-content-start">
         <div class="mr-2 d-flex align-items-center" style="height: 70px">
-            <img src="@if(!Auth::user()->photo) {{ asset('images/user.png') }} @else data:image.jpg;base64,{{Auth::user()->photo}} @endif" class="img-fluuid rounded-circle border border-cyan" alt="" width="auto" height="100%">
+            @include('partials.portal.profile-image',['userdata' => Auth::user(), 'border' => 'border border-cyan'])
         </div>
         <div class="d-flex align-items-center">
             <div class="">

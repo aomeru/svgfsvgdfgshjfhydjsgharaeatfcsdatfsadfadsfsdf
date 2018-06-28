@@ -18,7 +18,8 @@
     <div class="card-body">
         @if(Laratrust::can('create-leave-type'))
         <div class="mb-3 d-flex justify-content-end">
-            <button class="btn btn-primary btn-sm no-margin" title="Create new leave type" data-toggle="modal" data-target="#add-modal"><i class="fas fa-user-plus mr-2"></i>Allocate</button>
+            <button class="btn btn-primary btn-sm" title="Create new leave allocation" data-toggle="modal" data-target="#add-modal"><i class="fas fa-user-plus mr-2"></i>Allocate to Users</button>
+            <button class="btn btn-dark btn-sm ml-2" title="Allocate leave to group" data-toggle="modal" data-target="#group-modal"><i class="fas fa-users mr-2"></i>Allocate to Group</button>
         </div>
         @endif
 
@@ -34,6 +35,7 @@
                         <tr class="active">
                             <th>#</th>
                             <th>User</th>
+                            <th>Employee Type</th>
                             @foreach($ltypes as $ltype)
                             <th class="text-center">{{$ltype->title}}</th>
                             @endforeach
@@ -55,6 +57,8 @@
 
                                 <td>{{ $item->firstname.' '.$item->lastname }}</td>
 
+                                <td>{{ $item->employee_type }}</td>
+
                                 @for($x=0;$x<$ltypes->count();$x++)
                                 <?php
                                 $rec = $item->leave_allocation()->where('leave_type_id',$ltypes[$x]['id'])->first();
@@ -66,7 +70,7 @@
 
                                 @if(Laratrust::can('update-leave-allocation'))
                                 <td class="text-right">
-                                    @if(Laratrust::can('update-leave-type'))<a class="btn btn-primary btn-sm text-white" title="Edit {{ $item->title }}"><i class="fas fa-pencil-alt"></i></a>@endif
+                                    @if(Laratrust::can('update-leave-type'))<a href="{{ route('leave-allocation.show', Crypt::encrypt($item->id)) }}" class="btn btn-primary btn-sm text-white" title="Edit {{ $item->title }}"><i class="fas fa-pencil-alt"></i></a>@endif
                                 </td>
                                 @endif
 
@@ -121,7 +125,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="ltypes" class="form-control-label sr-onlyy">Leave Tyes</label>
+                        <label for="ltypes" class="form-control-label sr-onlyy">Leave Types</label>
                         <select name="ltypes[]" id="ltypes" class="form-control select" style="width: 100%;" multiple>
                             <option>Select Leave Types</option>
                             @foreach($ltypes as $type)
@@ -136,6 +140,60 @@
                     <input id="permmode" type="hidden" readonly value="basic">
                     <button type="button" class="btn-default btn" data-dismiss="modal" aria-label="Close"><i class="fas fa-times mr-2"></i>Cancel</button>
                     <button class="btn-primary btn" id='add-btn' type="submit" role="button"><i class="fas fa-check mr-2"></i>Allocate</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade active" id="group-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog sm-w500" role="document">
+		<div class="modal-content">
+            <form method="post">
+
+				<div class="modal-header"><h5 class="modal-title">Allocate to Group</h5></div>
+
+				<div class="modal-body">
+                    <div class="form-group">
+                        <label for="etype" class="form-control-label">Select Employee Type</label>
+
+                        <select name="etype" id="etype" class="select-ns" style="width: 100%">
+                            <?php $et = ['All','Contract','Full Time','Graduate Trainee','Part Time'] ?>
+                            @foreach($et as $type)
+                                <option value="{{$type}}">Allocate to "{{$type}}" employees</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ltype" class="form-control-label sr-onlyy">Leave Type</label>
+                        <select name="ltype" id="ltype" class="form-control select" style="width: 100%;">
+                            <option>Select Leave Type</option>
+                            @foreach($ltypes as $type)
+                                <option value="{{$type->title}}">{{ $type->title}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label font-weight-normal" for="or-unit">
+                            <input class="form-check-input" type="radio" name="allowed_update" id="allowed-reset" value="reset" checked>
+                            Reset existing allowed allocation
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label font-weight-normal" for="or-users">
+                            <input class="form-check-input" type="radio" name="allowed_update" id="allowed-add" value="add" >
+                            Add allowed days to existing number allocated to employee
+                        </label>
+                    </div>
+
+				</div>
+
+				<div class="modal-footer">
+                    <button type="button" class="btn-default btn" data-dismiss="modal" aria-label="Close"><i class="fas fa-times mr-2"></i>Cancel</button>
+                    <button class="btn-primary btn" id='group-btn' type="submit" role="button"><i class="fas fa-check mr-2"></i>Allocate</button>
 				</div>
 			</form>
 		</div>
@@ -162,9 +220,9 @@
             minimumResultsForSearch: Infinity,
         });
 
-        // $('#add-modal').modal('show');
+        // $('#group-modal').modal('show');
 
-        @if(Laratrust::can('create-manager'))
+        @if(Laratrust::can('create-leave-allocation'))
         $(document).on('click', '#add-btn', function(e){
 
 			e.preventDefault();
@@ -199,6 +257,46 @@
 					btn.html(btn_text);
 					var error = getErrorMessage(jqXHR, exception);
                     swal_alert('Failed to allocate leave to employees',error,'error','Go Back');
+				}
+			});
+        });
+
+        $(document).on('click', '#group-btn', function(e){
+
+			e.preventDefault();
+
+			var btn = $(this),
+				btn_text = btn.html(),
+				etype = $("#etype").val(),
+				ltype = $("#ltype").val(),
+                update_mode = $('input[name=allowed_update]:checked').val(),
+				token ='{{ Session::token() }}',
+				url = "{{route('leave-allocation.toall')}}";
+
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: {
+					ltype: ltype,
+					etype: etype,
+					update_mode: update_mode,
+					_token: token
+				},
+				beforeSend: function () {
+					btn.html('<i class="fas fa-spinner fa-spin"></i>');
+				},
+				success: function(response) {
+					btn.html(btn_text);
+                    $('#group-modal').modal('hide');
+					swal_alert('Leave type allocated to ' + etype + ' employee group','','success','Continue');
+                    window.setTimeout(function(){
+                        window.location.href = "{{route('leave-allocation.index')}}";
+                    },1000);
+				},
+				error: function(jqXHR, exception){
+					btn.html(btn_text);
+					var error = getErrorMessage(jqXHR, exception);
+                    swal_alert('Failed to allocate leave type to ' + etype + ' employee group',error,'error','Go Back');
 				}
 			});
         });

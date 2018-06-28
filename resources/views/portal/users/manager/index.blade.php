@@ -138,14 +138,14 @@
                     </div>
 
                     <div class="form-check">
-                        <label class="form-check-label font-weight-normal" for="exampleRadios1">
+                        <label class="form-check-label font-weight-normal" for="or-unit">
                             <input class="form-check-input" type="radio" name="unit_or_users" id="or-unit" value="or-unit">
                             Make Manager for staffs in selected unit
                         </label>
                     </div>
 
                     <div class="form-check">
-                        <label class="form-check-label font-weight-normal" for="exampleRadios2">
+                        <label class="form-check-label font-weight-normal" for="or-users">
                             <input class="form-check-input" type="radio" name="unit_or_users" id="or-users" value="or-users" checked>
                             Make Manager for selected staff
                         </label>

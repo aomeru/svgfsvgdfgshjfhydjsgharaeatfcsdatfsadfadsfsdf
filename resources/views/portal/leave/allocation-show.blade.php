@@ -17,43 +17,93 @@
 
 <div class="row">
     <div class="col-sm-3">
-        <div class="card">
-            <div class="card-header bg-dark">
-                <h5 class="card-title mb-0 text-white">Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6 offset-3 col-sm-8 offset-sm-2">
-                        <img src="@if(!$user->photo) {{ asset('images/user.png') }} @else data:image.jpg;base64,{{$user->photo}} @endif" class="img-fluid rounded-circle" alt="" width="auto" height="100%">
-                    </div>
-                </div>
-                <p class="text-center">
-                    {{$user->firstname.' '.$user->lastname}}{!! $user->job_title != null ? '<span class="text-muted">, '.$user->job_title.'</span>' : '' !!}
-                    <br>
-                    <small class="text-muted">{{ $user->unit == null ? '' : $user->unit->title.', '.$user->unit->department->title }}</small>
-                </p>
-            </div>
-        </div>
+        @include('partials.portal.profile',['userdata' => $user, 'border' => 'border border-f5'])
     </div>
 
     <div class="col-sm-9">
 
         <div class="card">
             <div class="card-header bg-dark text-white">
-                <h5 class="card-title mb-0">Subordinates</h5>
+                <h5 class="card-title mb-0">Leave Allocations</h5>
             </div>
             <div class="card-body">
-                @if($user->users->count() > 0)
-                    @foreach($user->users as $u)
-                        <button class="btn btn-info btn-sm mr-1 mb-1" disabled>{{$u->user->firstname.' '.$u->user->lastname}}</button>
+                <div class="row">
+                    @foreach($las as $key => $la)
+                        <?php $key; ?>
+                        <div class="col-6 col-sm-4">
+                            <div id="card-la-{{$key + 1}}" class="card shadomw-sm mb-3" data-hrid="{{$key + 1}}" data-id="{{Crypt::encrypt($la->id)}}" data-title="{{$la->leave_type->title}}">
+                                <?php
+                                $color = 'success';
+                                $marker = round($la->leave_type->allowed/3);
+                                if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
+                                ?>
+                                <div class="card-header text-white bg-{{$color}}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title ttext-capitalize m-0">{{$la->leave_type->title}}</h5>
+                                        <div class="display-4">{{$la->allowed}} {{-- <span class="text-secondary" style="font-size: 18px; vertical-align: top;">/{{round($la->leave_type->allowed)}}</span> --}}</div>
+                                    </div>
+                                </div>
+                                <div class="card-body text-whitee bg-darkk p-3">
+                                    <p class="mb-0">
+                                        <span class="text-secondary">Leave Type Applications: </span>
+                                        <span>
+                                            <?php
+                                            $acount = $user->leave()->where('leave_type_id',$la->leave_type->id)->count();
+                                            ?>
+                                            {{$acount}}
+                                        </span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <span class="text-secondary">Taken: </span>
+                                        <span>
+                                            <?php
+                                            $tcount = $user->leave()->where('leave_type_id',$la->leave_type->id)->whereIn('status', ['called off','completed'])->count();
+                                            ?>
+                                            {{$tcount}}
+                                        </span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <span class="text-secondary">Cancelled: </span>
+                                        <span>
+                                            <?php
+                                            $ccount = $user->leave()->where('leave_type_id',$la->leave_type->id)->whereIn('status', ['cancelled'])->count();
+                                            ?>
+                                            {{$ccount}}
+                                        </span>
+                                    </p>
+                                    <hr class="mb-3">
+
+                                    @if(Laratrust::can('update-leave-allocation')) <button class="btn btn-primary btn-sm la-edit-footer-btn" title="Edit {{ $user->fullname.' '.$la->leave_type->title }} leave allocation record"><i class="fas fa-pencil-alt"></i></button> @endif
+
+                                    @if(Laratrust::can('delete-leave-allocation') && $acount == 0) <button class="btn btn-danger btn-sm la-delete-btn" title="Delete {{ $user->fullname.' '.$la->leave_type->title }} leave allocation record" data-toggle="modal" data-target="#delete-modal"><i class="fas fa-trash-alt"></i></button> @endif
+                                </div>
+                                <div id="card-footer-{{$key+1}}" class="card-footer d-none">
+                                    <button type="button" class="close la-edit-footer-btn" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                                    <p class="text-muted">Please select the number of days allowed for this employee {{$la->leave_type->title}} leave record</p>
+
+                                    <form action="post">
+                                        <div class="input-group input-group-sm">
+                                            <select class="custom-select allowed-edit" id="allowed-edit-{{$key + 1}}">
+                                                @for($y=1;$y<=60;$y++)
+                                                    <option value="{{$y}}" @if(round($la->allowed) == $y) selected @endif>{{$y}}</option>
+                                                @endfor
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-success btn-sm la-edit-btn" type="button"><i class="fas fa-check mr-2"></i>Update</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
-                @else
-                    <p class="text-muted">This manager does not have subordinates</p>
-                @endif
+                </div>
             </div>
-            <div class="card-footer">
+            {{-- <div class="card-footer">
                 <button class="btn btn-primary btn-sm" title="Edit {{ $user->firstname.' '.$user->lastname }} subordinates" data-toggle="modal" data-target="#edit-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
@@ -67,43 +117,20 @@
 
 @section('page_footer')
 
-@if(Laratrust::can('update-manager'))
-<div class="modal fade" id="edit-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog w500" role="document">
+@if(Laratrust::can('delete-leave-allocation'))
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog w300 sm-w500" role="document">
 		<div class="modal-content">
-			<form method="post">
+            <div class="modal-body">
+                <p class="text-center font-18x no-bottom-margin">Are you sure you want to delete "<span id="delete-title" class="c-06f"></span>" leave allocation for {{$user->fullname}}?</p>
+            </div>
 
-				<div class="modal-header">
-                    <h5 class="modal-title">Update <span class="text-primary">{{$user->firstname.' '.$user->lastname}}</span> Subordinates</h5>
-				</div>
-
-				<div class="modal-body">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="user-unit">
-                        <label class="form-check-label font-weight-normal" for="user-unit">Update Staff Unit?</label>
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <select name="users[]" id="users" class="form-control select" multiple="multiple" style="width: 100%;">
-                            <?php
-                            $x = array();
-                            foreach($user->users as $u)
-                            {
-                                array_push($x,$u->user->email);
-                            }
-                            ?>
-                            @foreach($users as $user)
-                                <option value="{{$user->email}}" @if(in_array($user->email,$x)) selected @endif>{{$user->firstname.' '.$user->lastname}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-				</div>
-
-				<div class="modal-footer">
-                    <button type="button" class="btn-default btn" data-dismiss="modal" aria-label="Close"><i class="fas fa-times mr-2"></i>Cancel</button>
-                    <button class="btn-success btn" id='edit-btn' type="submit" role="button"><i class="fas fa-check mr-2"></i>Update</button>
-				</div>
-			</form>
+            <div class="modal-footer mh-override">
+                <input type="hidden" id="all-row-id-delete">
+                <input type="hidden" id="all-id-delete">
+                <button type="button" class="btn-primary btn" data-dismiss="modal" aria-label="Close"><i class="fas fa-times mr5"></i>Cancel</button>
+                <button class="btn-danger btn" id='delete-btn' type="submit" role="button"><i class="fas fa-check mr5"></i>Delete</button>
+            </div>
 		</div>
 	</div>
 </div>
@@ -125,26 +152,38 @@
         $('.data-table').DataTable();
         $('.select').select2();
 
-        // $('#edit-modal').modal('show');
+        @if(Laratrust::can('update-leave-allocation'))
+        $(document).on('click', '.la-edit-footer-btn', function(e){
+			e.preventDefault();
 
-        $(document).on('click', '#edit-btn', function(e){
+            var btn = $(this),
+                card = btn.closest('.card'),
+                k = card.data('hrid');
+            $("#card-footer-" + k).toggleClass('d-none');
+        });
+
+        $(document).on('click', '.la-edit-btn', function(e){
 
 			e.preventDefault();
 
             var btn = $(this),
 				btn_text = btn.html(),
-				users = $("#users").val(),
-                user_unit = $("#user-unit").is(':checked'),
+                card = btn.closest('.card'),
+                k = card.data('hrid'),
+                id = card.data('id'),
+                title = card.data('title'),
+				val = $("#allowed-edit-" + k).val(),
+                load_element = "#card-la-" + k,
 				token ='{{ Session::token() }}',
-				url = "{{route('managers.update', ':id')}}";
-                url = url.replace(':id',"{{Crypt::encrypt($user->id)}}");
+				url = "{{route('leave-allocation.update', ':id')}}";
+                url = url.replace(':id',id);
 
 			$.ajax({
 				type: "PUT",
 				url: url,
 				data: {
-					user_unit: user_unit,
-					users: users,
+					id: id,
+					val: val,
 					_token: token
 				},
 				beforeSend: function () {
@@ -152,19 +191,69 @@
 				},
 				success: function(response) {
 					btn.html(btn_text);
-                    $('#edit-modal').modal('hide');
-					swal_alert('Manager subordinates updated','','success','Continue');
-                    window.setTimeout(function(){
-                        window.location.href = "{{route('managers.show',Crypt::encrypt($user->id))}}";
-                    },1000);
+                    $("#card-footer-" + k).toggleClass('d-none');
+					swal_alert('{{$user->fullname}} ' + title + ' leave allocation updated','','success','Continue',2000);
+                    $(load_element).load(location.href + " "+ load_element +">*","");
 				},
 				error: function(jqXHR, exception){
 					btn.html(btn_text);
 					var error = getErrorMessage(jqXHR, exception);
-                    swal_alert('Failed to update Manager subordinates',error,'error','Go Back');
+                    swal_alert('Failed to update {{$user->fullname}} ' + title + ' leave allocation',error,'error','Go Back');
 				}
 			});
         });
+        @endif
+
+
+        @if(Laratrust::can('delete-leave-allocation'))
+        $('#delete-modal').on('show.bs.modal', function (e) {
+			var btn = $(e.relatedTarget),
+				card = btn.closest('.card'),
+                delete_title = card.data('title'),
+				k = card.data('hrid'),
+				item_id = card.data('id');
+
+			$("#delete-title").text(delete_title);
+			$("#all-id-delete").val(item_id);
+			$("#all-row-id-delete").val(k);
+		});
+
+		$(document).on('click', '#delete-btn', function(e){
+			e.preventDefault();
+			var btn = $(this),
+				btn_text = btn.html(),
+				item_id = $('#all-id-delete').val(),
+                title = $("#delete-title").text(),
+				remove_element = '#card-la-' + $("#all-row-id-delete").val(),
+				load_element = '#loadDiv',
+				token ='{{ Session::token() }}',
+				url = "{{route('leave-allocation.destroy', ':id')}}";
+                url = url.replace(':id', item_id);
+
+			$.ajax({
+				type: "DELETE",
+				url: url,
+				data: {
+					item_id: item_id,
+					_token: token
+				},
+				beforeSend: function () {
+					btn.html('<i class="fas fa-spinner fa-spin"></i>');
+				},
+				success: function(response) {
+					btn.html(btn_text);
+                    $('#delete-modal').modal('hide');
+                    swal_alert('{{$user->fullname}} ' + title + ' leave allocation deleted','','success','Continue',1500);
+					$(remove_element).remove();
+				},
+				error: function(jqXHR, exception){
+					btn.html(btn_text);
+					var error = getErrorMessage(jqXHR, exception);
+					swal_alert('Failed to delete {{$user->fullname}} ' + title + ' leave allocation',error,'error','Go Back');
+				}
+			});
+        });
+        @endif
 
     });
 
