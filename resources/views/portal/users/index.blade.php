@@ -24,9 +24,9 @@
             <p class="alert alert-info">No user record found.</p>
         @else
 
-            <div class="table-responssive">
-
-                <table class="table table-striped table-bordered table-hover nowwrap data-table" width="100%" data-page-length="25">
+            <div class="table-responsive">
+                <div id="button-container" class="mb-3"></div>
+                <table id="data-table" class="table table-striped table-bordered table-hover nowwrap data-table" width="100%" data-page-length="25">
 
                     <thead>
                         <tr class="active">
@@ -35,6 +35,7 @@
                             <th>User</th>
                             <th>Email</th>
                             <th>Job Title</th>
+                            <th>Unit</th>
                             <th>Department</th>
                             <th>Manager</th>
                             <th>Employee Type</th>
@@ -62,7 +63,9 @@
 
                                 <td>{{ $item->job_title }}</td>
 
-                                <td>{!! $item->unit == null ? '<span class="c-999">N/A</span>' : $item->unit->department->title.' <span class="c-999 v-padding-5">/</span> '.$item->unit->title !!}</td>
+                                <td>{!! $item->unit == null ? '<span class="c-999">N/A</span>' : $item->unit->title !!}</td>
+
+                                <td>{!! $item->unit == null ? '<span class="c-999">N/A</span>' : $item->unit->department->title !!}</td>
 
                                 <td>{!! $item->manager == null ? '<span class="c-999">N/A</span>' : $item->manager->manager->firstname.' '.$item->manager->manager->lastname !!}</td>
 
@@ -210,7 +213,14 @@
 
 <script>
     $(document).ready(function() {
-        $('.data-table').DataTable();
+        var table = $('#data-table').DataTable({
+            fixedHeader: true,
+            buttons: [
+                'colvis', 'excel', 'print'
+            ]
+        });
+        table.buttons().container().appendTo( $('#button-container') );
+
         $('.select').select2();
         $('.select-ns').select2({
             minimumResultsForSearch: Infinity,

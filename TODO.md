@@ -11,5 +11,10 @@ USERS
     // implement modal views for roles
 
 LEAVE
-    application action
-    call of action
+    APPLICATION
+        Apply for leave
+        Cancel Leave
+            Cancel button only if not approved by HR
+            Call off leave action
+                Only HR after approval, through request
+                Check if leave has been exhausted

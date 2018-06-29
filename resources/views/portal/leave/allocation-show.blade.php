@@ -27,6 +27,9 @@
                 <h5 class="card-title mb-0">Leave Allocations</h5>
             </div>
             <div class="card-body">
+                @if($las->count() == 0)
+                    <p class="mb-0 text-muted">The are no leave allocations for <strong>{{$user->fullname}}</strong> yet</p>
+                @else
                 <div class="row">
                     @foreach($las as $key => $la)
                         <?php $key; ?>
@@ -100,6 +103,7 @@
                         </div>
                     @endforeach
                 </div>
+                @endif
             </div>
             {{-- <div class="card-footer">
                 <button class="btn btn-primary btn-sm" title="Edit {{ $user->firstname.' '.$user->lastname }} subordinates" data-toggle="modal" data-target="#edit-modal"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>

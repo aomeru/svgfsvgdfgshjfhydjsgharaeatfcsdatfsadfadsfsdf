@@ -9,7 +9,6 @@
         <link rel="shortcut icon" href="{{asset('images/favicon.png')}}" />
         <link href="{{ asset('css/fontawesome-all.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/datatables.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/user.css') }}" rel="stylesheet">
     </head>

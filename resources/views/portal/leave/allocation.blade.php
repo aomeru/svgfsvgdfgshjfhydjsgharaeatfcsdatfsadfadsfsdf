@@ -214,7 +214,9 @@
 <script>
 
     $(document).ready(function() {
-        $('.data-table').DataTable();
+        $('.data-table').DataTable({
+            'fixedHeader': true,
+        });
         $('.select').select2();
         $('.select-ns').select2({
             minimumResultsForSearch: Infinity,
