@@ -13,7 +13,7 @@ class CreateLeavetables extends Migration
      */
     public function up()
     {
-        Schema::create('leave', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
@@ -25,9 +25,9 @@ class CreateLeavetables extends Migration
             $table->date('end_date')->nullable();
             $table->date('back_on')->nullable();
             $table->date('call_off')->nullable();
-            $table->integer('year');
+            $table->integer('year')->nullable();
             $table->string('status')->default('pending');
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
 

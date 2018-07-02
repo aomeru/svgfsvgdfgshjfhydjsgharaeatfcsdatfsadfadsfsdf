@@ -7,7 +7,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>@yield('page_title'){{ config('app.name') }}</title>
         <link rel="shortcut icon" href="{{asset('images/favicon.png')}}" />
-        <link href="{{ asset('css/fontawesome-all.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/fontawesome-all.css') }}" rel="stylesheet">
         <link href="{{ asset('css/datatables.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/user.css') }}" rel="stylesheet">
@@ -25,7 +25,7 @@
         @yield('page_footer')
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('js/datatables.min.js') }}"></script>
         <script src="{{ asset('js/select2.min.js') }}"></script>
         <script src="{{ asset('js/sweetalert.min.js') }}"></script>
@@ -72,10 +72,35 @@
                 });
             }
 
-            function get_slug(t) {
+            function get_slug(t)
+            {
                 slug = t.toLowerCase().replace(/  /g, ' ').replace(/ /g, '-').replace(/&/g, 'and');
                 return slug;
             }
+
+            $(document).ready(function(){
+                $(document).on('click','.notif-item',function(e){
+                    e.preventDefault();
+                    var elem = $(this),
+                        nid = elem.data('id'),
+                        nurl = elem.data('url'),
+                        load_element = "#notif-div",
+                        token ='{{ Session::token() }}';
+
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ route('read.notif') }}',
+                        data: {
+                            id: nid,
+                            _token: token
+                        },
+                        success: function(response) {
+                            $(load_element).load(location.href + " "+ load_element +">*","");
+                            if(nurl !== '') window.location.href = nurl;
+                        }
+                    });
+                });
+            });
         </script>
 
         @yield('scripts')

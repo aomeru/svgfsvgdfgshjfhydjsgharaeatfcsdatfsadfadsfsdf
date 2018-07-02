@@ -21,6 +21,8 @@ Route::get('/test', 'App\AppController@test');
 Route::prefix('portal')->middleware('auth')->group(function(){
     Route::get('/', 'Portal\DashboardController@index')->middleware('permission:dashboard')->name('portal');
 
+    Route::post('/', 'Portal\DashboardController@read_notif')->name('read.notif');
+
     Route::group(['prefix' => 'departments-and-units'], function () {
 		$con = 'Portal\DepartmentController@';
 		$rkey = 'portal.depts';
@@ -51,16 +53,26 @@ Route::prefix('portal')->middleware('auth')->group(function(){
     Route::group(['prefix' => 'roles'], function () {
 		$con = 'Portal\RoleController@';
         $rkey = 'roles';
-		Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
-		Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
-		Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
+        
+        Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
+        
+        Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
+        
+        Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
     });
 
     Route::group(['prefix' => 'leave'], function () {
 		Route::resource('leave-record','Portal\Leave\LeaveTypeController');
-		Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
+
+        Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
+
         Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
+        
+        Route::resource('holiday','Portal\Leave\HolidayController')->except(['edit','create','show']);
+        
         Route::post('/allocation/assign-to-all','Portal\Leave\LeaveAllocationController@to_users')->name('leave-allocation.toall');
+        
+        Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);
     });
 
     Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);

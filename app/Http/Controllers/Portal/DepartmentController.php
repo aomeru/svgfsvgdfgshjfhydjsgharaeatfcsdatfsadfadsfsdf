@@ -13,6 +13,7 @@ use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\GeneralNotification;
 
 class DepartmentController extends Controller
 {
@@ -77,18 +78,29 @@ class DepartmentController extends Controller
 
 
 		if($item->save()) {
+            if($user != null)
+            {
+                $title = $r->head_type == 'ed' ? 'Executive Director' : 'General Manager';
+                $user->notify(new GeneralNotification([
+                    'title' => $title.' assigned to you for '.$item->title.' department',
+                    'url' => ''
+                ]));
+            }
+
             $unit = new Unit();
             $unit->title = $item->title;
             $unit->department_id = $item->id;
-            if($user != null){
-                $unit->manager_id = $user->id;
-                $mg = Role::where('display_name','Manager')->first();
-                if($mg != null) if(!$user->hasRole($mg)) $user->attachRole($mg);
-            }
+            if($user != null) $unit->manager_id = $user->id;
             if($unit->save()){
                 if($user != null){
+                    $mg = Role::where('display_name','Manager')->first();
+                    if($mg != null) if(!$user->hasRole($mg->name)) $user->attachRole($mg);
                     $user->unit_id = $unit->id;
                     $user->update();
+                    $user->notify(new GeneralNotification([
+                        'title' => 'Manager assigned to you for '.$unit->title.' unit',
+                        'url' => ''
+                    ]));
                 }
             }
             $this->log(Auth::user()->id, 'Created '.$item->title.' department and unit with id .'.$item->id, $r->path(), 'action');
@@ -204,6 +216,10 @@ class DepartmentController extends Controller
             if($user != null) {
                 $user->unit_id = $item->id;
                 $user->update();
+                $user->notify(new GeneralNotification([
+                    'title' => 'Manager assigned to you for '.$item->title.' unit',
+                    'url' => ''
+                ]));
             }
             $this->log(Auth::user()->id, 'Created '.$item->title.' unit with id .'.$item->id, $r->path(),'action');
             return response()->json(array('success' => true, 'message' => 'Unit created'), 200);

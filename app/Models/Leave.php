@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Leave extends Model
 {
-    protected $table = 'leave';
+    // protected $table = 'leaves';
+
+    protected $fillable = [];
 
     public function user()
     {

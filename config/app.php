@@ -222,5 +222,7 @@ return [
 
 
     'leave_year' => env('LEAVE_YEAR'),
+    'it_email' => env('ITEMAIL'),
+    'hr_email' => env('HREMAIL'),
 
 ];

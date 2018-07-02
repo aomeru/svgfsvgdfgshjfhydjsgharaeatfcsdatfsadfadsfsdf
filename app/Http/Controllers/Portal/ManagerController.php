@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\GeneralNotification;
 
 class ManagerController extends Controller
 {
@@ -82,7 +83,9 @@ class ManagerController extends Controller
         $manager = User::where('email',$r->manager)->first();
         $unit = Unit::where('title',$r->unit)->first();
         $manager->unit_id = $unit->id;
-        if($manager->update()) $this->log(Auth::user()->id, 'Updated staff unit for '.$manager->firstname.' '.$manager->lastname.' to '.$unit->title, $r->path());
+        if($manager->update()){
+            $this->log(Auth::user()->id, 'Updated staff unit for '.$manager->firstname.' '.$manager->lastname.' to '.$unit->title, $r->path());
+        }
         if($r->unit_users == 'or-unit')
         {
             foreach($unit->users()->where('id','<>',$manager->id)->get() as $user)
@@ -121,7 +124,14 @@ class ManagerController extends Controller
         if($r->unit_manager)
         {
             $unit->manager_id = $manager->id;
-            if($unit->update()) $this->log(Auth::user()->id, 'Updated '.$unit->title.' unit manager to '.$manager->firstname.' '.$manager->lastname, $r->path());
+            if($unit->update()) {
+                $manager->notify(new GeneralNotification([
+                    'title' => 'Manager record attached to Unit: '.$unit->title,
+                    'url' => ''
+                ]));
+
+                $this->log(Auth::user()->id, 'Updated '.$unit->title.' unit manager to '.$manager->firstname.' '.$manager->lastname, $r->path());
+            }
         }
 
         $role = Role::where('display_name','Manager')->first();

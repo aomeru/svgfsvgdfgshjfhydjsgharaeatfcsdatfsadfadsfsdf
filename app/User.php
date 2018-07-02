@@ -88,4 +88,9 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(Models\Leave::class, 'hr_id');
     }
+
+    public function holiday()
+	{
+		return $this->hasMany(Models\Holiday::class);
+    }
 }

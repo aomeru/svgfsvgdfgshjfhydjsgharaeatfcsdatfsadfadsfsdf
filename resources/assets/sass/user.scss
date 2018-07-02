@@ -32,9 +32,9 @@ body {
 #portal-left {
     position: fixed;
     top: 50px;
-    left: -300px;
+    left: -320px;
     bottom: 0;
-    width: 300px;
+    width: 320px;
     background-color: #fff;
     overflow-y: auto;
     z-index: 100;
@@ -125,13 +125,17 @@ body {
     }
 }
 #portal-mobile-header {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 50px;
     max-height: 50px;
     // background-color: $bcolorb;
     background-color: #fff;
     color: #fff;
     border-bottom: 1px solid rgba(0,0,0,.15);
+    z-index: 50;
     .brand {
         display: block;
         height: 50px;
@@ -143,7 +147,7 @@ body {
         }
     }
     .portal-mobile-menu-button {
-        padding: 10px 20px;
+        padding: 10px;
         // background-color: rgba(3,169,244,.25);
         background-color: $bcolorb;
         height: 50px;
@@ -177,6 +181,32 @@ body {
             }
             &.active {
                 color: #666;
+            }
+        }
+    }
+    .notif {
+        .dropdown-toggle {
+            background-color: transparent;
+            outline: none;
+            border: none;
+            border-color: none;
+            &:hover {
+                background-color: transparent;
+                outline: none;
+                border: none;
+                border-color: none;
+            }
+            &:after {
+                display: none;
+            }
+        }
+        .dropdown-menu {
+            .dropdown-item {
+                cursor: pointer;
+                &:hover {
+                    background-color: #fff;
+                    color: $cyancolor;
+                }
             }
         }
     }

@@ -5,8 +5,8 @@
         </a>
     </div>
     <div class="d-flex align-items-center">
-        <a class="portal-mobile-menu-button" id="portal-mobile-menu-button">
-            <i class="fas fa-bars fa-2x"></i>
+        <a class="portal-mobile-menu-button d-flex align-items-center" id="portal-mobile-menu-button">
+            <i class="fas fa-bars"></i>
         </a>
     </div>
 </div>
@@ -15,8 +15,11 @@
         <div class="heading d-flex align-items-center">
             <h2 class="d-none d-sm-block">@yield('portal_page_title')</h2><h4 class="d-block d-sm-none">@yield('portal_page_title')</h4>
         </div>
-        <div class="bc d-flex align-items-center">
-            @yield('bc')
+        <div class="d-flex jestify-content-end">
+            <div class="bc d-flex align-items-center">
+                @yield('bc')
+                @include('partials.portal.notifications')
+            </div>
         </div>
     </div>
 
