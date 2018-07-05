@@ -34,16 +34,16 @@
         <li class="nav-item">
             <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'leave') sub-active @endif"><i class="far fa-calendar-alt fa-fw mr-2"></i>Leave</a>
             <ul id="testleave" class="sub-nav flex-column ml-4 pl-4">
-                @if(Laratrust::can('*-leave'))<li class="sub-nav-item"><a href="" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave') active @endif"><i class="far fa-calendar-alt fa-fw mr-2"></i>My Leave</a></li>@endif
+                @if(Laratrust::can('*-leave'))<li class="sub-nav-item"><a href="{{route('portal.leave')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave') active @endif"><i class="far fa-calendar-alt fa-fw mr-2"></i>My Leave</a></li>@endif
 
                 <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-check fa-fw mr-2"></i>Leave Approvals</a></li>
-                
+
                 @if(Laratrust::can('*-holiday'))<li class="sub-nav-item"><a href="{{route('holiday.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'holiday') active @endif"><i class="fas fa-plane fa-fw mr-2"></i>Holidays</a></li>@endif
-                
+
                 @if(Laratrust::can('*-leave-allocation'))<li class="sub-nav-item"><a href="{{route('leave-allocation.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-allocation') active @endif"><i class="fas fa-calendar fa-fw mr-2"></i>Leave Allocation</a></li>@endif
 
                 @if(Laratrust::can('*-leave-type'))<li class="sub-nav-item"><a href="{{route('leave-type.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-type') active @endif"><i class="far fa-calendar fa-fw mr-2"></i>Leave Types</a></li>@endif
-                
+
                 @if(Laratrust::can('*-leave-record'))<li class="sub-nav-item"><a href="{{route('leave-record.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave-record') active @endif"><i class="far fa-calendar fa-fw mr-2"></i>Leave Record</a></li>@endif
             </ul>
         </li>

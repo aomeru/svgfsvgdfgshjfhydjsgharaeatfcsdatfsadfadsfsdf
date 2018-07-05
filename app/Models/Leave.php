@@ -9,7 +9,7 @@ class Leave extends Model
 {
     // protected $table = 'leaves';
 
-    protected $fillable = [];
+    protected $fillable = ['user_id', 'leave_type_id', 'rstaff_id', 'start_date', 'end_date', 'back_on', 'call_off', 'year', 'status', 'comment'];
 
     public function user()
     {

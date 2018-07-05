@@ -38,7 +38,7 @@
                 if (jqXHR.responseJSON) {
                     var errors = (jqXHR.responseJSON.errors);
                     $.each(errors, function(key, value){
-                        msg = value[0];
+                        msg = msg + value[0];
                     })
                 } else if(jqXHR['errors']) {
                     msg = jqXHR['errors'];
@@ -58,6 +58,20 @@
                     msg = 'Uncaught Error.\n' + jqXHR.responseText;
                 }
                 return msg;
+            }
+
+            function palert(msg,type) {
+                var elem = $('#alertDiv');
+                elem.toggleClass('alert');
+                if(type == 'success') {
+                    elem.toggleClass('alert-success').html('<i class="fas fa-check mr-3"></i>' + msg);
+                } else {
+                    var con = '';
+                    $.each(msg.responseJSON.errors, function(key, value){
+                        con = con + '<i class="fas fa-times mr-2"></i>' + value[0] + '<br>';
+                    });
+                    elem.toggleClass('alert-danger').html(con);
+                }
             }
 
             function swal_alert(title,message,icon,button='',timer='')

@@ -36,6 +36,7 @@
                             <th>Title</th>
                             <th>Start Date</th>
                             <th>End Date</th>
+                            <th class="text-center">Modified</th>
                             @if(Laratrust::can('edit-holiday|delete-holiday'))<th class="text-right">Actions</th>@endif
                         </tr>
                     </thead>
@@ -55,6 +56,8 @@
                                 <td>{{ $item->start_date }}</td>
 
                                 <td>{!! $item->end_date == null ? '<em class="c-999">Null</em>' : $item->end_date !!}</td>
+
+                                <td class="text-center">{{\Carbon\Carbon::parse($item->updated_at)->diffForHumans()}}</td>
 
                                 @if(Laratrust::can('read-holiday|delete-holiday'))
                                 <td class="text-right">

@@ -18109,6 +18109,18 @@ label {
   border: none;
 }
 
+.select2-container .select2-selection--single {
+  height: 38px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 38px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 36px;
+}
+
 @media only screen and (max-width: 543px) {
   .xs-w-100 {
     width: 100%;
@@ -56522,5 +56534,9 @@ body {
     text-align: left;
     vertical-align: middle;
   }
+}
+
+.card-custom .card-header {
+  border-bottom: 3px solid rgba(0, 0, 0, 0.15);
 }
 

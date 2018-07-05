@@ -2,24 +2,33 @@
 namespace App\Traits;
 
 use Auth;
-use App\User;
-use App\Models\Log;
 use Session;
+use App\User;
+use DateTime;
+use App\Models\Log;
+use App\Models\Holiday;
 
 trait CommonTrait
 {
+    protected $date = '';
+
+    public function __construct()
+    {
+        $this->date = new \Datetime();
+    }
+
     public function echeck() {return response()->json(array('success' => false, 'errors' => ['errors' => ['Got here.']]), 400);}
 
 	public function get_datetime()
 	{
-		$date = new \DateTime();
-		return $date->format('Y-m-d H:i:s');
+		// $date = new \DateTime();
+		return $this->date->format('Y-m-d H:i:s');
     }
 
     public function get_date()
 	{
-		$date = new \DateTime();
-		return $date->format('Y-m-d');
+		// $date = new \DateTime();
+		return $this->date->format('Y-m-d');
     }
 
     public function clean_string($string)
@@ -95,12 +104,12 @@ trait CommonTrait
 
 	public function log($user_id, $descrip, $path, $type='')
 	{
-		$log = new Log();
-        $log->user_id = $user_id;
-        if($type) $log->type = $type;
-		$log->page_url = $path;
-		$log->descrip = $descrip;
-		$log->save();
+		// $log = new Log();
+        // $log->user_id = $user_id;
+        // if($type) $log->type = $type;
+		// $log->page_url = $path;
+		// $log->descrip = $descrip;
+		//$log->save();
 	}
 
 	public function ad()
@@ -112,5 +121,5 @@ trait CommonTrait
 	{
 		$string = str_replace(' ', '_', $string);
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
-	}
+    }
 }

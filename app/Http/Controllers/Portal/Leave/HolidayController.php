@@ -8,6 +8,7 @@ use App\Traits\CommonTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\HolidayRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,25 +54,8 @@ class HolidayController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $r)
+    public function store(HolidayRequest $r)
     {
-        $rules = array(
-            'title' => 'required|unique:holidays',
-            'start_date' => 'required|date|unique:holidays',
-            'end_date' => 'sometimes|nullable|date|gt:start_date|unique:holidays',
-        );
-        $messages = [
-            'start_date.unique' => 'The start date already exists in a different holiday record',
-            'end_date.gt' => 'The holiday end date must be greater than the start date',
-            'end_date.unique' => 'The end date already exists in a different holiday record',
-        ];
-        $validator = Validator::make($r->all(), $rules, $messages);
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 400);
-        }
         $item = Auth::user()->holiday()->create([
             'title' => ucwords($r->title),
             'start_date' => $r->start_date,
@@ -125,12 +109,12 @@ class HolidayController extends Controller
 
         $rules = array(
             'title' => 'required|unique:holidays,title,'.$id,
-            'start_date' => 'required|date||unique:holidays',
-            'end_date' => 'sometimes|nullable|date|gt:start_date||unique:holidays',
+            'start_date' => 'required|date||unique:holidays,start_date,'.$id,
+            'end_date' => 'sometimes|nullable|date|after:start_date|unique:holidays,end_date,'.$id,
         );
         $messages = [
             'start_date.unique' => 'The start date already exists in a different holiday  record',
-            'end_date.gt' => 'The holiday end date must be greater than the start date',
+            'end_date.after' => 'The holiday end date must be after the start date',
             'end_date.unique' => 'The end date already exists in a different holiday  record',
         ];
         $validator = Validator::make($r->all(), $rules, $messages);

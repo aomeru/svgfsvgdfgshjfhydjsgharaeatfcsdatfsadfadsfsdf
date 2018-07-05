@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     public function leave_allocation()
 	{
-		return $this->hasOne(Models\LeaveAllocation::class);
+		return $this->hasMany(Models\LeaveAllocation::class);
     }
 
     public function leave()

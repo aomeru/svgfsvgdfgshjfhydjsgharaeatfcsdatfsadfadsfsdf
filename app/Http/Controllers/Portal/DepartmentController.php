@@ -281,7 +281,13 @@ class DepartmentController extends Controller
 
         if($unit == null) return response()->json(array('success' => false, 'errors' => ['errors' => ['This unit does not exist.']]), 400);
 
-		if($unit->users->count() > 0) return response()->json(array('success' => false, 'errors' => ['errors' => ['Please delete '.$unit->title.' users first.']]), 400);
+        foreach($unit->users as $user)
+        {
+            $user->unit_id = null;
+            $user->update();
+        }
+
+		// if($unit->users->count() > 0) return response()->json(array('success' => false, 'errors' => ['errors' => ['Please delete '.$unit->title.' users first.']]), 400);
 
 		$did = $unit->id;
 		$dtitle = $unit->title;

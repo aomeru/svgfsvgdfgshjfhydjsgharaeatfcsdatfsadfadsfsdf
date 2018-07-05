@@ -53,11 +53,11 @@ Route::prefix('portal')->middleware('auth')->group(function(){
     Route::group(['prefix' => 'roles'], function () {
 		$con = 'Portal\RoleController@';
         $rkey = 'roles';
-        
+
         Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
-        
+
         Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
-        
+
         Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
     });
 
@@ -67,12 +67,24 @@ Route::prefix('portal')->middleware('auth')->group(function(){
         Route::resource('leave-type','Portal\Leave\LeaveTypeController')->except(['edit','create']);
 
         Route::resource('leave-allocation','Portal\Leave\LeaveAllocationController');
-        
+
         Route::resource('holiday','Portal\Leave\HolidayController')->except(['edit','create','show']);
-        
+
         Route::post('/allocation/assign-to-all','Portal\Leave\LeaveAllocationController@to_users')->name('leave-allocation.toall');
-        
-        Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);
+
+        Route::group(['prefix' => 'my-leave'], function () {
+            $con = 'Portal\Leave\LeaveController@';
+            $rkey = 'portal.leave';
+            Route::get('/', $con.'index')->name($rkey);
+            Route::post('/store', $con.'store')->name($rkey.'.store');
+            Route::get('/show/{id}', $con.'show')->name($rkey.'.show');
+            Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
+            Route::post('/{id}/update', $con.'update')->name($rkey.'.update');
+            Route::get('/{id}/delete', $con.'destroy')->name($rkey.'.delete');
+            Route::post('/get-date', $con.'get_cdate');
+        });
+
+        // Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);
     });
 
     Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);
