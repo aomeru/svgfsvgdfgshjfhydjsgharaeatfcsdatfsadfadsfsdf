@@ -163,7 +163,7 @@ $color = [
                                         <td>{{ $row_count }}</td>
 
                                         <td>
-                                            <a href="{{ route('portal.leave.request.show', Crypt::encrypt($item->id)) }}" class="text-underline" title="View {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave request">
+                                            <a href="{{ route('portal.leave.request.show', $item->leave_request->code) }}" class="text-underline" title="View {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave request">
                                                 {{ $item->leave_request->code }}
                                             </a>
                                         </td>
@@ -234,7 +234,7 @@ $color = [
                         <span class="text-secondary">Applications: </span>
                         <span>
                             <?php
-                            $acount = Auth::user()->leave()->where('leave_type_id',$la->leave_type->id)->count();
+                            $acount = Auth::user()->leave()->where('leave_type_id',$la->leave_type->id)->where('status','<>','pending')->count();
                             ?>
                             {{$acount}}
                         </span>

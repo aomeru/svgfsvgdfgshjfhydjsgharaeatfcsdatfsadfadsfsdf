@@ -87,7 +87,7 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             $con = 'Portal\Leave\LeaveRequestController@';
             $rkey = 'portal.leave.request';
             Route::get('/', $con.'index')->name($rkey);
-            Route::get('/{id}', $con.'show')->name($rkey.'.show');
+            Route::get('/{code}', $con.'show')->name($rkey.'.show');
         });
 
         // Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);

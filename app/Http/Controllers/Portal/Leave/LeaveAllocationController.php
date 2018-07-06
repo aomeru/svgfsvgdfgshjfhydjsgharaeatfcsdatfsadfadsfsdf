@@ -33,7 +33,7 @@ class LeaveAllocationController extends Controller
     public function index()
     {
         $this->log(Auth::user()->id, 'Opened the leave type page.', Request()->path());
-        return view('portal.leave.allocation', [
+        return view('portal.leave.allocation.index', [
 			'list' => LeaveAllocation::whereHas('user', function($u){
                 $u->orderBy('firstname');
             })->get(),
@@ -119,7 +119,7 @@ class LeaveAllocationController extends Controller
             return redirect()->back();
         }
         $this->log(Auth::user()->id, 'Opened '.$item->firstname.' '.$item->lastname.' leave allocation page', Request()->path());
-        return view('portal.leave.allocation-show', [
+        return view('portal.leave.allocation.show', [
 			'user' => $item,
 			'las' => LeaveAllocation::where('user_id',$item->id)->get(),
             'nav' => 'leave',

@@ -70,7 +70,7 @@
 
                                 @if(Laratrust::can('update-leave-allocation'))
                                 <td class="text-right">
-                                    @if(Laratrust::can('update-leave-type'))<a href="{{ route('leave-allocation.show', Crypt::encrypt($item->id)) }}" class="btn btn-primary btn-sm text-white" title="Edit {{ $item->title }}"><i class="fas fa-pencil-alt"></i></a>@endif
+                                    @if(Laratrust::can('update-leave-allocation'))<a href="{{ route('leave-allocation.show', Crypt::encrypt($item->id)) }}" class="btn btn-primary btn-sm text-white" title="View {{ $item->fullname }} leave allocations"><i class="fas fa-pencil-alt"></i></a>@endif
                                 </td>
                                 @endif
 

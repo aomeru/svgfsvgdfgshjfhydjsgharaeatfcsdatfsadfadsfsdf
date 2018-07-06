@@ -45,19 +45,6 @@ class DepartmentController extends Controller
 
     public function storeDept(Request $r)
 	{
-		$rules = array(
-			'dept_name' => 'required|regex:/^([a-zA-Z&\', ]+)$/|unique:departments,title',
-			'head_type' => 'required|in:gm,ed',
-			'head_value' => 'nullable|exists:users,email',
-        );
-		$validator = Validator::make($r->all(), $rules);
-		if ($validator->fails()) {
-			return response()->json([
-				'success' => false,
-				'errors' => $validator->errors()
-			], 400);
-		}
-
         $item = new Department();
         $item->title = ucwords($r->dept_name);
         if($r->head_value != null)

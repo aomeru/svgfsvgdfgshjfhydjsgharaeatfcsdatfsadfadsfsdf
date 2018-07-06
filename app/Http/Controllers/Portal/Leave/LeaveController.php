@@ -12,6 +12,7 @@ use App\Models\Leave;
 use App\Models\Holiday;
 use App\Traits\LeaveTrait;
 use App\Traits\CommonTrait;
+use App\Models\LeaveRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreLeave;
 use App\Http\Requests\UpdateLeave;
@@ -74,12 +75,6 @@ class LeaveController extends Controller
         }
 
         return response()->json(array('success' => false, 'errors' => ['errors' => ['Oops, something went wrong please try again']]), 422);
-    }
-
-    public function show($id)
-    {
-        dd('show');
-        //
     }
 
     public function edit($id)
@@ -191,29 +186,28 @@ class LeaveController extends Controller
 
         if($l->leave_request == null)
         {
+            do {
+                $code = 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper($l->user->username);
+            } while (LeaveRequest::where('code',$code)->first() != null);
+
             $l->leave_request()->create([
-                'code' => 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper($l->user->username),
+                'code' => $code,
             ]);
         }
         $l->leave_request()->update([
             'manager_id' => $l->user->manager->manager->id
         ]);
-        if($l->leave_request->log->count() > 0)
-        {
-            $l->leave_request->log()->create([
-                'comment' => 'Leave request updated',
-            ]);
-        } else {
-            $l->leave_request->log()->create([
-                'comment' => 'Leave request submitted',
-            ]);
-        }
+        $msg = $l->leave_request->log == null ? 'Leave request submitted' : 'Leave request updated';
+        $l->leave_request->log()->create([
+            'comment' => $msg
+        ]);
+
         $l->update([
             'status' => 'submitted',
         ]);
         $l->user->manager->manager->notify(new GeneralNotification([
             'title' => $l->user->fullname.'\'s leave request awaiting your approval',
-            'url' => route('portal.leave.approval',$l->leave_request->code),
+            'url' => route('portal.leave.request.show',$l->leave_request->code),
         ]));
         Session::flash('success','Leave application submitted successfully to '.$l->user->manager->manager->fullname);
         return response()->json(200);

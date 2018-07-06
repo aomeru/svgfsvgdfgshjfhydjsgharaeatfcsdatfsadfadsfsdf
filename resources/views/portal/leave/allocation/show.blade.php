@@ -36,11 +36,11 @@
                         <div class="col-6 col-sm-4">
                             <div id="card-la-{{$key + 1}}" class="card shadomw-sm mb-3" data-hrid="{{$key + 1}}" data-id="{{Crypt::encrypt($la->id)}}" data-title="{{$la->leave_type->title}}">
                                 <?php
-                                $color = 'success';
+                                $color = 'info';
                                 $marker = round($la->leave_type->allowed/3);
                                 if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
                                 ?>
-                                <div class="card-header text-white bg-{{$color}}">
+                                <div class="card-header text-white bg-{{$color}} progress-bar-striped">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h5 class="card-title ttext-capitalize m-0">{{$la->leave_type->title}}</h5>
                                         <div class="display-4">{{$la->allowed}} {{-- <span class="text-secondary" style="font-size: 18px; vertical-align: top;">/{{round($la->leave_type->allowed)}}</span> --}}</div>
@@ -51,7 +51,7 @@
                                         <span class="text-secondary">Leave Type Applications: </span>
                                         <span>
                                             <?php
-                                            $acount = $user->leave()->where('leave_type_id',$la->leave_type->id)->count();
+                                            $acount = $user->leave()->where('leave_type_id',$la->leave_type->id)->where('status','<>','pending')->count();
                                             ?>
                                             {{$acount}}
                                         </span>

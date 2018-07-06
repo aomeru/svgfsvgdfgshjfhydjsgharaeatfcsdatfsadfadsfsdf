@@ -34,7 +34,7 @@
                     <span class="text-secondary">Applications: </span>
                     <span>
                         <?php
-                        $acount = Auth::user()->leave()->where('leave_type_id',$la->leave_type->id)->count();
+                        $acount = Auth::user()->leave()->where('leave_type_id',$la->leave_type->id)->where('status','<>','pending')->count();
                         ?>
                         {{$acount}}
                     </span>
