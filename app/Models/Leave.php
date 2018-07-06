@@ -30,4 +30,12 @@ class Leave extends Model
 	{
 		return $this->hasOne(LeaveRequest::class);
     }
+
+    public function cstatus()
+	{
+        $status = '';
+        $x = $this->leave_request(LeaveRequest::class);
+        $manager = ['submitted'];
+        $hr = ['submitted'];
+    }
 }

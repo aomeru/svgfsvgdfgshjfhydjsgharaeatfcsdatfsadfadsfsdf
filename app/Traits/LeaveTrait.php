@@ -48,10 +48,10 @@ trait LeaveTrait
         return $dates;
     }
 
-    public function get_holiday_array()
+    public function get_holiday_array($s,$e='')
     {
         $v = [];
-        foreach(Holiday::orderby('start_date')->get() as $h)
+        foreach(Holiday::whereBetween('start_date',[$s,$e])->orderby('start_date')->get() as $h)
         {
             $hsd = new DateTime($h->start_date); $hsd = $hsd->format('Y-m-d');
             if($h->end_date != null){

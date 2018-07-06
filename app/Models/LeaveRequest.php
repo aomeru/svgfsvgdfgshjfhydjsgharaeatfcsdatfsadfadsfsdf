@@ -9,6 +9,8 @@ class LeaveRequest extends Model
 {
     protected $table = 'leave_request';
 
+    protected $fillable = ['code','manager_id','manager_decision_date','hr_id','hr_decision_date','status'];
+
     public function leave()
 	{
 		return $this->belongsTo(Leave::class);

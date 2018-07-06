@@ -19,7 +19,7 @@
     <div class="col-sm-3 mb-3 mb-sm-0">
         <div class="card card-custom">
             <?php
-            $color = 'success';
+            $color = 'info';
             $marker = round($la->leave_type->allowed/3);
             if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
             ?>
@@ -90,62 +90,60 @@
                             <br><small class="text-muted">Please continue with your application</small>
                         </h5>
                         <hr class="my-3">
-                        <form>
-                            <div class="row">
-                                <div class="col-sm-6 offset-sm-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <div class="form-group">
-                                                <label for="start-date" class="form-control-label">Start Date</label>
-                                                <div class="input-group">
-                                                    <input id="start-date" type="date" class="form-control" placeholder="Start Date" v-model="mindate" @change="set_max_date" min="{{ date('Y-m-d') }}">
-                                                    <label for="start-date" class="input-group-append mb-0">
-                                                        <span class="input-group-text"><span class="fas fa-calendar"></span></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-6">
-                                            <div class="form-group">
-                                                <label for="start-date" class="form-control-label">End Date</label>
-                                                <div class="input-group">
-                                                    <input id="end-date" type="date" class="form-control" placeholder="End Date" :min="mindate" :max="maxdate" value="{{$leave->end_date}}">
-                                                    <label for="end-date" class="input-group-append mb-0">
-                                                        <span class="input-group-text"><span class="fas fa-calendar"></span></span>
-                                                    </label>
-                                                </div>
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="start-date" class="form-control-label">Start Date</label>
+                                            <div class="input-group">
+                                                <input id="start-date" type="date" class="form-control" placeholder="Start Date" v-model="mindate" @change="set_max_date" min="{{ date('Y-m-d') }}">
+                                                <label for="start-date" class="input-group-append mb-0">
+                                                    <span class="input-group-text"><span class="fas fa-calendar"></span></span>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="rstaff" class="form-control-label">Relieving Staff</label>
-                                        <select id="rstaff" class="form-control select" style="width: 100%;">
-                                            <option>Select Staff</option>
-                                            @foreach($col as $c)
-                                                <option value="{{$c->email}}" @if($leave->ruser != null && $c->email == $leave->ruser->email) selected @endif>{{$c->fullname}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    {{-- <div class="row">
-                                        <div class="col-6">
-                                        </div>
-
-                                        <div class="col-6">
-                                            <div class="form-group">
-
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="start-date" class="form-control-label">End Date</label>
+                                            <div class="input-group">
+                                                <input id="end-date" type="date" class="form-control" placeholder="End Date" :min="mindate" :max="maxdate" value="{{$leave->end_date}}">
+                                                <label for="end-date" class="input-group-append mb-0">
+                                                    <span class="input-group-text"><span class="fas fa-calendar"></span></span>
+                                                </label>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="rstaff" class="form-control-label">Relieving Staff</label>
+                                    <select id="rstaff" class="form-control select" style="width: 100%;">
+                                        <option>Select Staff</option>
+                                        @foreach($col as $c)
+                                            <option value="{{$c->email}}" @if($leave->ruser != null && $c->email == $leave->ruser->email) selected @endif>{{$c->fullname}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                {{-- <div class="row">
+                                    <div class="col-6">
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+
+                                        </div>
+                                    </div>
+                                </div> --}}
                             </div>
+                        </div>
 
-                            <hr class="my-3">
+                        <hr class="my-3">
 
-                            <a class="btn-secondary btn mr-2" href="{{route('portal.leave')}}"><i class="fas fa-sign-out-alt mr-2"></i>Exit</a>
-                            <button class="btn-primary btn save-btn" data-action="continue" type="button" role="button"><i class="fas fa-save mr-2"></i>Continue</button>
-                        </form>
+                        <a class="btn-secondary btn mr-2" href="{{route('portal.leave')}}"><i class="fas fa-sign-out-alt mr-2"></i>Exit</a>
+                        <button class="btn-primary btn save-btn" data-action="continue" type="button" role="button"><i class="fas fa-save mr-2"></i>Continue</button>
                     </div>
                     <div class="tab-pane fade text-left text-center py-4" id="leave-submit" role="tabpanel" aria-labelledby="leave-submit-tab">
                         <h5 class="text-primary">
@@ -153,22 +151,20 @@
                             <br><small class="text-muted">Please add any neccessary information and submit</small>
                         </h5>
                         <hr class="my-3">
-                        <form>
-                            <div class="row">
-                                <div class="col-sm-6 offset-sm-3">
+                        <div class="row">
+                            <div class="col-sm-6 offset-sm-3">
 
-                                    <h5>Submit your application to your manager "<span class="text-primary">{{Auth::user()->manager->manager->fullname}}</span>" for approval</h5>
-                                    <p class="help text-muted">Please contact HR if your manager information is incorrect</p>
+                                <h5>Submit your application to your manager "<span class="text-primary">{{Auth::user()->manager == null ? 'No Manager':  Auth::user()->manager->manager->fullname}}</span>" for approval</h5>
+                                <p class="help text-muted">Please contact HR if your manager information is incorrect</p>
 
-                                    <div class="form-group">
-                                        <textarea name="lcomment" id="lcomment" class="form-control" rows="5" placeholder="Additional Information?"></textarea>
-                                    </div>
+                                <div class="form-group">
+                                <textarea name="lcomment" id="lcomment" class="form-control" rows="5" placeholder="Additional Information?">{{$leave->comment}}</textarea>
                                 </div>
                             </div>
+                        </div>
 
-                            <hr class="my-3">
-                            <button class="btn-success btn" id="submit-btn" type="button" role="button"><i class="fas fa-check mr-2"></i>Submit</button>
-                        </form>
+                        <hr class="my-3">
+                        <button class="btn-success btn save-btn" data-action="submit" type="button" role="button" @if(Auth::user()->manager == null) disabled @endif><i class="fas fa-check mr-2"></i>Submit</button>
                     </div>
                 </div>
             </div>
@@ -219,7 +215,8 @@
             },
             created(){
                 this.set_max_date();
-                this.pval = {{$leave->rstaff_id == null ? 30 : 75}};
+                this.pval = '{{$leave->rstaff_id == null ? 30 : 75}}';
+                if('{{$leave->status}}' === 'submitted') this.pval = 100;
                 this.width = 'width: ' + this.pval + '%';
             }
         });
@@ -239,9 +236,9 @@
 				start_date = $("#start-date").val(),
 				end_date = $("#end-date").val(),
 				rstaff = $("#rstaff").val(),
+				lcomment = $("#lcomment").val(),
 				lid ='{{ Crypt::encrypt($leave->id) }}',
 				token ='{{ Session::token() }}',
-                prog = '75%',
 				url = "{{route('portal.leave.update', Crypt::encrypt($leave->id))}}";
 
 			$.ajax({
@@ -252,6 +249,7 @@
 					end_date: end_date,
 					rstaff: rstaff,
 					action: action,
+					comment: lcomment,
 					lid: lid,
 					_token: token
 				},
@@ -261,12 +259,13 @@
 				},
 				success: function(response) {
                     btn.html(btn_text);
-                    $('#pbar').outerWidth(prog).html(prog);
                     if(action === 'continue') {
+                        $('#pbar').outerWidth('75%').html('75%');
                         palert('Leave application updated','success');
                         $('#leave-submit-tab').click();
                     } else {
-                        // redir
+                        $('#pbar').outerWidth('100%').html('100%');
+                        window.location.href = "{{route('portal.leave')}}"
                     }
 				},
 				error: function(error){

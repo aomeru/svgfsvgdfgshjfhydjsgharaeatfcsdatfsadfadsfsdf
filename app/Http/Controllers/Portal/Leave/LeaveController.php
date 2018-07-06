@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\GeneralNotification;
 
 class LeaveController extends Controller
 {
@@ -40,11 +41,9 @@ class LeaveController extends Controller
         $this->log(Auth::user()->id, 'Opened the my leave page.', Request()->path());
         return view('portal.leave.index', [
             'on_leave' => $this->on_leave(Auth::user()),
-			'clist' => Auth::user()->leave()->has('leave_request',0)->get(),
-			'alist' => Auth::user()->leave()->has('leave_request')->get(),
-			'calist' => Auth::user()->leave()->whereHas('leave_request', function($q){
-                $q->where('status','completed');
-            })->get(),
+			'clist' => Auth::user()->leave()->whereIn('status',['pending','submitted','manager_declined'])->get(),
+			'alist' => Auth::user()->leave()->whereNotIn('status',['completed','pending','manager_declined'])->get(),
+			'calist' => Auth::user()->leave()->where('status','completed')->get(),
 			'las' => Auth::user()->leave_allocation()->whereHas('leave_type',function($q){ $q->orderby('title'); })->get(),
             'nav' => 'leave',
 			'subnav' => 'leave',
@@ -61,12 +60,14 @@ class LeaveController extends Controller
         $leave = Auth::user()->leave()->where('leave_type_id',$la->leave_type_id)->has('leave_request',0)->first();
         if($leave != null) return response()->json(array('success' => false, 'errors' => ['errors' => ['You have an existing saved record for this leave type, edit it to continue']]), 422);
 
+        // check the leave status
+
         $item = Auth::user()->leave()->create([
             'start_date' => $r->start_date,
             'leave_type_id' => $la->leave_type_id,
             'year' => $la->year
         ]);
-        if($item != null)
+        if($item)
         {
             $this->log(Auth::user()->id, 'Created a leave record with id .'.$item->id, $r->path(), 'action');
             return response()->json(array('success' => true, 'msg' => Crypt::encrypt($item->id)), 200);
@@ -108,8 +109,6 @@ class LeaveController extends Controller
             }
         }
 
-        // dd($item);
-
         $this->log(Auth::user()->id, 'Opened the leave item page for: '.$item->id, Request()->path());
         return view('portal.leave.create.apply', [
             'leave' => $item,
@@ -129,11 +128,13 @@ class LeaveController extends Controller
         $ed = new DateTime($r->end_date); $edx = $ed->format('Y-m-d');
         $period = $this->date_range($sdx,$edx);
         $wkd = [0,6]; $d = 0; $add = 0; $sd_add = false;
-        $hols = $this->get_holiday_array();
+        $hols = $this->get_holiday_array($sd,$ed);
+
+        // return response()->json(['errors' => ['error' => [$hols]]], 422);
 
         foreach($period as $p)
         {
-            if(!in_array($p,$wkd))
+            if(!in_array(date('w',strtotime($p)),$wkd))
             {
                 if(in_array($p,$hols))
                 {
@@ -156,19 +157,66 @@ class LeaveController extends Controller
         $rstaff = User::where('email',$r->rstaff)->first();
         if($this->on_leave($rstaff)) return response()->json(['errors' => ['error' => ['The relieving staff selected is on leave, please select someone else.']]], 422);
 
+        $bd = new DateTime($ed->format('Y-m-d'));
+        // return response()->json(['errors' => ['error' => [$bd,$ed]]], 422);
+        do {
+            $bd->add(new DateInterval('P1D'))->format('Y-m-d');
+        } while(in_array(date('w',strtotime($bd->format('Y-m-d'))),$wkd));
+
+        // return response()->json(['errors' => ['error' => [$bd,$ed]]], 422);
+
         $update = $item->update([
             'start_date' => $sd,
             'end_date' => $ed,
+            'back_on' => $bd,
             'rstaff_id' => $rstaff->id
         ]);
         if($update)
         {
+            if($r->action == 'submit'){
+                $item->update(['comment' => $r->comment]);
+                return $this->make_request($item);
+            }
             $this->log(Auth::user()->id, 'Updated the leave application for: '.$item->id, Request()->path());
             return response()->json(array('success' => true, 'message' => 'Leave updated'), 200);
         }
 
         return response()->json(['errors' => ['error' => ['Oops, we were unable to process these changes, please try again']]], 422);
 
+    }
+
+    protected function make_request($l)
+    {
+        if($l->user->manager == null) return response()->json(['errors' => ['error' => ['You need to contact HR to update your manager information before you can submit this application.']]], 422);
+
+        if($l->leave_request == null)
+        {
+            $l->leave_request()->create([
+                'code' => 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper($l->user->username),
+            ]);
+        }
+        $l->leave_request()->update([
+            'manager_id' => $l->user->manager->manager->id
+        ]);
+        if($l->leave_request->log->count() > 0)
+        {
+            $l->leave_request->log()->create([
+                'comment' => 'Leave request updated',
+            ]);
+        } else {
+            $l->leave_request->log()->create([
+                'comment' => 'Leave request submitted',
+            ]);
+        }
+        $l->update([
+            'status' => 'submitted',
+        ]);
+        $l->user->manager->manager->notify(new GeneralNotification([
+            'title' => $l->user->fullname.'\'s leave request awaiting your approval',
+            'url' => route('portal.leave.approval',$l->leave_request->code),
+        ]));
+        Session::flash('success','Leave application submitted successfully to '.$l->user->manager->manager->fullname);
+        return response()->json(200);
     }
 
     public function destroy($id)
@@ -184,7 +232,7 @@ class LeaveController extends Controller
 
         if($item->leave_request != null)
         {
-            Session::flash('error','You cannot delete a leave record that has a request');
+            Session::flash('error','You cannot delete a leave record that have an appplication request');
             return redirect()->back();
         }
 

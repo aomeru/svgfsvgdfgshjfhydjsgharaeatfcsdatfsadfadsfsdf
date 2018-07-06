@@ -92,7 +92,7 @@ $color = [
 
                                         <td class="text-center">{!! $item->end_date == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->end_date)) !!}</td>
 
-                                        <td class="text-center">{!! $item->end_date == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->back_on)) !!}</td>
+                                        <td class="text-center">{!! $item->back_on == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->back_on)) !!}</td>
 
                                         <td class="text-center text-{{$color[$item->status]}}">{{ $item->status }}</td>
 
@@ -103,11 +103,7 @@ $color = [
                                                 <a href="{{ route('portal.leave.edit', Crypt::encrypt($item->id)) }}" class="btn btn-primary btn-sm text-white" title="Edit {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave"><i class="fas fa-pencil-alt"></i></a>
                                             @endif
 
-                                            @if(Laratrust::can('delete-leave'))
-                                                {{-- <form action="{{ route('portal.leave.destroy', Crypt::encrypt($item->id)) }}" method="delete">
-                                                    @method('DELETE')
-                                                    <button class="btn btn-danger btn-sm text-white" type="submit" title="Delete {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave"><i class="far fa-trash-alt"></i></button>
-                                                </form> --}}
+                                            @if(Laratrust::can('delete-leave') && $item->status == 'pending')
                                                 <a href="{{ route('portal.leave.delete', Crypt::encrypt($item->id)) }}" class="btn btn-danger btn-sm text-white" title="Delete {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave"><i class="far fa-trash-alt"></i></a>
                                             @endif
                                         </td>
@@ -137,10 +133,76 @@ $color = [
                         You have no existing leave application
                     </p>
                 @else
+                    <div class="table-responsive">
+
+                        <table class="table table-striped table-bordered table-hover nowrap data-table" width="100%" data-page-length="25">
+
+                            <thead>
+                                <tr class="active">
+                                    <th>#</th>
+                                    <th>Leave</th>
+                                    <th>Type</th>
+                                    <th class="text-center">Start Date</th>
+                                    <th class="text-center">End Date</th>
+                                    <th class="text-center">Return Date</th>
+                                    <th>Relieve Staff</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Last Modified</th>
+                                    @if($item->status != 'completed')<th class="text-right">Actions</th>@endif
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @php $row_count = 1 @endphp
+
+                                @foreach($alist as $item)
+
+                                    <tr>
+
+                                        <td>{{ $row_count }}</td>
+
+                                        <td>
+                                            <a href="{{ route('portal.leave.request.show', Crypt::encrypt($item->id)) }}" class="text-underline" title="View {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave request">
+                                                {{ $item->leave_request->code }}
+                                            </a>
+                                        </td>
+
+                                        <td>{{ $item->leave_type->title }}</td>
+
+                                        <td class="text-center">{{ date('jS M, Y', strtotime($item->start_date)) }}</td>
+
+                                        <td class="text-center">{!! $item->end_date == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->end_date)) !!}</td>
+
+                                        <td class="text-center">{!! $item->back_on == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->back_on)) !!}</td>
+
+                                        <td>{!! $item->ruser == null ? '<em class="text-muted">N/A</em>' : $item->ruser->fullname !!}</td>
+
+                                        <td class="text-center text-{{$color[$item->leave_request->status]}}">{{ $item->leave_request->status }}</td>
+
+                                        <td class="text-center">{{\Carbon\Carbon::parse($item->leave_request->updated_at)->diffForHumans()}}</td>
+
+                                        @if($item->status != 'completed' && Laratrust::can('update-leave-request'))
+                                        <td class="text-right">
+                                            <a href="{{ Crypt::encrypt($item->id) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
+                                        </td>
+                                        @endif
+
+                                    </tr>
+
+                                    @php $row_count++ @endphp
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
                 @endif
             </div>
         </div>
-  </div>
+    </div>
 
     <div class="col-sm-3">
 
@@ -157,11 +219,11 @@ $color = [
         @foreach($las as $key => $la)
             <div class="card card-custom shadomw-sm mb-3">
                 <?php
-                $color = 'success';
+                $color = 'info';
                 $marker = round($la->leave_type->allowed/3);
                 if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
                 ?>
-                <div class="card-header text-white bg-{{$color}}">
+                <div class="card-header text-white progress-bar-striped bg-{{$color}}">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title ttext-capitalize m-0">{{$la->leave_type->title}}</h5>
                         <div class="display-4">{{$la->allowed}}</div>

@@ -38,7 +38,7 @@ class UpdateLeave extends FormRequest
         $sv = date('w',strtotime($s)); $ev = date('w',strtotime($e));
         if(in_array($sv,$wkd) || in_array($ev,$wkd)) return ['weekday' => 'required'];
 
-        $hols = implode(',',$this->get_holiday_array());
+        $hols = implode(',',$this->get_holiday_array($s,$e));
 
         return [
             'start_date' => 'required|date|unique:holidays,start_date|unique:holidays,end_date|not_in:'.$hols,

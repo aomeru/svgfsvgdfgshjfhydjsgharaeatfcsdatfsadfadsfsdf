@@ -21,6 +21,9 @@ class AppController extends Controller
     {
         // return false;
 
+        dd(str_shuffle(strtotime(now())));
+        dd(date('y-m-d h:i:s'));
+
         $user = User::where('email','like','%speter%')->first();
         $then = new DateTime($user->date_of_hire);
         $now = new DateTime();

@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\LeaveTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLeave extends FormRequest
 {
+    use LeaveTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -42,7 +44,7 @@ class StoreLeave extends FormRequest
                 'weekday' => 'required',
             ];
         }
-        $hols = implode(',',$this->get_holiday_array());
+        $hols = implode(',',$this->get_holiday_array($s));
         return [
             'start_date' => 'required|date|unique:holidays,start_date|unique:holidays,end_date|not_in:'.$hols,
             'nodays' => 'required|numeric|min:1|max:'.$la->allowed,

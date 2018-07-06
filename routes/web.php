@@ -77,11 +77,17 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             $rkey = 'portal.leave';
             Route::get('/', $con.'index')->name($rkey);
             Route::post('/store', $con.'store')->name($rkey.'.store');
-            Route::get('/show/{id}', $con.'show')->name($rkey.'.show');
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
             Route::post('/{id}/update', $con.'update')->name($rkey.'.update');
             Route::get('/{id}/delete', $con.'destroy')->name($rkey.'.delete');
             Route::post('/get-date', $con.'get_cdate');
+        });
+
+        Route::group(['prefix' => 'requests'], function () {
+            $con = 'Portal\Leave\LeaveRequestController@';
+            $rkey = 'portal.leave.request';
+            Route::get('/', $con.'index')->name($rkey);
+            Route::get('/{id}', $con.'show')->name($rkey.'.show');
         });
 
         // Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);

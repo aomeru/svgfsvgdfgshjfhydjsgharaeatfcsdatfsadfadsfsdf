@@ -36,7 +36,7 @@
             <ul id="testleave" class="sub-nav flex-column ml-4 pl-4">
                 @if(Laratrust::can('*-leave'))<li class="sub-nav-item"><a href="{{route('portal.leave')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'leave') active @endif"><i class="far fa-calendar-alt fa-fw mr-2"></i>My Leave</a></li>@endif
 
-                <li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-check fa-fw mr-2"></i>Leave Approvals</a></li>
+                @if(Laratrust::can('*-leave-request'))<li class="sub-nav-item"><a href="" class="sub-nav-link"><i class="far fa-calendar-check fa-fw mr-2"></i>Leave Request</a></li>@endif
 
                 @if(Laratrust::can('*-holiday'))<li class="sub-nav-item"><a href="{{route('holiday.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'holiday') active @endif"><i class="fas fa-plane fa-fw mr-2"></i>Holidays</a></li>@endif
 
