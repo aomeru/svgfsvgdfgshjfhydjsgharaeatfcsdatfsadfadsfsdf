@@ -20,7 +20,9 @@
 // Extra large - desktops
 @media only screen and (min-width: 1200px) { @import 'custom/style.xlarge'; }
 
-
+* {
+    transition: all .2s linear;
+}
 
 .navbar-laravel {
     background-color: #fff;
@@ -44,19 +46,15 @@ body {
         left: 0;
         transition: left 0.3s ease-in-out;
     }
-
     @include media-breakpoint-up(sm) {
         top: 0;
         left: 0;
         width: 350px;
     }
-
     .nav {
         font-size: 18px;
-
         .nav-item {
             // margin-bottom: 5px;
-
             .nav-link {
                 color: #333;
                 border-radius: 20px;
@@ -85,11 +83,9 @@ body {
                     // padding-left: 2rem;
                 }
             }
-
             .has-sub-nav {
                 cursor: pointer;
             }
-
             .sub-nav {
                 list-style: none;
                 font-size: 16px;
@@ -117,6 +113,42 @@ body {
                             color: $cyancolor;
                             // padding-left: 1.5rem;
                             text-decoration: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &.dark {
+        background-color: #333;
+        .nav {
+            .nav-item {
+                .nav-link {
+                    color: #ccc;
+                    &.active {
+                        color: #fff;
+                    }
+                    &:hover {
+                        color: $cyancolor;
+                    }
+                    &.nav-link-red {
+                        color: #f00 !important;
+                    }
+                }
+                .sub-nav {
+                    border-color:#666;
+                    .sub-nav-item {
+                        .sub-nav-link {
+                            color: #999;
+                            &.active {
+                                color: #fff;
+                                &:hover {
+                                    color: #fff;
+                                }
+                            }
+                            &:hover {
+                                color: $cyancolor;
+                            }
                         }
                     }
                 }
@@ -231,9 +263,19 @@ body {
         vertical-align: middle;
     }
 }
-
-.card-custom {
-    .card-header {
-        border-bottom: 3px solid rgba(0,0,0,0.15);
-    }
+.card-custom-header {
+    border-bottom: 3px solid rgba(0,0,0,0.15);
+}
+.card-body-tr {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: white
+}
+.card-body-trr {
+    border-top-right-radius: 35px;
+    background-color: white
+}
+.card-body-tlr {
+    border-top-left-radius: 35px;
+    background-color: white
 }

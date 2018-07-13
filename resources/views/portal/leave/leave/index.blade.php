@@ -82,7 +82,7 @@ $color = [
 
                                         <td class="text-uppercase">
                                             <a href="{{ route('portal.leave.edit', Crypt::encrypt($item->id)) }}" class="text-underline" title="Edit {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave">
-                                                {{ Auth::user()->username.'-'.strtotime($item->created_at) }}
+                                                {{ $item->leave_request == null ? Auth::user()->username.'-'.strtotime($item->created_at) : $item->leave_request->code }}
                                             </a>
                                         </td>
 
@@ -148,7 +148,7 @@ $color = [
                                     <th>Relieve Staff</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Last Modified</th>
-                                    @if($item->status != 'completed')<th class="text-right">Actions</th>@endif
+                                    <th class="text-right">Actions</th>
                                 </tr>
                             </thead>
 
@@ -182,11 +182,11 @@ $color = [
 
                                         <td class="text-center">{{\Carbon\Carbon::parse($item->leave_request->updated_at)->diffForHumans()}}</td>
 
-                                        @if($item->status != 'completed' && Laratrust::can('update-leave-request'))
                                         <td class="text-right">
+                                            @if($item->status != 'completed' && Laratrust::can('update-leave-request'))
                                             <a href="{{ Crypt::encrypt($item->id) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
+                                            @endif
                                         </td>
-                                        @endif
 
                                     </tr>
 
@@ -207,7 +207,9 @@ $color = [
     <div class="col-sm-3">
 
         <div class="mb-3">
-            @if(Laratrust::can('create-leave'))<button class="btn btn-primary btn-sm" title="Create new leave application" data-toggle="modal" data-target="#add-modal"><i class="fas fa-calendar-plus mr-2"></i>Apply</button>@endif
+            @if(Laratrust::can('create-leave'))
+                <a href="{{ route('portal.leave.apply') }}" class="btn btn-primary btn-sm" title="Create new leave application"><i class="fas fa-calendar-plus mr-2"></i>Apply</a>
+            @endif
         </div>
 
         <div class="alert aler-dark bg-dark text-white mb-2">

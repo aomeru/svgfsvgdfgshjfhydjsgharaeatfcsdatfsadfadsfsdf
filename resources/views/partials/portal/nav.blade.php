@@ -1,31 +1,35 @@
-<div class="p-3" id="portal-left">
+<?php
+    $theme = 'dark';
+    $brand = $theme == 'dark' ? '-w' : '';
+?>
+<div class="p-3 {{$theme}}" id="portal-left">
     <div class="row d-none d-sm-block">
         <div class="d-flex justify-content-center">
             <div class="col-9">
                 <a class="" href="{{ route('portal') }}">
-                    <img src="{{ asset('images/brand-name.png') }}" alt="" class="img-fluid">
+                    <img src="{{ asset('images/brand-name'.$brand.'.png') }}" alt="" class="img-fluid">
                 </a>
             </div>
         </div>
     </div>
 
-    <hr class="mb-4 d-none d-sm-block">
+    <hr class="mb-4 d-none d-sm-block @if($theme == 'dark') border-secondary @endif">
     <div class="d-flex justify-content-start">
         <div class="mr-2 d-flex align-items-center" style="height: 70px">
-            @include('partials.portal.profile-image',['userdata' => Auth::user(), 'border' => 'border border-cyan'])
+            @include('partials.portal.profile-image',['userdata' => Auth::user()])
         </div>
         <div class="d-flex align-items-center">
             <div class="">
-                <h4 class="mb-0">
+                <h4 class="mb-0 text-white">
                     {{Auth::user()->firstname.' '.Auth::user()->lastname}}
                 </h4>
-                <p class="mb-0 c-666">
-                    <em>{{Auth::user()->job_title ? Auth::user()->job_title : 'Job Title'}} / {{Auth::user()->unit != null ? Auth::user()->unit->department->title : 'Department'}}</em>
+                <p class="mb-0 c-999">
+                    <small><em>{{Auth::user()->job_title ? Auth::user()->job_title : 'Job Title'}} <br> {{Auth::user()->unit != null ? Auth::user()->unit->department->title : 'Department'}}</em></small>
                 </p>
             </div>
         </div>
     </div>
-    <hr class="mb-4">
+    <hr class="mb-4 @if($theme == 'dark') border-secondary @endif">
 
     <ul class="nav flex-column px-2">
         @if(Laratrust::can('dashboard'))<li class="nav-item"><a href="{{ route('portal') }}" class="nav-link @if(!isset($nav)) active @endif"><i class="fas fa-desktop fa-fw mr-2"></i>Dashboard</a></li>@endif
@@ -74,7 +78,7 @@
             </li>
         @endif
 
-        <div class="dropdown-divider"></div>
+        <div class="dropdown-divider @if($theme == 'dark') border-secondary @endif"></div>
 
         <li class="nav-item"><a href="{{ route('home') }}" class="nav-link"><i class="fas fa-home fa-fw mr-2"></i>Homepage</a></li>
 

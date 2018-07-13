@@ -14,7 +14,7 @@ trait CommonTrait
 
     public function __construct()
     {
-        $this->date = new \Datetime();
+        $this->date = new Datetime();
     }
 
     public function echeck() {return response()->json(array('success' => false, 'errors' => ['errors' => ['Got here.']]), 400);}

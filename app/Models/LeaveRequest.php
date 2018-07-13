@@ -11,6 +11,13 @@ class LeaveRequest extends Model
 
     protected $fillable = ['code','manager_id','manager_decision_date','hr_id','hr_decision_date','status'];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'manager_decision_date',
+        'hr_decision_date'
+    ];
+
     public function leave()
 	{
 		return $this->belongsTo(Leave::class);
@@ -28,11 +35,11 @@ class LeaveRequest extends Model
 
     public function log()
 	{
-		return $this->hasMany(LeaveRequestLog::class);
+		return $this->hasMany(LeaveRequestLog::class, 'leave_request_id');
     }
 
     public function deference()
 	{
-		return $this->hasOne(LeaveRequestDeference::class);
+		return $this->hasOne(LeaveRequestDeference::class, 'leave_request_id');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Traits;
 use Auth;
 use App\User;
 use DateTime;
+use DateInterval;
 use App\Models\Holiday;
 
 trait LeaveTrait
@@ -67,5 +68,45 @@ trait LeaveTrait
             }
         }
         return $v;
+    }
+
+    protected function leave_dates($start_date, $end_date)
+    {
+        $sd = new DateTime($start_date); $sdx = $sd->format('Y-m-d');
+        $ed = new DateTime($end_date); $edx = $ed->format('Y-m-d');
+        $period = $this->date_range($sdx,$edx);
+        $wkd = [0,6]; $d = 0; $add = 0; $sd_add = false;
+        $hols = $this->get_holiday_array($sd,$ed);
+
+        foreach($period as $p)
+        {
+            if(!in_array(date('w',strtotime($p)),$wkd))
+            {
+                if(in_array($p,$hols))
+                {
+                    if($period[0] == $p) $sd_add = true;
+                    $add++;
+                }
+            }
+            $d++;
+        }
+
+        if($add > 0)
+        {
+            $ed->add(new DateInterval('P'.$add.'D'))->format('Y-m-d');
+            if($sd_add) $sd->add(new DateInterval('P'.$add.'D'))->format('Y-m-d');
+        }
+
+        $bd = new DateTime($ed->format('Y-m-d'));
+        do {
+            $bd->add(new DateInterval('P1D'))->format('Y-m-d');
+        } while(in_array(date('w',strtotime($bd->format('Y-m-d'))),$wkd));
+
+        return [
+            'sd' => $sd,
+            'ed' => $ed,
+            'bd' => $bd,
+            'no_days' => $d,
+        ];
     }
 }

@@ -32,6 +32,16 @@
         <script src="{{ asset('js/user.js') }}" defer></script>
 
         <script>
+            function get_error_msg(error)
+            {
+                var msg = '<ul class="mb-0 pl-3">';
+                $.each(error.response.data.errors, function(key, value){
+                    msg = msg + '<li>' + value + '</li>';
+                });
+                msg = msg + '</ul>';
+                return msg;
+            }
+
             function getErrorMessage(jqXHR, exception)
             {
                 var msg = '';

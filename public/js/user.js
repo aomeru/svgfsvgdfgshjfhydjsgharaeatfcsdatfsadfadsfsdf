@@ -30534,20 +30534,6 @@ var Vue = __webpack_require__(31);
 window.Vue = Vue;
 var Slug = __webpack_require__(34);
 Slug.defaults.mode = 'rfc3986';
-
-// Vue.component('example-component', require('./components/ExampleComponent.vue'));
-
-// const app = new Vue({
-//     el: '#app',
-//     created()
-//     {
-//         console.log('created');
-//     }
-// });
-
-$(function () {
-    //console.log('hello world')
-});
 __webpack_require__(49);
 
 /***/ }),

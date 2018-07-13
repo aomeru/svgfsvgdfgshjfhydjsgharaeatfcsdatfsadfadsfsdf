@@ -56316,6 +56316,11 @@ label {
   }
 }
 
+* {
+  -webkit-transition: all .2s linear;
+  transition: all .2s linear;
+}
+
 .navbar-laravel {
   background-color: #fff;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
@@ -56418,6 +56423,46 @@ body {
 #portal-left .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link:hover {
   color: #03a9f4;
   text-decoration: none;
+}
+
+#portal-left.dark {
+  background-color: #333;
+}
+
+#portal-left.dark .nav .nav-item .nav-link {
+  color: #ccc;
+}
+
+#portal-left.dark .nav .nav-item .nav-link.active {
+  color: #fff;
+}
+
+#portal-left.dark .nav .nav-item .nav-link:hover {
+  color: #03a9f4;
+}
+
+#portal-left.dark .nav .nav-item .nav-link.nav-link-red {
+  color: #f00 !important;
+}
+
+#portal-left.dark .nav .nav-item .sub-nav {
+  border-color: #666;
+}
+
+#portal-left.dark .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link {
+  color: #999;
+}
+
+#portal-left.dark .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link.active {
+  color: #fff;
+}
+
+#portal-left.dark .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link.active:hover {
+  color: #fff;
+}
+
+#portal-left.dark .nav .nav-item .sub-nav .sub-nav-item .sub-nav-link:hover {
+  color: #03a9f4;
 }
 
 #portal-mobile-header {
@@ -56536,7 +56581,23 @@ body {
   }
 }
 
-.card-custom .card-header {
+.card-custom-header {
   border-bottom: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.card-body-tr {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: white;
+}
+
+.card-body-trr {
+  border-top-right-radius: 35px;
+  background-color: white;
+}
+
+.card-body-tlr {
+  border-top-left-radius: 35px;
+  background-color: white;
 }
 

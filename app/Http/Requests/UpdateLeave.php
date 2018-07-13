@@ -60,7 +60,7 @@ class UpdateLeave extends FormRequest
             'end_date.required' => 'Please select an end date',
             'end_date.date' => 'Your end date must be in this format "yyyy-mm-dd"',
             'end_date.not_in' => 'The selected end date is an holiday',
-            'after_or_equal.date' => 'Your end date must be after the start date',
+            'end_date.after_or_equal' => 'Your end date must be after the start date',
             'rstaff.required' => 'Please select a relieving staff in your unit/department',
             'rstaff.exists' => 'The selected staff does not exist',
         ];

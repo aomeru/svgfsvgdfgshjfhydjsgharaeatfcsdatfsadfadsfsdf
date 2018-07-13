@@ -14,6 +14,8 @@ use App\Traits\LeaveTrait;
 use App\Traits\CommonTrait;
 use App\Models\LeaveRequest;
 use Illuminate\Http\Request;
+use App\Models\LeaveAllocation;
+use App\Models\LeaveRequestLog;
 use App\Http\Requests\StoreLeave;
 use App\Http\Requests\UpdateLeave;
 use App\Http\Controllers\Controller;
@@ -29,10 +31,11 @@ class LeaveController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:create-leave', ['only' => ['store']]);
-        $this->middleware('permission:read-leave');
+        $this->middleware('permission:create-leave', ['only' => ['create','store']]);
+        $this->middleware('permission:read-leave', ['only' => ['index']]);
         $this->middleware('permission:update-leave', ['only' => ['edit','update']]);
         $this->middleware('permission:delete-leave', ['only' => ['destroy']]);
+        // $this->middleware('permission:update-leave-request', ['only' => ['get_cdate']]);
     }
 
     public function index()
@@ -40,7 +43,7 @@ class LeaveController extends Controller
         // get last leave with request
 
         $this->log(Auth::user()->id, 'Opened the my leave page.', Request()->path());
-        return view('portal.leave.index', [
+        return view('portal.leave.leave.index', [
             'on_leave' => $this->on_leave(Auth::user()),
 			'clist' => Auth::user()->leave()->whereIn('status',['pending','submitted','manager_declined'])->get(),
 			'alist' => Auth::user()->leave()->whereNotIn('status',['completed','pending','manager_declined'])->get(),
@@ -51,28 +54,47 @@ class LeaveController extends Controller
 		]);
     }
 
+    public function create()
+    {
+        // dd('dd');
+        return view('portal.leave.leave.create', [
+			'las' => Auth::user()->leave_allocation()->whereHas('leave_type',function($q){ $q->orderby('title'); })->get(),
+            'col' => $this->get_rcolleagues(Auth::user()),
+            'nav' => 'leave',
+			'subnav' => 'leave',
+		]);
+    }
+
     public function store(StoreLeave $r)
     {
-        $la = Auth::user()->leave_allocation()->whereHas('leave_type',function($q) use ($r){
-            $q->where('title',$r->ltype);
-        })->first();
         if($this->on_leave(Auth::user())) return response()->json(array('success' => false, 'errors' => ['errors' => ['You can\'t create a new leave request while on leave']]), 422);
 
-        $leave = Auth::user()->leave()->where('leave_type_id',$la->leave_type_id)->has('leave_request',0)->first();
-        if($leave != null) return response()->json(array('success' => false, 'errors' => ['errors' => ['You have an existing saved record for this leave type, edit it to continue']]), 422);
+        $id = decrypt($r->ltype);
+        $la = LeaveAllocation::find($id);
 
-        // check the leave status
+        $leave = Auth::user()->leave()->where('leave_type_id',$la->leave_type_id)->whereNotIn('status',['completed'])->orderby('created_at','desc')->first();
+        if($leave != null) return response()->json(array('success' => false, 'errors' => ['errors' => ['You have an existing saved record for this leave type, edit it to continue if not submitted.']]), 422);
+
+        $a = $this->leave_dates($r->start_date, $r->end_date);
+
+        if($a['no_days'] > $la->allowed) return response()->json(['errors' => ['error' => ['You have selected more days than your allocation for this leave type.']]], 422);
+
+        $rstaff = User::where('email',$r->rstaff)->first();
+        if($this->on_leave($rstaff)) return response()->json(['errors' => ['error' => ['The relieving staff selected is on leave, please select someone else.']]], 422);
+
+        if(Auth::user()->manager == null) return response()->json(['errors' => ['error' => ['You need to contact HR to update your manager information before you can submit this application.']]], 422);
 
         $item = Auth::user()->leave()->create([
-            'start_date' => $r->start_date,
+            'start_date' => $a['sd'],
+            'end_date' => $a['ed'],
+            'back_on' => $a['bd'],
+            'rstaff_id' => $rstaff->id,
             'leave_type_id' => $la->leave_type_id,
-            'year' => $la->year
+            'year' => $la->year,
+            'comment' => $r->comment
         ]);
-        if($item)
-        {
-            $this->log(Auth::user()->id, 'Created a leave record with id .'.$item->id, $r->path(), 'action');
-            return response()->json(array('success' => true, 'msg' => Crypt::encrypt($item->id)), 200);
-        }
+
+        if($item != null) return $this->make_request($item);
 
         return response()->json(array('success' => false, 'errors' => ['errors' => ['Oops, something went wrong please try again']]), 422);
     }
@@ -105,7 +127,7 @@ class LeaveController extends Controller
         }
 
         $this->log(Auth::user()->id, 'Opened the leave item page for: '.$item->id, Request()->path());
-        return view('portal.leave.create.apply', [
+        return view('portal.leave.leave.create', [
             'leave' => $item,
             'col' => $this->get_rcolleagues(Auth::user()),
             'nav' => 'leave',
@@ -182,12 +204,10 @@ class LeaveController extends Controller
 
     protected function make_request($l)
     {
-        if($l->user->manager == null) return response()->json(['errors' => ['error' => ['You need to contact HR to update your manager information before you can submit this application.']]], 422);
-
         if($l->leave_request == null)
         {
             do {
-                $code = 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper($l->user->username);
+                $code = 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper(Auth::user()->username);
             } while (LeaveRequest::where('code',$code)->first() != null);
 
             $l->leave_request()->create([
@@ -195,21 +215,21 @@ class LeaveController extends Controller
             ]);
         }
         $l->leave_request()->update([
-            'manager_id' => $l->user->manager->manager->id
+            'manager_id' => Auth::user()->manager->manager->id
         ]);
-        $msg = $l->leave_request->log == null ? 'Leave request submitted' : 'Leave request updated';
-        $l->leave_request->log()->create([
-            'comment' => $msg
-        ]);
-
+        $item = new LeaveRequestLog;
+        $item->leave_request_id = $l->leave_request()->id;
+        $item->comment = 'Leave request submitted';
+        $item->save();
         $l->update([
             'status' => 'submitted',
         ]);
-        $l->user->manager->manager->notify(new GeneralNotification([
-            'title' => $l->user->fullname.'\'s leave request awaiting your approval',
+        Auth::user()->manager->manager->notify(new GeneralNotification([
+            'title' => Auth::user()->fullname.'\'s leave request awaiting your approval',
             'url' => route('portal.leave.request.show',$l->leave_request->code),
         ]));
-        Session::flash('success','Leave application submitted successfully to '.$l->user->manager->manager->fullname);
+        Session::flash('success','Leave application submitted successfully to '.Auth::user()->manager->manager->fullname);
+        $this->log(Auth::user()->id, 'Applied for leave with code .'.$item->leave_request->code, $r->path(), 'action');
         return response()->json(200);
     }
 
@@ -244,6 +264,13 @@ class LeaveController extends Controller
 
     public function get_cdate(Request $r)
     {
-        return Carbon::parse($r['params']['start_date'])->copy()->addDays($r['params']['allowed'] - 1)->format('Y-m-d');
+        $id = Crypt::decrypt($r['ltype']);
+        $la = LeaveAllocation::find($id);
+        return Carbon::parse($r['start_date'])->copy()->addDays($la->allowed - 1)->format('Y-m-d');
+    }
+
+    public function get_cdatee()
+    {
+        echo 'got here';
     }
 }

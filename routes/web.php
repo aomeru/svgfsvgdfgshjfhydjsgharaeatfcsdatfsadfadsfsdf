@@ -23,6 +23,31 @@ Route::prefix('portal')->middleware('auth')->group(function(){
 
     Route::post('/', 'Portal\DashboardController@read_notif')->name('read.notif');
 
+    Route::resource('roles','Portal\RoleController')->except(['edit','create']);
+
+    Route::group(['prefix' => 'roles'], function () {
+		$con = 'Portal\RoleController@';
+        $rkey = 'roles';
+
+        Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
+
+        Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
+
+        Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
+    });
+
+    Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);
+
+    Route::group(['prefix' => 'permissions'], function () {
+		$con = 'Portal\PermissionsController@';
+        $rkey = 'permissions';
+		Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
+        Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
+        Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
+		Route::get('{name}/add-to/all-roles/', $con.'to_roles')->name($rkey.'.toroles');
+        Route::get('{name}/remove-from/all-roles/', $con.'from_roles')->name($rkey.'.fromroles');
+    });
+
     Route::group(['prefix' => 'departments-and-units'], function () {
 		$con = 'Portal\DepartmentController@';
 		$rkey = 'portal.depts';
@@ -48,19 +73,6 @@ Route::prefix('portal')->middleware('auth')->group(function(){
         Route::resource('managers','Portal\ManagerController')->except(['edit','create']);
     });
 
-    Route::resource('roles','Portal\RoleController')->except(['edit','create']);
-
-    Route::group(['prefix' => 'roles'], function () {
-		$con = 'Portal\RoleController@';
-        $rkey = 'roles';
-
-        Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
-
-        Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
-
-        Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
-    });
-
     Route::group(['prefix' => 'leave'], function () {
 		Route::resource('leave-record','Portal\Leave\LeaveTypeController');
 
@@ -76,6 +88,7 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             $con = 'Portal\Leave\LeaveController@';
             $rkey = 'portal.leave';
             Route::get('/', $con.'index')->name($rkey);
+            Route::get('/apply', $con.'create')->name($rkey.'.apply');
             Route::post('/store', $con.'store')->name($rkey.'.store');
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
             Route::post('/{id}/update', $con.'update')->name($rkey.'.update');
@@ -88,21 +101,11 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             $rkey = 'portal.leave.request';
             Route::get('/', $con.'index')->name($rkey);
             Route::get('/{code}', $con.'show')->name($rkey.'.show');
+            Route::post('/manager-decision', $con.'manager_action')->name($rkey.'.ma');
+            Route::post('/hr-decision', $con.'hr_action')->name($rkey.'.ma');
         });
 
         // Route::resource('my-leave','Portal\Leave\LeaveController')->except(['create']);
     });
-
-    Route::resource('permissions','Portal\PermissionsController')->except(['edit','create']);
-
-    Route::group(['prefix' => 'permissions'], function () {
-		$con = 'Portal\PermissionsController@';
-        $rkey = 'permissions';
-		Route::put('{name}/edit-description/', $con.'edit_description')->name($rkey.'.ed');
-        Route::get('{name}/add-to/all-users/', $con.'to_users')->name($rkey.'.tousers');
-        Route::get('{name}/remove-from/all-users/', $con.'from_users')->name($rkey.'.fromusers');
-		Route::get('{name}/add-to/all-roles/', $con.'to_roles')->name($rkey.'.toroles');
-        Route::get('{name}/remove-from/all-roles/', $con.'from_roles')->name($rkey.'.fromroles');
-	});
 
 });

@@ -3,8 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Traits\LeaveTrait;
+use App\Models\LeaveAllocation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class StoreLeave extends FormRequest
 {
@@ -26,9 +29,15 @@ class StoreLeave extends FormRequest
      */
     public function rules()
     {
-        $la = Auth::user()->leave_allocation()->whereHas('leave_type',function($q){
-            $q->where('title',$this->ltype);
-        })->first();
+        try {
+            $id = decrypt($this->ltype);
+        } catch (DecryptException $e) {
+            return [
+                'ltype' => 'required',
+            ];
+        }
+        $la = LeaveAllocation::find($id);
+
         if($la == null)
         {
             return [
@@ -37,31 +46,39 @@ class StoreLeave extends FormRequest
         }
         $wkd = [0,6];
         $s = $this->start_date;
+        $e = $this->end_date;
         $sv = date('w',strtotime($s));
-        if(in_array($sv,$wkd))
+        $ev = date('w',strtotime($e));
+        if(in_array($sv,$wkd) || in_array($ev,$wkd))
         {
             return [
                 'weekday' => 'required',
             ];
         }
-        $hols = implode(',',$this->get_holiday_array($s));
+        $shols = implode(',',$this->get_holiday_array($s));
+        $ehols = implode(',',$this->get_holiday_array($e));
         return [
-            'start_date' => 'required|date|unique:holidays,start_date|unique:holidays,end_date|not_in:'.$hols,
-            'nodays' => 'required|numeric|min:1|max:'.$la->allowed,
+            'start_date' => 'required|date|unique:holidays,start_date|unique:holidays,end_date|not_in:'.$shols,
+            'end_date' => 'required|date|unique:holidays,start_date|unique:holidays,end_date|after_or_equal:start_date|not_in:'.$ehols,
+            'rstaff' => 'required|exists:users,email'
         ];
     }
 
     public function messages()
     {
         return [
-            'weekday.required' => 'The selected start date must be a weekday',
-            'ltype.exists' => 'The selected leave type does not exist',
-            'nodays.numeric' => 'The number of days must be numeric',
-            'nodays.min' => 'You must select at least a day for this application',
-            'nodays.max' => 'You cannot create a leave greater than the number of days allocated for this leave type',
-            'start_date.required' => 'Please select a start date',
-            'start_date.unique' => 'The selected start date is an holiday',
-            'start_date.not_in' => 'The selected start date is an holiday',
+            'weekday.required' => 'The selected dates must be a weekday.',
+            'ltype.required' => 'Please select a leave type.',
+            'ltype.exists' => 'The selected leave type does not exist.',
+            'start_date.required' => 'Please select a start date.',
+            'start_date.unique' => 'The selected start date is an holiday.',
+            'start_date.not_in' => 'The selected start date is an holiday.',
+            'end_date.required' => 'Please select an end date.',
+            'end_date.unique' => 'The selected end date is an holiday.',
+            'end_date.after_or_equal' => 'The selected end date must be after the start date.',
+            'end_date.not_in' => 'The selected end date is an holiday.',
+            'rstaff.required' => 'Please select a relieving staff in your unit/department.',
+            'rstaff.exists' => 'The selected staff does not exist.',
         ];
     }
 }
