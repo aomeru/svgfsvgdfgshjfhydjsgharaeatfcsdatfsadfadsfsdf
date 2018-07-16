@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <hr class="mb-4 d-none d-sm-block @if($theme == 'dark') border-secondary @endif">
+    <hr class="mb-4 d-none d-sm-block @if($theme == 'dark') border-dark @endif">
     <div class="d-flex justify-content-start">
         <div class="mr-2 d-flex align-items-center" style="height: 70px">
             @include('partials.portal.profile-image',['userdata' => Auth::user()])
@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <hr class="mb-4 @if($theme == 'dark') border-secondary @endif">
+    <hr class="mb-4 @if($theme == 'dark') border-dark @endif">
 
     <ul class="nav flex-column px-2">
         @if(Laratrust::can('dashboard'))<li class="nav-item"><a href="{{ route('portal') }}" class="nav-link @if(!isset($nav)) active @endif"><i class="fas fa-desktop fa-fw mr-2"></i>Dashboard</a></li>@endif
@@ -78,7 +78,7 @@
             </li>
         @endif
 
-        <div class="dropdown-divider @if($theme == 'dark') border-secondary @endif"></div>
+        <div class="dropdown-divider @if($theme == 'dark') border-dark @endif"></div>
 
         <li class="nav-item"><a href="{{ route('home') }}" class="nav-link"><i class="fas fa-home fa-fw mr-2"></i>Homepage</a></li>
 

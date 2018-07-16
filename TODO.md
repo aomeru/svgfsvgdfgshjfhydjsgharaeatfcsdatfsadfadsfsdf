@@ -30,6 +30,7 @@ LEAVE
                 Mark leave request status and leave status
                 Add Leave log for item
                 Send email notification to next or previous or both
+                send notification to relieving staff
         Call off leave action
             Only HR after approval, through request
             Check if leave has been exhausted

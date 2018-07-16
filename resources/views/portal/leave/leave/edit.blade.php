@@ -1,6 +1,6 @@
 @extends('layouts.portal')
-@section('page_title','Leave Application - ')
-@section('portal_page_title') <i class="fas fa-calendar-plus mr-3"></i>Leave Application @endSection
+@section('page_title','Edit Leave Application - ')
+@section('portal_page_title') <i class="fas fa-calendar-plus mr-3"></i>Edit Leave Application <span class="text-primary">{{$leave->leave_request->code}}</span> @endSection
 
 @section('bc')
     <nav aria-label="breadcrumb" class="d-none d-md-block">
@@ -8,7 +8,7 @@
             <li class="breadcrumb-item"><a href="{{route('portal')}}">Dashboard</a></li>
             <li class="breadcrumb-item">Leave</li>
             <li class="breadcrumb-item"><a href="{{route('portal.leave')}}">My Leave</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Apply</li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Application</li>
         </ol>
     </nav>
 @endSection
@@ -17,19 +17,19 @@
 
 <div class="row">
     <div class="col-sm-3 mb-3 mb-sm-0">
-        <div class="card card-custom">
-            <?php
-            $color = 'info';
-            $marker = round($la->leave_type->allowed/3);
-            if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
-            ?>
-            <div class="card-header text-white progress-bar-striped bg-{{$color}}">
+        <?php
+        $color = 'info';
+        $marker = round($la->leave_type->allowed/3);
+        if($la->allowed <= $marker) $color = 'danger'; elseif($la->allowed <= ($marker* 2)) $color = 'warning';
+        ?>
+        <div class="card shadow-sm progress-bar-striped bg-{{$color}} border-0">
+            <div class="card-header text-white border-0">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title ttext-capitalize m-0">{{$la->leave_type->title}}</h5>
                     <div class="display-4">{{$la->allowed}}</div>
                 </div>
             </div>
-            <div class="card-body text-whitee bg-darkk p-3">
+            <div class="card-body card-body-trr text-whitee bg-darkk p-3">
                 <p class="mb-0">
                     <span class="text-secondary">Applications: </span>
                     <span>

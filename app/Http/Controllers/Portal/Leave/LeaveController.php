@@ -94,6 +94,8 @@ class LeaveController extends Controller
             'comment' => $r->comment
         ]);
 
+        // return response()->json(array('success' => false, 'errors' => ['errors' => [$item]]), 422);
+
         if($item != null) return $this->make_request($item);
 
         return response()->json(array('success' => false, 'errors' => ['errors' => ['Oops, something went wrong please try again']]), 422);
@@ -127,7 +129,7 @@ class LeaveController extends Controller
         }
 
         $this->log(Auth::user()->id, 'Opened the leave item page for: '.$item->id, Request()->path());
-        return view('portal.leave.leave.create', [
+        return view('portal.leave.leave.edit', [
             'leave' => $item,
             'col' => $this->get_rcolleagues(Auth::user()),
             'nav' => 'leave',
@@ -204,32 +206,35 @@ class LeaveController extends Controller
 
     protected function make_request($l)
     {
-        if($l->leave_request == null)
+        $lr = LeaveRequest::where('leave_id',$l->id)->first();
+        if($lr == null)
         {
+            $lr = new LeaveRequest;
             do {
                 $code = 'LR'.str_shuffle(strtotime(now())).'-'.strtoupper(Auth::user()->username);
             } while (LeaveRequest::where('code',$code)->first() != null);
-
-            $l->leave_request()->create([
-                'code' => $code,
-            ]);
+            $lr->leave_id = $l->id;
+            $lr->code = $code;
+            $lr->save();
         }
-        $l->leave_request()->update([
-            'manager_id' => Auth::user()->manager->manager->id
-        ]);
-        $item = new LeaveRequestLog;
-        $item->leave_request_id = $l->leave_request()->id;
-        $item->comment = 'Leave request submitted';
-        $item->save();
+        $lr->manager_id = Auth::user()->manager->manager->id;
+        $lr->update();
+
+        $msg = $lr->log->count() > 0 ? 'Submitted leave request application' : 'Updated leave request and submitted application';
+
+        $log = new LeaveRequestLog;
+        $log->leave_request_id = $lr->id;
+        $log->comment = $msg;
+        $log->save();
         $l->update([
             'status' => 'submitted',
         ]);
         Auth::user()->manager->manager->notify(new GeneralNotification([
             'title' => Auth::user()->fullname.'\'s leave request awaiting your approval',
-            'url' => route('portal.leave.request.show',$l->leave_request->code),
+            'url' => route('portal.leave.request.show',$lr->code),
         ]));
         Session::flash('success','Leave application submitted successfully to '.Auth::user()->manager->manager->fullname);
-        $this->log(Auth::user()->id, 'Applied for leave with code .'.$item->leave_request->code, $r->path(), 'action');
+        $this->log(Auth::user()->id, 'Applied for leave with code .'.$lr->code, Request()->path(), 'action');
         return response()->json(200);
     }
 
@@ -269,8 +274,4 @@ class LeaveController extends Controller
         return Carbon::parse($r['start_date'])->copy()->addDays($la->allowed - 1)->format('Y-m-d');
     }
 
-    public function get_cdatee()
-    {
-        echo 'got here';
-    }
 }
