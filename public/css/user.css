@@ -56601,3 +56601,33 @@ body {
   background-color: white;
 }
 
+#notifications {
+  position: fixed;
+  top: 50px;
+  right: -320px;
+  bottom: 0;
+  width: 320px;
+  background-color: #fff;
+  color: #333;
+  overflow-y: auto;
+  z-index: 101;
+  -webkit-transition: left 0.3s ease-in-out;
+  transition: left 0.3s ease-in-out;
+  border-left: 2px solid #999;
+}
+
+#notifications.is-active {
+  top: 0;
+  right: 0;
+  -webkit-transition: left 0.3s ease-in-out;
+  transition: left 0.3s ease-in-out;
+}
+
+@media (min-width: 576px) {
+  #notifications {
+    top: 0;
+    right: 0;
+    width: 400px;
+  }
+}
+

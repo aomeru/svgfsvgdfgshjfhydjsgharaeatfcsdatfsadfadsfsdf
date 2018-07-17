@@ -243,7 +243,6 @@ body {
         }
     }
 }
-
 @include media-breakpoint-up(sm) {
     .modal {
         text-align: center;
@@ -278,4 +277,27 @@ body {
 .card-body-tlr {
     border-top-left-radius: 35px;
     background-color: white
+}
+#notifications {
+    position: fixed;
+    top: 50px;
+    right: -320px;
+    bottom: 0;
+    width: 320px;
+    background-color: #fff;
+    color: #333;
+    overflow-y: auto;
+    z-index: 101;
+    transition: left 0.3s ease-in-out;
+    border-left: 2px solid #999;
+    &.is-active {
+        top: 0;
+        right: 0;
+        transition: left 0.3s ease-in-out;
+    }
+    @include media-breakpoint-up(sm) {
+        top: 0;
+        right: 0;
+        width: 400px;
+    }
 }

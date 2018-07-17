@@ -54,7 +54,7 @@ $hr_stage = ['manager_deferred','manager_approved'];
                     Application Status: <em class="text-{{$color[$item->status]}} text-capitalize">{{str_replace('_',' ',$item->status)}}</em>
                 </p>
                 <hr class="my-3">
-                <div class="row">
+                <div class="row text-primary">
                     <div class="col-6 col-sm-4">
                         <p><span class="text-secondary">Leave Type: </span>{{$item->leave->leave_type->title }}</p>
                     </div>
@@ -268,7 +268,7 @@ $hr_stage = ['manager_deferred','manager_approved'];
         $('.select').select2();
 
         var app = new Vue({
-            el : '#app',
+            el : '#portal',
             data : {
                 author : '{{$item->manage_decision_date == null ? "manager" : "hr" }}',
                 pmode : '',

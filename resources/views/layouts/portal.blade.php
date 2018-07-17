@@ -16,10 +16,11 @@
     <body>
 
         <div id="app">
+            @include('partials.portal.nav')
             <div id="portal">
-                @include('partials.portal.nav')
                 @include('partials.portal.main')
             </div>
+            @include('partials.portal.notifications')
         </div>
 
         @yield('page_footer')

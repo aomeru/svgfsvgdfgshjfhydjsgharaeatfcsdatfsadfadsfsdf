@@ -1,5 +1,8 @@
 <?php $count = Auth::user()->unreadNotifications->count(); ?>
-<div id="notif-div"  class="dropdown ml-3 notif d-none d-sm-block">
+<div id="notifications" class="is-active">
+
+</div>
+{{-- <div id="notif-div"  class="dropdown ml-3 notif d-none d-sm-block">
     <button id="notif-button" class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @if($count == 0) disabled @endif>
         <i class="fas fa-bell mr-1 @if($count > 0) fa-2x texxt-danger @endif"></i>@if($count > 0) <span class="badge badge-danger">{{$count}}</span> @endif
     </button>
@@ -19,4 +22,4 @@
         @endforeach
     </div>
     @endif
-</div>
+</div> --}}

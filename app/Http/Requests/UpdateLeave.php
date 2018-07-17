@@ -28,10 +28,15 @@ class UpdateLeave extends FormRequest
      */
     public function rules()
     {
-        $id = Crypt::decrypt($this->lid);
+        $nor = false;
+        try {
+            $id = decrypt($this->id);
+        } catch (DecryptException $e) {
+            $nor = true;
+        }
         $item = Leave::find($id);
-        $la = Auth::user()->leave_allocation()->where('leave_type_id',$item->leave_type_id)->first();
-        if($item == null) return ['leave' => 'exists:leaves'];
+        // $la = Auth::user()->leave_allocation()->where('leave_type_id',$item->leave_type_id)->first();
+        if($item == null || $nor) return ['leave' => 'exists:leaves'];
         if($item->user_id != Auth::user()->id) return ['owner' => 'required',];
 
         $wkd = [0,6]; $s = $this->start_date; $e = $this->end_date;
@@ -51,6 +56,7 @@ class UpdateLeave extends FormRequest
     {
         return [
             'weekday.required' => 'The selected date(s) must be a weekday',
+            'leave.exists' => 'The leave your are trying to update does not exist',
             'leave.exists' => 'The leave your are trying to update does not exist',
             'owner.required' => 'The leave your are trying to update does not belong to you',
             'start_date.required' => 'Please select a start date',

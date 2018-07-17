@@ -18,7 +18,6 @@
         <div class="d-flex jestify-content-end">
             <div class="bc d-flex align-items-center">
                 @yield('bc')
-                @include('partials.portal.notifications')
             </div>
         </div>
     </div>

@@ -91,7 +91,7 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             Route::get('/apply', $con.'create')->name($rkey.'.apply');
             Route::post('/store', $con.'store')->name($rkey.'.store');
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
-            Route::post('/{id}/update', $con.'update')->name($rkey.'.update');
+            Route::post('/update', $con.'update')->name($rkey.'.update');
             Route::get('/{id}/delete', $con.'destroy')->name($rkey.'.delete');
             Route::post('/get-date', $con.'get_cdate');
         });

@@ -139,65 +139,32 @@ class LeaveController extends Controller
         //
     }
 
-    public function update(UpdateLeave $r, $id)
+    public function update(UpdateLeave $r)
     {
-        $id = Crypt::decrypt($id);
+        $id = decrypt($r->id);
         $item = Leave::find($id);
-        $sd = new DateTime($r->start_date); $sdx = $sd->format('Y-m-d');
-        $ed = new DateTime($r->end_date); $edx = $ed->format('Y-m-d');
-        $period = $this->date_range($sdx,$edx);
-        $wkd = [0,6]; $d = 0; $add = 0; $sd_add = false;
-        $hols = $this->get_holiday_array($sd,$ed);
-
-        // return response()->json(['errors' => ['error' => [$hols]]], 422);
-
-        foreach($period as $p)
-        {
-            if(!in_array(date('w',strtotime($p)),$wkd))
-            {
-                if(in_array($p,$hols))
-                {
-                    if($period[0] == $p) $sd_add = true;
-                    $add++;
-                }
-            }
-            $d++;
-        }
-
+        $a = $this->leave_dates($r->start_date, $r->end_date);
         $la = Auth::user()->leave_allocation()->where('leave_type_id',$item->leave_type_id)->first();
-        if($d > $la->allowed) return response()->json(['errors' => ['error' => ['You have selected more days than your allocation for this leave type.']]], 422);
 
-        if($add > 0)
-        {
-            $ed->add(new DateInterval('P'.$add.'D'))->format('Y-m-d');
-            if($sd_add) $sd->add(new DateInterval('P'.$add.'D'))->format('Y-m-d');
-        }
+        if($a['no_days'] > $la->allowed) return response()->json(['errors' => ['error' => ['You have selected more days than your allocation for this leave type.']]], 422);
 
         $rstaff = User::where('email',$r->rstaff)->first();
         if($this->on_leave($rstaff)) return response()->json(['errors' => ['error' => ['The relieving staff selected is on leave, please select someone else.']]], 422);
 
-        $bd = new DateTime($ed->format('Y-m-d'));
-        // return response()->json(['errors' => ['error' => [$bd,$ed]]], 422);
-        do {
-            $bd->add(new DateInterval('P1D'))->format('Y-m-d');
-        } while(in_array(date('w',strtotime($bd->format('Y-m-d'))),$wkd));
-
-        // return response()->json(['errors' => ['error' => [$bd,$ed]]], 422);
+        if(Auth::user()->manager == null) return response()->json(['errors' => ['error' => ['You need to contact HR to update your manager information before you can submit this application.']]], 422);
 
         $update = $item->update([
-            'start_date' => $sd,
-            'end_date' => $ed,
-            'back_on' => $bd,
-            'rstaff_id' => $rstaff->id
+            'start_date' => $a['sd'],
+            'end_date' => $a['ed'],
+            'back_on' => $a['bd'],
+            'rstaff_id' => $rstaff->id,
+            'comment' => $r->comment
         ]);
+
         if($update)
         {
-            if($r->action == 'submit'){
-                $item->update(['comment' => $r->comment]);
-                return $this->make_request($item);
-            }
             $this->log(Auth::user()->id, 'Updated the leave application for: '.$item->id, Request()->path());
-            return response()->json(array('success' => true, 'message' => 'Leave updated'), 200);
+            return $this->make_request($item);
         }
 
         return response()->json(['errors' => ['error' => ['Oops, we were unable to process these changes, please try again']]], 422);
@@ -216,11 +183,11 @@ class LeaveController extends Controller
             $lr->leave_id = $l->id;
             $lr->code = $code;
             $lr->save();
-        }
+        } else { $lr->manager_decision = 'pending'; }
         $lr->manager_id = Auth::user()->manager->manager->id;
         $lr->update();
 
-        $msg = $lr->log->count() > 0 ? 'Submitted leave request application' : 'Updated leave request and submitted application';
+        $msg = $lr->log->count() == 0 ? 'Submitted leave request application' : 'Updated leave request and submitted application';
 
         $log = new LeaveRequestLog;
         $log->leave_request_id = $lr->id;

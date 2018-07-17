@@ -87,7 +87,7 @@
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="unset_alert"><span aria-hidden="true">&times;</span></button>
                             </div>
 
-                            <button class="btn-success btn save-btn mr-2" type="submit" role="button" @if(Auth::user()->manager == null) disabled @endif @click="process_form" v-html="sbtn"></button>
+                            <button class="btn-success btn save-btn mr-2" type="submit" role="button" @if(Auth::user()->manager == null) disabled @endif v-html="sbtn"></button>
 
                             <a class="btn-white btn" href="{{route('portal.leave')}}"><i class="fas fa-times mr-2"></i>Cancel</a>
                         </div>
@@ -167,7 +167,7 @@
     $(document).ready(function() {
         @if(Laratrust::can('create-leave'))
         var app = new Vue({
-            el : '#app',
+            el : '#portal',
             data : {
                 start_date : '',
                 end_date : '',
