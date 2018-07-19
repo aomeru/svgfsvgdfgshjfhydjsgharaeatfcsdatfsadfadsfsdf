@@ -17,9 +17,7 @@
 
         <div id="app">
             @include('partials.portal.nav')
-            <div id="portal">
-                @include('partials.portal.main')
-            </div>
+            @include('partials.portal.main')
             @include('partials.portal.notifications')
         </div>
 
@@ -104,6 +102,10 @@
             }
 
             $(document).ready(function(){
+                $(document).on('click','.notif-toggle',function(){
+                    $('#notifications').toggleClass('is-active');
+                });
+
                 $(document).on('click','.notif-item',function(e){
                     e.preventDefault();
                     var elem = $(this),
@@ -120,7 +122,7 @@
                             _token: token
                         },
                         success: function(response) {
-                            $(load_element).load(location.href + " "+ load_element +">*","");
+                            $('#notifications').load(location.href + " #notifications>*","");
                             if(nurl !== '') window.location.href = nurl;
                         }
                     });

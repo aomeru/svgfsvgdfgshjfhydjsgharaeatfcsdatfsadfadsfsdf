@@ -183,7 +183,7 @@ class LeaveController extends Controller
             $lr->leave_id = $l->id;
             $lr->code = $code;
             $lr->save();
-        } else { $lr->manager_decision = 'pending'; }
+        } else { $lr->manager_decision = 'pending'; $lr->status = 'submitted'; }
         $lr->manager_id = Auth::user()->manager->manager->id;
         $lr->update();
 

@@ -127,6 +127,9 @@ body {
                     color: #ccc;
                     &.active {
                         color: #fff;
+                        &:hover {
+                            color: #fff;
+                        }
                     }
                     &:hover {
                         color: $cyancolor;
@@ -216,30 +219,16 @@ body {
             }
         }
     }
-    .notif {
-        .dropdown-toggle {
+    #notif-button {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        border-color: none;
+        &:hover {
             background-color: transparent;
             outline: none;
             border: none;
             border-color: none;
-            &:hover {
-                background-color: transparent;
-                outline: none;
-                border: none;
-                border-color: none;
-            }
-            &:after {
-                display: none;
-            }
-        }
-        .dropdown-menu {
-            .dropdown-item {
-                cursor: pointer;
-                &:hover {
-                    background-color: #fff;
-                    color: $cyancolor;
-                }
-            }
         }
     }
 }
@@ -289,7 +278,7 @@ body {
     overflow-y: auto;
     z-index: 101;
     transition: left 0.3s ease-in-out;
-    border-left: 2px solid #999;
+    border-left: 2px solid #ccc;
     &.is-active {
         top: 0;
         right: 0;
@@ -297,7 +286,17 @@ body {
     }
     @include media-breakpoint-up(sm) {
         top: 0;
-        right: 0;
+        right: -400px;
         width: 400px;
+    }
+    .list-group {
+        a {
+            color: #666;
+            cursor: pointer;
+            &:hover {
+                background-color: transparent;
+                color: $cyancolor
+            }
+        }
     }
 }

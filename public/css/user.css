@@ -56437,6 +56437,10 @@ body {
   color: #fff;
 }
 
+#portal-left.dark .nav .nav-item .nav-link.active:hover {
+  color: #fff;
+}
+
 #portal-left.dark .nav .nav-item .nav-link:hover {
   color: #03a9f4;
 }
@@ -56533,31 +56537,18 @@ body {
   color: #666;
 }
 
-#portal-right .notif .dropdown-toggle {
+#portal-right #notif-button {
   background-color: transparent;
   outline: none;
   border: none;
   border-color: none;
 }
 
-#portal-right .notif .dropdown-toggle:hover {
+#portal-right #notif-button:hover {
   background-color: transparent;
   outline: none;
   border: none;
   border-color: none;
-}
-
-#portal-right .notif .dropdown-toggle:after {
-  display: none;
-}
-
-#portal-right .notif .dropdown-menu .dropdown-item {
-  cursor: pointer;
-}
-
-#portal-right .notif .dropdown-menu .dropdown-item:hover {
-  background-color: #fff;
-  color: #03a9f4;
 }
 
 @media (min-width: 576px) {
@@ -56613,7 +56604,7 @@ body {
   z-index: 101;
   -webkit-transition: left 0.3s ease-in-out;
   transition: left 0.3s ease-in-out;
-  border-left: 2px solid #999;
+  border-left: 2px solid #ccc;
 }
 
 #notifications.is-active {
@@ -56626,8 +56617,18 @@ body {
 @media (min-width: 576px) {
   #notifications {
     top: 0;
-    right: 0;
+    right: -400px;
     width: 400px;
   }
+}
+
+#notifications .list-group a {
+  color: #666;
+  cursor: pointer;
+}
+
+#notifications .list-group a:hover {
+  background-color: transparent;
+  color: #03a9f4;
 }
 

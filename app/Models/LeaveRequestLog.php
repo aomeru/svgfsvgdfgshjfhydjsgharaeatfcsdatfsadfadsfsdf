@@ -9,7 +9,7 @@ class LeaveRequestLog extends Model
 {
     protected $table = 'leave_request_log';
 
-    protected $fillable = ['user_id','type','comment'];
+    protected $fillable = ['leave_request_id','user_id','type','comment'];
 
     public function leave_request()
     {

@@ -9,7 +9,7 @@ class LeaveRequest extends Model
 {
     protected $table = 'leave_request';
 
-    protected $fillable = ['code','manager_id','manager_decision_date','hr_id','hr_decision_date','status'];
+    protected $fillable = ['code','manager_id','manager_decision','manager_decision_date','hr_id','hr_decision','hr_decision_date','status'];
 
     protected $dates = [
         'created_at',

@@ -3,11 +3,15 @@ $color = [
     'pending' => 'muted',
     'submitted' => 'primary',
     'manager_approved' => 'success',
+    'manager_deferred' => 'success',
     'manager_declined' => 'danger',
     'hr_approved' => 'success',
+    'hr_deferred' => 'success',
     'hr_declined' => 'danger',
     'completed' => 'success',
 ];
+$edit_allow = ['submitted','manager_declined'];
+$cancel_allow = ['submitted','manager_approved','manager_declined','manager_deferred'];
 ?>
 
 @extends('layouts.portal')
@@ -44,7 +48,7 @@ $color = [
 
         <div class="card mb-3 mb-sm-5">
             <div class="card-header bg-dark text-white">
-                <h5 class="card-title m-0">Created Leave</h5>
+                <h5 class="card-title m-0">Leave</h5>
             </div>
             <div class="card-body">
                 @if($clist->count() == 0)
@@ -183,7 +187,7 @@ $color = [
                                         <td class="text-center">{{\Carbon\Carbon::parse($item->leave_request->updated_at)->diffForHumans()}}</td>
 
                                         <td class="text-right">
-                                            @if($item->status != 'completed' && Laratrust::can('update-leave-request'))
+                                            @if(in_array($item->status, $cancel_allow) && Laratrust::can('update-leave-request'))
                                             <a href="{{ Crypt::encrypt($item->id) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
                                             @endif
                                         </td>
@@ -275,7 +279,7 @@ $color = [
 @section('page_footer')
 
 @if(Laratrust::can('create-leave'))
-<div class="modal fade" id="add-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
+{{-- <div class="modal fade" id="add-modal" tabinndex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog sm-w500" role="document">
 		<div class="modal-content">
             <form method="post">
@@ -321,7 +325,7 @@ $color = [
 			</form>
 		</div>
 	</div>
-</div>
+</div> --}}
 @endif
 
 @endsection
@@ -336,70 +340,70 @@ $color = [
 
 <script>
 
-    function switchfunc(elem)
-    {
-        var y = elem.find('option:selected').data('allowed'),
-                elem = '<label for="no-days" class="form-control-label sr-onlyy">Select Number of Days</label><select id="no-days" class="form-control select" style="width: 100%;">';
-        for(x = 1; x <= y; x++)
-        {
-            elem = elem + '<option value="'+x+'">'+x+'</option>';
-        }
-        elem = elem + '</select>';
-        $('#days-wrap').html(elem);
-        $('#no-days').select2();
-    }
+    // function switchfunc(elem)
+    // {
+    //     var y = elem.find('option:selected').data('allowed'),
+    //             elem = '<label for="no-days" class="form-control-label sr-onlyy">Select Number of Days</label><select id="no-days" class="form-control select" style="width: 100%;">';
+    //     for(x = 1; x <= y; x++)
+    //     {
+    //         elem = elem + '<option value="'+x+'">'+x+'</option>';
+    //     }
+    //     elem = elem + '</select>';
+    //     $('#days-wrap').html(elem);
+    //     $('#no-days').select2();
+    // }
 
     $(document).ready(function() {
         $('.data-table').DataTable();
-        $('.select').select2();
-        $('.select-ns').select2({
-            minimumResultsForSearch: Infinity,
-        });
+        // $('.select').select2();
+        // $('.select-ns').select2({
+        //     minimumResultsForSearch: Infinity,
+        // });
 
-        switchfunc($('#ltype'));
+        // switchfunc($('#ltype'));
 
-        $('#ltype').on('change',function(e){
-            switchfunc($(this));
-        });
+        // $('#ltype').on('change',function(e){
+        //     switchfunc($(this));
+        // });
 
-        @if(Laratrust::can('create-leave'))
-        $(document).on('click', '#add-btn', function(e){
+        // @if(Laratrust::can('create-leave'))
+        // $(document).on('click', '#add-btn', function(e){
 
-			e.preventDefault();
+		// 	e.preventDefault();
 
-			var btn = $(this),
-				btn_text = btn.html(),
-				ltype = $("#ltype").val(),
-				start_date = $("#start-date").val(),
-				nodays = $("#no-days").val(),
-				token ='{{ Session::token() }}',
-				url = "{{route('portal.leave.store')}}";
-				redir = "{{route('portal.leave.edit', ':id')}}";
+		// 	var btn = $(this),
+		// 		btn_text = btn.html(),
+		// 		ltype = $("#ltype").val(),
+		// 		start_date = $("#start-date").val(),
+		// 		nodays = $("#no-days").val(),
+		// 		token ='{{ Session::token() }}',
+		// 		url = "{{route('portal.leave.store')}}";
+		// 		redir = "{{route('portal.leave.edit', ':id')}}";
 
-			$.ajax({
-				type: "POST",
-				url: url,
-				data: {
-					ltype: ltype,
-					nodays: nodays,
-					start_date: start_date,
-					_token: token
-				},
-				beforeSend: function () {
-					btn.html('<i class="fas fa-spinner fa-spin"></i>');
-				},
-				success: function(response) {
-                    redir = redir.replace(':id', response.msg);
-                    window.location.href = redir;
-				},
-				error: function(jqXHR, exception){
-					btn.html(btn_text);
-					var error = getErrorMessage(jqXHR, exception);
-                    swal_alert('Failed to create leave',error,'error','Go Back');
-				}
-			});
-        });
-        @endif
+		// 	$.ajax({
+		// 		type: "POST",
+		// 		url: url,
+		// 		data: {
+		// 			ltype: ltype,
+		// 			nodays: nodays,
+		// 			start_date: start_date,
+		// 			_token: token
+		// 		},
+		// 		beforeSend: function () {
+		// 			btn.html('<i class="fas fa-spinner fa-spin"></i>');
+		// 		},
+		// 		success: function(response) {
+        //             redir = redir.replace(':id', response.msg);
+        //             window.location.href = redir;
+		// 		},
+		// 		error: function(jqXHR, exception){
+		// 			btn.html(btn_text);
+		// 			var error = getErrorMessage(jqXHR, exception);
+        //             swal_alert('Failed to create leave',error,'error','Go Back');
+		// 		}
+		// 	});
+        // });
+        // @endif
 
     });
 

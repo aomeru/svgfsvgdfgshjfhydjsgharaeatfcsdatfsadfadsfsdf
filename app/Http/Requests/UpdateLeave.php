@@ -7,6 +7,7 @@ use App\Traits\LeaveTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class UpdateLeave extends FormRequest
 {
@@ -64,6 +65,7 @@ class UpdateLeave extends FormRequest
             'start_date.unique' => 'The selected start date is an holiday',
             'start_date.not_in' => 'The selected start date is an holiday',
             'end_date.required' => 'Please select an end date',
+            'end_date.unique' => 'The selected end date is an holiday',
             'end_date.date' => 'Your end date must be in this format "yyyy-mm-dd"',
             'end_date.not_in' => 'The selected end date is an holiday',
             'end_date.after_or_equal' => 'Your end date must be after the start date',

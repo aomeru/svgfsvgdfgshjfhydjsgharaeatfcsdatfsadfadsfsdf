@@ -18,8 +18,8 @@ class DashboardController extends Controller
 
     public function read_notif(Request $r)
     {
-        // if($r->id == 'markall') return $this->read_all_notif();
-        // Auth::user()->unreadnotifications()->where('id',$r->id)->first()->markAsRead();
+        if($r->id == 'markall') return $this->read_all_notif();
+        Auth::user()->unreadnotifications()->where('id',$r->id)->first()->markAsRead();
         return response()->json(['',200]);
     }
 

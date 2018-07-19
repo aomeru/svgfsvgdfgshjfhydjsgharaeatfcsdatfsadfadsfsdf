@@ -11,7 +11,8 @@ trait LeaveTrait
 {
     public function on_leave($user)
     {
-        $x = $user->leave()->has('leave_request')->where('status','hr_approved')->orderby('created_at','desc')->first();
+        return false;
+        $x = $user->leave()->where('status','hr_approved')->orderby('created_at','desc')->first();
         return $x == null ? false : true;
     }
 
@@ -29,11 +30,6 @@ trait LeaveTrait
             if(!$this->on_leave($v)) array_push($x,$v);
         }
         return $x;
-    }
-
-    public function check_start_date($date)
-    {
-
     }
 
     public function date_range($first, $last, $step = '+1 day', $output_format = 'Y-m-d' )
@@ -110,5 +106,5 @@ trait LeaveTrait
         ];
     }
 
-    
+
 }

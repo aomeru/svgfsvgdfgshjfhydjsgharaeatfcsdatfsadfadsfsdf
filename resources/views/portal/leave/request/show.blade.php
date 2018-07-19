@@ -3,13 +3,17 @@ $color = [
     'pending' => 'muted',
     'submitted' => 'primary',
     'manager_approved' => 'success',
+    'manager_deferred' => 'success',
     'manager_declined' => 'danger',
     'hr_approved' => 'success',
+    'hr_deferred' => 'success',
     'hr_declined' => 'danger',
     'completed' => 'success',
 ];
 $manager_stage = ['submitted'];
-$hr_stage = ['manager_deferred','manager_approved'];
+$hr_stage = ['manager_deferred','manager_approved','hr_declined'];
+$edit = false;
+$user_edit = in_array($item->status,['submitted','manager_declined']) && Auth::id() == $item->leave->user_id ? true : false;
 ?>
 
 @extends('layouts.portal')
@@ -50,23 +54,39 @@ $hr_stage = ['manager_deferred','manager_approved'];
                 <h5 class="card-title mb-0">Application</h5>
             </div>
             <div class="card-body">
-                <p class="text-right">
-                    Application Status: <em class="text-{{$color[$item->status]}} text-capitalize">{{str_replace('_',' ',$item->status)}}</em>
-                </p>
+                <div class="@if($user_edit) d-flex justify-content-between @endif">
+                    @if($user_edit)
+                        <a href="{{ route('portal.leave.edit', Crypt::encrypt($item->leave->id)) }}" class="btn btn-primary btn-sm" title="Edit {{ Auth::user()->fullname.'-'.strtotime($item->leave->created_at) }} leave"><i class="fas fa-pencil-alt mr-2"></i> Edit</a>
+                    @endif
+                    <p class="text-right mb-0">
+                        Application Status: <em class="text-{{$color[$item->status]}} text-capitalize">{{str_replace('_',' ',$item->status)}}</em>
+                    </p>
+                </div>
                 <hr class="my-3">
                 <div class="row text-primary">
                     <div class="col-6 col-sm-4">
-                        <p><span class="text-secondary">Leave Type: </span>{{$item->leave->leave_type->title }}</p>
+                        <p>
+                            <span class="text-secondary">Leave Type: </span>{{$item->leave->leave_type->title }}
+                        </p>
                     </div>
                     <div class="col-6 col-sm-4">
-                        <p><span class="text-secondary">Start date: </span>{{ date('jS M, Y', strtotime($item->leave->start_date)) }}</p>
+                        <p>
+                            <span class="text-secondary">Start date: </span>
+                            {!! $item->deference == null ? date('jS M, Y', strtotime($item->leave->start_date)) : '<em><s class="text-danger">'.date('jS M, Y', strtotime($item->leave->start_date)).'</s></em> '.date('jS M, Y', strtotime($item->deference->start_date)) !!}
+                        </p>
                     </div>
 
                     <div class="col-6 col-sm-4">
-                        <p><span class="text-secondary">End date: </span>{{ date('jS M, Y', strtotime($item->leave->end_date)) }}</p>
+                        <p>
+                            <span class="text-secondary">End date: </span>
+                            {!! $item->deference == null ? date('jS M, Y', strtotime($item->leave->end_date)) : '<em><s class="text-danger">'.date('jS M, Y', strtotime($item->leave->end_date)).'</s></em> '.date('jS M, Y', strtotime($item->deference->end_date)) !!}
+                        </p>
                     </div>
                     <div class="col-6 col-sm-4">
-                        <p><span class="text-secondary">Date of Resumption: </span>{{ date('jS M, Y', strtotime($item->leave->back_on)) }}</p>
+                        <p>
+                            <span class="text-secondary">Date of Resumption: </span>
+                            {!! $item->deference == null ? date('jS M, Y', strtotime($item->leave->back_on)) : '<em><s class="text-danger">'.date('jS M, Y', strtotime($item->leave->back_on)).'</s></em> '.date('jS M, Y', strtotime($item->deference->back_on)) !!}
+                        </p>
                     </div>
 
                     <div class="col-6 col-sm-4">
@@ -83,8 +103,31 @@ $hr_stage = ['manager_deferred','manager_approved'];
 
         <div class="row mt-3">
             <div class="col-sm-6">
+                @if($item->deference != null)
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">Leave Deference</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-primary">
+                                <div class="col-6">
+                                    <p class="mb-0"><span class="text-secondary">Start date: </span>{{ date('jS M, Y', strtotime($item->deference->start_date)) }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-0"><span class="text-secondary">End date: </span>{{ date('jS M, Y', strtotime($item->deference->end_date)) }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-0"><span class="text-secondary">Date of Resumption: </span>{{ date('jS M, Y', strtotime($item->deference->back_on)) }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-0 text-capitalize"><span class="text-secondary">Decision by: </span>{{ $item->deference->type }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="card">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="card-title mb-0">Employee Leave Action</h5>
                     </div>
                     <div class="card-body">
@@ -111,7 +154,7 @@ $hr_stage = ['manager_deferred','manager_approved'];
                         </div>
 
 
-                        @if($item->manager->id == Auth::user()->id && in_array($item->status,$manager_stage))
+                        @if($item->manager_id == Auth::user()->id && in_array($item->status,$manager_stage))
                             <hr class="my-3">
                             <h5 class="text-primary">Manager Action</h5>
                             <div class="form-group">
@@ -131,7 +174,7 @@ $hr_stage = ['manager_deferred','manager_approved'];
                                         <div class="form-group">
                                             <label for="start-date" class="form-control-label">Deferred Start Date</label>
                                             <div class="input-group">
-                                                <input id="start-date" type="date" class="form-control" placeholder="Start Date" v-model="mindate" @change="set_max_date" min="{{ date('Y-m-d') }}">
+                                                <input id="start-date" type="date" class="form-control" placeholder="Start Date" v-model="mindate" min="{{ date('Y-m-d') }}">
                                                 <label for="start-date" class="input-group-append mb-0">
                                                     <span class="input-group-text"><span class="fas fa-calendar"></span></span>
                                                 </label>
@@ -153,23 +196,82 @@ $hr_stage = ['manager_deferred','manager_approved'];
                                 </div>
                             </div>
 
-                            <div class="alert text-center alert-dismissible fade show" role="alert" v-if="pmsg" v-bind:class="{ 'alert-danger': perror, 'alert-success': psuccess }">
-                                <i class="fas mr-2" v-bind:class="{ 'fa-times': perror, 'fa-check': psuccess }"></i> @{{presponse}}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" v-if="perror">
+                                <p class="mb-0" v-html="presponse"></p>
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="unset_alert"><span aria-hidden="true">&times;</span></button>
                             </div>
 
                             <div v-if="defer">
-
                                 <button class="btn btn-success mr-1" type="button" role="button" @click="process_action" v-html="adbtn"></button>
 
-                                <button class="btn btn-default mr-1" type="button" role="button" @click="set_defer_state"><i class="fas fa-times mr-2"></i>Cancel</button>
-
+                                <button class="btn btn-default mr-1" type="button" role="button" @click="defer = false"><i class="fas fa-times mr-2"></i>Cancel</button>
                             </div>
+
                             <div v-else>
 
                                 <button class="btn btn-success mr-1" type="button" role="button" @click="set_option('approve')" v-html="abtn"></button>
 
-                                <button class="btn btn-secondary mr-1" type="button" role="button" @click="set_defer_state"><i class="fas fa-arrow-right mr-2"></i>Defer</button>
+                                <button class="btn btn-secondary mr-1" type="button" role="button" @click="defer = true"><i class="fas fa-arrow-right mr-2"></i>Defer</button>
+
+                                <button class="btn btn-danger mr-1" type="button" role="button" @click="set_option('decline')" v-html="dbtn"></button>
+
+                            </div>
+
+                            <hr class="my-3">
+                        @endif
+
+
+                        @if($item->hr_id == Auth::user()->id && in_array($item->status,$hr_stage))
+                            <hr class="my-3">
+                            <h5 class="text-primary">HR Action</h5>
+
+                            <div class="form-group">
+                                <textarea rows="3" class="form-control" placeholder="Comment" v-model="comment"></textarea>
+                            </div>
+                            <div v-if="defer">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="start-date" class="form-control-label">Deferred Start Date</label>
+                                            <div class="input-group">
+                                                <input id="start-date" type="date" class="form-control" placeholder="Start Date" v-model="mindate" min="{{ date('Y-m-d') }}">
+                                                <label for="start-date" class="input-group-append mb-0">
+                                                    <span class="input-group-text"><span class="fas fa-calendar"></span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="start-date" class="form-control-label">Deferred End Date</label>
+                                            <div class="input-group">
+                                                <input id="end-date" type="date" class="form-control" placeholder="End Date" :min="mindate" :max="maxdate" v-model="end_date">
+                                                <label for="end-date" class="input-group-append mb-0">
+                                                    <span class="input-group-text"><span class="fas fa-calendar"></span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert" v-if="perror">
+                                <p class="mb-0" v-html="presponse"></p>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="unset_alert"><span aria-hidden="true">&times;</span></button>
+                            </div>
+
+                            <div v-if="defer">
+                                <button class="btn btn-success mr-1" type="button" role="button" @click="process_action" v-html="adbtn"></button>
+
+                                <button class="btn btn-default mr-1" type="button" role="button" @click="defer = false"><i class="fas fa-times mr-2"></i>Cancel</button>
+                            </div>
+
+                            <div v-else>
+
+                                <button class="btn btn-success mr-1" type="button" role="button" @click="set_option('approve')" v-html="abtn"></button>
+
+                                <button class="btn btn-secondary mr-1" type="button" role="button" @click="defer = true"><i class="fas fa-arrow-right mr-2"></i>Defer</button>
 
                                 <button class="btn btn-danger mr-1" type="button" role="button" @click="set_option('decline')" v-html="dbtn"></button>
 
@@ -262,22 +364,17 @@ $hr_stage = ['manager_deferred','manager_approved'];
 <script>
 
     $(document).ready(function() {
-        $('.data-table').DataTable({
-            "order": []
-        });
-        $('.select').select2();
 
         var app = new Vue({
             el : '#portal',
             data : {
-                author : '{{$item->manage_decision_date == null ? "manager" : "hr" }}',
+                author : '{{in_array($item->status, ["submitted","manager_declined"]) ? "manager" : "hr" }}',
                 pmode : '',
                 hr : '',
                 comment : '',
                 defer : false,
-                start_date : '',
-                end_date : '{{$item->leave->end_date}}',
-                mindate : '{{$item->leave->start_date}}',
+                end_date : '{{$item->deference == null ? $item->leave->end_date : $item->deference->end_date}}',
+                mindate : '{{$item->deference == null ? $item->leave->start_date : $item->deference->start_date}}',
                 maxdate : '',
                 token : '{{ Session::token() }}',
                 button : {
@@ -299,17 +396,16 @@ $hr_stage = ['manager_deferred','manager_approved'];
                     this.pmode = v
                     this.process_action()
                 },
-                set_defer_state : function(){
-                    this.defer = this.defer === true ? false : true
-                },
                 set_max_date : function(){
-                    let vm = this
+                    let self = this
                     axios.post('/portal/leave/my-leave/get-date', {
-                        params: { start_date: vm.mindate, allowed: {{$item->leave->user->leave_allocation()->where('leave_type_id',$item->leave->leave_type_id)->value('allowed')}}, _token: vm.token }
-                    }).then(function(response) {vm.maxdate = response.data;}).catch(function(error){ console.log(error); });
-                },
-                set_start_date : function(){
-                    this.start_date = this.mindate
+                        start_date : this.mindate,
+                        ltype : '{{Crypt::encrypt($item->leave->user->leave_allocation()->where("leave_type_id",$item->leave->leave_type->id)->value("id"))}}',
+                    }).then((response) => {
+                        self.maxdate = response.data
+                    }).catch((error) => {
+                        console.log(error)
+                    });
                 },
                 set_loading : function () {
                     if(this.pmode === 'approve') {
@@ -337,8 +433,9 @@ $hr_stage = ['manager_deferred','manager_approved'];
                     axios.post(url, {
                         code : '{{$item->code}}',
                         hr : this.hr,
+                        author : this.author,
                         pmode : this.pmode,
-                        start_date : this.start_date,
+                        start_date : this.mindate,
                         end_date : this.end_date,
                         comment : this.comment
                     }).then((response) => {
@@ -354,64 +451,26 @@ $hr_stage = ['manager_deferred','manager_approved'];
                 }
             },
             created(){
-                this.set_start_date()
+                this.set_max_date()
                 this.abtn = this.button.approve
                 this.dbtn = this.button.decline
                 this.adbtn = this.button.approve_defer
             },
             watch : {
                 mindate : function(){
-                    this.set_start_date()
+                    this.set_max_date()
                 },
                 defer : function(){
                     if(this.defer === true) this.pmode = 'defer'; else this.pmode = ''
                 }
+            },
+            mounted(){
+                $('.data-table').DataTable({
+                    "order": []
+                });
+                $('.select').select2();
             }
         });
-
-
-
-        // $('#edit-modal').modal('show');
-
-        // $(document).on('click', '#edit-btn', function(e){
-
-		// 	e.preventDefault();
-
-        //     var btn = $(this),
-		// 		btn_text = btn.html(),
-		// 		users = $("#users").val(),
-        //         user_unit = $("#user-unit").is(':checked'),
-		// 		token ='{{ Session::token() }}',
-		// 		url = "{{route('managers.update', ':id')}}";
-        //         url = url.replace(':id',"{{Crypt::encrypt($item->id)}}");
-
-		// 	$.ajax({
-		// 		type: "PUT",
-		// 		url: url,
-		// 		data: {
-		// 			user_unit: user_unit,
-		// 			users: users,
-		// 			_token: token
-		// 		},
-		// 		beforeSend: function () {
-		// 			btn.html('<i class="fas fa-spinner fa-spin"></i>');
-		// 		},
-		// 		success: function(response) {
-		// 			btn.html(btn_text);
-        //             $('#edit-modal').modal('hide');
-		// 			swal_alert('Manager subordinates updated','','success','Continue');
-        //             window.setTimeout(function(){
-        //                 window.location.href = "{{route('managers.show',Crypt::encrypt($item->id))}}";
-        //             },1000);
-		// 		},
-		// 		error: function(jqXHR, exception){
-		// 			btn.html(btn_text);
-		// 			var error = getErrorMessage(jqXHR, exception);
-        //             swal_alert('Failed to update Manager subordinates',error,'error','Go Back');
-		// 		}
-		// 	});
-        // });
-
     });
 
 </script>
