@@ -15,7 +15,7 @@
 
     @if(Session::has('warning'))
     <div class="alert alert-warning bg-warning text-white text-center mb-5 alert-dismissible fade show" role="alert">
-		<i class="fas fa-exclamation-triangle ml-2"></i> {!! session('error') !!}
+		<i class="fas fa-exclamation-triangle ml-2"></i> {!! session('warning') !!}
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	</div>
 	@endif

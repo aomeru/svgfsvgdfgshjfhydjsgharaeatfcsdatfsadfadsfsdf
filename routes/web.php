@@ -18,7 +18,7 @@ Route::get('/process', 'App\LoginController@auth_login')->name('process_login');
 Route::get('/logout', 'App\LoginController@logout')->name('logout');
 Route::get('/test', 'App\AppController@test');
 
-Route::prefix('portal')->middleware('auth')->group(function(){
+Route::prefix('portal')->middleware(['auth','is-user'])->group(function(){
     Route::get('/', 'Portal\DashboardController@index')->middleware('permission:dashboard')->name('portal');
 
     Route::post('/', 'Portal\DashboardController@read_notif')->name('read.notif');
@@ -93,6 +93,7 @@ Route::prefix('portal')->middleware('auth')->group(function(){
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
             Route::post('/update', $con.'update')->name($rkey.'.update');
             Route::get('/{id}/delete', $con.'destroy')->name($rkey.'.delete');
+            Route::get('/{id}/cancel', $con.'cancel')->name($rkey.'.cancel');
             Route::post('/get-date', $con.'get_cdate');
         });
 

@@ -9,6 +9,7 @@ $color = [
     'hr_deferred' => 'success',
     'hr_declined' => 'danger',
     'completed' => 'success',
+    'called-off' => 'warning',
 ];
 $edit_allow = ['submitted','manager_declined'];
 $cancel_allow = ['submitted','manager_approved','manager_declined','manager_deferred'];
@@ -187,8 +188,8 @@ $cancel_allow = ['submitted','manager_approved','manager_declined','manager_defe
                                         <td class="text-center">{{\Carbon\Carbon::parse($item->leave_request->updated_at)->diffForHumans()}}</td>
 
                                         <td class="text-right">
-                                            @if(in_array($item->status, $cancel_allow) && Laratrust::can('update-leave-request'))
-                                            <a href="{{ Crypt::encrypt($item->id) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
+                                            @if(in_array($item->status, $cancel_allow) && Laratrust::can('delete-leave'))
+                                                <a href="{{ route('portal.leave.cancel', Crypt::encrypt($item->id)) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
                                             @endif
                                         </td>
 

@@ -21,7 +21,7 @@
 
             <div class="card-body py-5">
 
-                <form v-on:submit.prevent>
+                <form v-on:submit.prevent="process_form">
                     <div class="row">
                         <div class="col-sm-6 offset-sm-3">
 

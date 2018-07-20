@@ -41,7 +41,6 @@ class LeaveController extends Controller
     public function index()
     {
         // get last leave with request
-
         $this->log(Auth::user()->id, 'Opened the my leave page.', Request()->path());
         return view('portal.leave.leave.index', [
             'on_leave' => $this->on_leave(Auth::user()),
@@ -56,7 +55,16 @@ class LeaveController extends Controller
 
     public function create()
     {
-        // dd('dd');
+        if($this->on_leave(Auth::user()))
+        {
+            Session::flash('error','You can\'t start a new leave application until you resume.');
+            return redirect()->back();
+        }
+        if(Auth::user()->leave()->whereIn('status',['hr_approved','hr_deferred'])->count() > 0)
+        {
+            Session::flash('error','You already have an approved leave application.');
+            return redirect()->back();
+        }
         return view('portal.leave.leave.create', [
 			'las' => Auth::user()->leave_allocation()->whereHas('leave_type',function($q){ $q->orderby('title'); })->get(),
             'col' => $this->get_rcolleagues(Auth::user()),
@@ -72,7 +80,7 @@ class LeaveController extends Controller
         $id = decrypt($r->ltype);
         $la = LeaveAllocation::find($id);
 
-        $leave = Auth::user()->leave()->where('leave_type_id',$la->leave_type_id)->whereNotIn('status',['completed'])->orderby('created_at','desc')->first();
+        $leave = Auth::user()->leave()->where('leave_type_id',$la->leave_type_id)->whereNotIn('status',['completed','called-off'])->orderby('created_at','desc')->first();
         if($leave != null) return response()->json(array('success' => false, 'errors' => ['errors' => ['You have an existing saved record for this leave type, edit it to continue if not submitted.']]), 422);
 
         $a = $this->leave_dates($r->start_date, $r->end_date);
@@ -223,6 +231,39 @@ class LeaveController extends Controller
         }
 
 		$did = $item->id;
+
+		if($item->delete()){
+            $this->log(Auth::user()->id, 'Deleted leave record with id .'.$did, Request()->path(),'action');
+            Session::flash('success','Leave record deleted');
+            return redirect()->route('portal.leave');
+        }
+
+		Session::flash('error','Could not process your request');
+        return redirect()->back();
+    }
+
+    public function cancel($id)
+    {
+        $id = Crypt::decrypt($id);
+		$item = Leave::find($id);
+
+        if($item == null)
+        {
+            Session::flash('error','This leave record does not exists');
+            return redirect()->back();
+        }
+
+        if(in_array($item->status, ['hr_deferred','hr_approved','hr_declined','complete','called-off']))
+        {
+            Session::flash('error','The leave request is already being processed, you can no longer cancel it');
+            return redirect()->back();
+        }
+
+        $did = $item->id;
+
+        $item->leave_request->deference()->delete();
+        $item->leave_request->log()->delete();
+        $item->leave_request()->delete();
 
 		if($item->delete()){
             $this->log(Auth::user()->id, 'Deleted leave record with id .'.$did, Request()->path(),'action');

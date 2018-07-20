@@ -9,6 +9,7 @@ $color = [
     'hr_deferred' => 'success',
     'hr_declined' => 'danger',
     'completed' => 'success',
+    'called-off' => 'warning',
 ];
 $manager_stage = ['submitted'];
 $hr_stage = ['manager_deferred','manager_approved','hr_declined'];
@@ -221,7 +222,7 @@ $user_edit = in_array($item->status,['submitted','manager_declined']) && Auth::i
                         @endif
 
 
-                        @if($item->hr_id == Auth::user()->id && in_array($item->status,$hr_stage))
+                        @if($item->hr_id == Auth::user()->id && !in_array($item->status,$hr_stage))
                             <hr class="my-3">
                             <h5 class="text-primary">HR Action</h5>
 

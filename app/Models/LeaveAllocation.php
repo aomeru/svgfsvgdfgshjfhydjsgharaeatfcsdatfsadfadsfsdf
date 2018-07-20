@@ -9,6 +9,8 @@ class LeaveAllocation extends Model
 {
     protected $table = 'leave_allocation';
 
+    protected $fillable = ['allowed'];
+
     public function leave_type()
 	{
 		return $this->belongsTo(LeaveType::class);

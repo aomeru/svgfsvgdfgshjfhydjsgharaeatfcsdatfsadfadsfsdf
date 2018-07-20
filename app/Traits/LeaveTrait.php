@@ -11,9 +11,19 @@ trait LeaveTrait
 {
     public function on_leave($user)
     {
-        return false;
-        $x = $user->leave()->where('status','hr_approved')->orderby('created_at','desc')->first();
-        return $x == null ? false : true;
+        $check = false; $exit = false;
+        $x = $user->leave()->whereIn('status',['hr_approved','hr_deferred'])->orderby('created_at','desc')->get();
+        foreach($x as $y)
+        {
+            $r = $this->date_range($y->start_date,$y->end_date);
+            foreach($r as $d)
+            {
+                if(date('Y-m-d') == $d) $check = true;
+                if($check) break;
+            }
+            if($check) break;
+        }
+        return $check;
     }
 
     public function get_colleagues($user)

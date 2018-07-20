@@ -152,6 +152,7 @@ class LoginController extends Controller
         $photo = $this->get_image($t);
         if($photo) $new->photo = $photo;
         $new->save();
+        $new->attachRole('employee');
         return $new;
     }
 
