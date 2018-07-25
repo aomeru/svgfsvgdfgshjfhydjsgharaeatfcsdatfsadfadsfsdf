@@ -46,7 +46,7 @@ class LeaveController extends Controller
             'on_leave' => $this->on_leave(Auth::user()),
 			'clist' => Auth::user()->leave()->whereIn('status',['pending','submitted','manager_declined'])->get(),
 			'alist' => Auth::user()->leave()->whereNotIn('status',['completed','pending','manager_declined'])->get(),
-			'calist' => Auth::user()->leave()->where('status','completed')->get(),
+			'calist' => Auth::user()->leave()->whereIn('status',['completed','called_off'])->get(),
 			'las' => Auth::user()->leave_allocation()->whereHas('leave_type',function($q){ $q->orderby('title'); })->get(),
             'nav' => 'leave',
 			'subnav' => 'leave',

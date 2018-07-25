@@ -53,12 +53,22 @@
         </li>
         @endif
 
-        <li class="nav-item"><a href="" class="nav-link"><i class="fas fa-chart-line fa-fw mr-2"></i>KPI Objectives</a></li>
+
+        @if(Laratrust::can('*-kpi*'))
+            <li class="nav-item">
+                <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'kpi') sub-active @endif"><i class="fas fa-chart-line fa-fw mr-2"></i>KPI</a>
+                <ul class="sub-nav flex-column ml-4 pl-4">
+                    @if(Laratrust::can('*-kpi-settings'))
+                        <li class="sub-nav-item"><a href="{{route('portal.kpi.settings')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'settings') active @endif"><i class="fas fa-cogs fa-fw mr-2"></i>KPI Settings</a></li>
+                    @endif
+                </ul>
+            </li>
+        @endif
 
         @if(Laratrust::can('*-user|*-manager'))
         <li class="nav-item">
             <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'users') sub-active @endif"><i class="far fa-user-circle fa-fw mr-2"></i>Users</a>
-            <ul id="testuser" class="sub-nav flex-column ml-4 pl-4">
+            <ul class="sub-nav flex-column ml-4 pl-4">
                 @if(Laratrust::can('*-user'))<li class="sub-nav-item"><a href="{{route('portal.users')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'all-users') active @endif"><i class="fas fa-users fa-fw mr-2"></i>All Users</a></li>@endif
                 @if(Laratrust::can('*-manager'))<li class="sub-nav-item"><a href="{{route('managers.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'managers') active @endif"><i class="fas fa-user-tie fa-fw mr-2"></i>Managers</a></li>@endif
             </ul>
@@ -68,7 +78,7 @@
         @if(Laratrust::can('*-department|*-unit|*-role|*-permission'))
             <li class="nav-item">
                 <a class="nav-link has-sub-nav @if(isset($nav) && $nav == 'settings') sub-active @endif"><i class="fas fa-cogs fa-fw mr-2"></i>Settings</a>
-                <ul id="testuser" class="sub-nav flex-column ml-4 pl-4">
+                <ul class="sub-nav flex-column ml-4 pl-4">
                     @if(Laratrust::can('read-department|read-unit'))<li class="sub-nav-item"><a href="{{ route('portal.depts') }}" class="sub-nav-link @if(isset($subnav) && $subnav == 'departments-and-units') active @endif"><i class="fas fa-university fa-fw mr-2"></i>Departments & Units</a></li>@endif
 
                     @if(Laratrust::can('read-role'))<li class="sub-nav-item"><a href="{{route('roles.index')}}" class="sub-nav-link @if(isset($subnav) && $subnav == 'roles') active @endif"><i class="fas fa-user-shield fa-fw mr-2"></i>Roles</a></li>@endif

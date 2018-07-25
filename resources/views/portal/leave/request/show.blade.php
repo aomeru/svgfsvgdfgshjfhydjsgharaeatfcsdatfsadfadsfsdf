@@ -15,6 +15,7 @@ $manager_stage = ['submitted'];
 $hr_stage = ['manager_deferred','manager_approved','hr_declined'];
 $edit = false;
 $user_edit = in_array($item->status,['submitted','manager_declined']) && Auth::id() == $item->leave->user_id ? true : false;
+$call_off_request = in_array($item->status,['hr_approved','hr_deferred']) && Auth::id() == $item->leave->user_id && date('Y-m-d') < $item->end_date ? true : false;
 ?>
 
 @extends('layouts.portal')
@@ -222,7 +223,7 @@ $user_edit = in_array($item->status,['submitted','manager_declined']) && Auth::i
                         @endif
 
 
-                        @if($item->hr_id == Auth::user()->id && !in_array($item->status,$hr_stage))
+                        @if($item->hr_id == Auth::user()->id && in_array($item->status,$hr_stage))
                             <hr class="my-3">
                             <h5 class="text-primary">HR Action</h5>
 
@@ -279,6 +280,12 @@ $user_edit = in_array($item->status,['submitted','manager_declined']) && Auth::i
                             </div>
 
                             <hr class="my-3">
+                        @endif
+
+
+                        @if($call_off_request)
+                            <hr class="my-3">
+                            <a href="" class="btn btn-warning" title="Call off leave request"><i class="fas fa-angle-double-right mr-2"></i>Request Call-Off</a>
                         @endif
                     </div>
                 </div>

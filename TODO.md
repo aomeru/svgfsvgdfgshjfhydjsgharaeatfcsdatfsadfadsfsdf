@@ -37,4 +37,6 @@ LEAVE
     CHECKS
         On leave check
 
-Check logging
+CHECK LOGGING
+
+KPI

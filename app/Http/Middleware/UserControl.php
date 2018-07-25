@@ -19,13 +19,17 @@ class UserControl
     public function handle($request, Closure $next)
     {
         // dd('working');
-        if($this->on_leave(Auth::user()))
+        // if($this->on_leave(Auth::user()))
         {
             $leaves = Auth::user()->leave()->whereIn('status',['hr_approved','hr_deferred'])->where('end_date','<',date('Y-m-d'))->orderby('created_at','desc')->get();
+            // dd($leaves);
             foreach($leaves as $y)
             {
                 $y->update([
-                    'staus' => 'completed'
+                    'status' => 'completed'
+                ]);
+                $y->leave_request()->update([
+                    'status' => 'completed'
                 ]);
             }
         }

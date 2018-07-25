@@ -9,7 +9,7 @@ $color = [
     'hr_deferred' => 'success',
     'hr_declined' => 'danger',
     'completed' => 'success',
-    'called-off' => 'warning',
+    'called_off' => 'warning',
 ];
 $edit_allow = ['submitted','manager_declined'];
 $cancel_allow = ['submitted','manager_approved','manager_declined','manager_deferred'];
@@ -48,87 +48,6 @@ $cancel_allow = ['submitted','manager_approved','manager_declined','manager_defe
         </div>
 
         <div class="card mb-3 mb-sm-5">
-            <div class="card-header bg-dark text-white">
-                <h5 class="card-title m-0">Leave</h5>
-            </div>
-            <div class="card-body">
-                @if($clist->count() == 0)
-                    <p class="alert alert-secondary mb-0">
-                        You have no created leave record
-                    </p>
-                @else
-                    <div class="table-responsive">
-
-                        <table class="table table-striped table-bordered table-hover nowrap data-table" width="100%" data-page-length="25">
-
-                            <thead>
-                                <tr class="active">
-                                    <th>#</th>
-                                    <th>Leave</th>
-                                    <th>Type</th>
-                                    <th class="text-center">Start Date</th>
-                                    <th class="text-center">End Date</th>
-                                    <th class="text-center">Return Date</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Last Modified</th>
-                                    <th class="text-right">Actions</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                @php $row_count = 1 @endphp
-
-                                @foreach($clist as $item)
-
-                                    <tr>
-
-                                        <td>{{ $row_count }}</td>
-
-                                        <td class="text-uppercase">
-                                            <a href="{{ route('portal.leave.edit', Crypt::encrypt($item->id)) }}" class="text-underline" title="Edit {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave">
-                                                {{ $item->leave_request == null ? Auth::user()->username.'-'.strtotime($item->created_at) : $item->leave_request->code }}
-                                            </a>
-                                        </td>
-
-                                        <td>{{ $item->leave_type->title }}</td>
-
-                                        <td class="text-center">{{ date('jS M, Y', strtotime($item->start_date)) }}</td>
-
-                                        <td class="text-center">{!! $item->end_date == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->end_date)) !!}</td>
-
-                                        <td class="text-center">{!! $item->back_on == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->back_on)) !!}</td>
-
-                                        <td class="text-center text-{{$color[$item->status]}}">{{ $item->status }}</td>
-
-                                        <td class="text-center">{{\Carbon\Carbon::parse($item->updated_at)->diffForHumans()}}</td>
-
-                                        <td class="text-right">
-                                            @if(Laratrust::can('update-leave'))
-                                                <a href="{{ route('portal.leave.edit', Crypt::encrypt($item->id)) }}" class="btn btn-primary btn-sm text-white" title="Edit {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave"><i class="fas fa-pencil-alt"></i></a>
-                                            @endif
-
-                                            @if(Laratrust::can('delete-leave') && $item->status == 'pending')
-                                                <a href="{{ route('portal.leave.delete', Crypt::encrypt($item->id)) }}" class="btn btn-danger btn-sm text-white" title="Delete {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave"><i class="far fa-trash-alt"></i></a>
-                                            @endif
-                                        </td>
-
-                                    </tr>
-
-                                    @php $row_count++ @endphp
-
-                                @endforeach
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <div class="card">
             <div class="card-header bg-dark text-white">
                 <h5 class="card-title m-0">Leave Applications</h5>
             </div>
@@ -192,6 +111,73 @@ $cancel_allow = ['submitted','manager_approved','manager_declined','manager_defe
                                                 <a href="{{ route('portal.leave.cancel', Crypt::encrypt($item->id)) }}" class="btn btn-warning btn-sm text-white" title="Cancel leave request"><i class="fas fa-ban"></i></a>
                                             @endif
                                         </td>
+
+                                    </tr>
+
+                                    @php $row_count++ @endphp
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title m-0">Completed Leave</h5>
+            </div>
+            <div class="card-body">
+                @if($calist->count() == 0)
+                    <p class="alert alert-secondary mb-0">
+                        You have no completed leave record
+                    </p>
+                @else
+                    <div class="table-responsive">
+
+                        <table class="table table-striped table-bordered table-hover nowrap data-table" width="100%" data-page-length="25">
+
+                            <thead>
+                                <tr class="active">
+                                    <th>#</th>
+                                    <th>Leave</th>
+                                    <th>Type</th>
+                                    <th class="text-center">Start Date</th>
+                                    <th class="text-center">End Date</th>
+                                    <th class="text-center">Return Date</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @php $row_count = 1 @endphp
+
+                                @foreach($calist as $item)
+
+                                    <tr>
+
+                                        <td>{{ $row_count }}</td>
+
+                                        <td class="text-uppercase">
+                                            <a href="{{ route('portal.leave.request.show', $item->leave_request->code) }}" class="text-underline" title="View {{ Auth::user()->fullname.'-'.strtotime($item->created_at) }} leave request">
+                                                {{ $item->leave_request->code }}
+                                            </a>
+                                        </td>
+
+                                        <td>{{ $item->leave_type->title }}</td>
+
+                                        <td class="text-center">{{ date('jS M, Y', strtotime($item->start_date)) }}</td>
+
+                                        <td class="text-center">{!! $item->end_date == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->end_date)) !!}</td>
+
+                                        <td class="text-center">{!! $item->back_on == null ? '<em class="text-muted">N/A</em>' : date('jS M, Y', strtotime($item->back_on)) !!}</td>
+
+                                        <td class="text-center text-{{$color[$item->status]}}">{{ $item->status }}</td>
 
                                     </tr>
 
