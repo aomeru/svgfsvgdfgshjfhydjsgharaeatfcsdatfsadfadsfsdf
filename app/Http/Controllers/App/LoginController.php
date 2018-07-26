@@ -91,7 +91,7 @@ class LoginController extends Controller
         //     ]
         // ]);
         if($user->status != 'active') return $this->kill_process($r,'denied',"You are not permitted to use the ERP Portal.");
-        Auth::login($user);
+        Auth::login($user, true);
         $this->log(Auth::user()->id,'User Logged into the ERP Portal',$r->path(),'auth');
         return redirect()->route('portal');
     }

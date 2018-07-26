@@ -118,7 +118,7 @@ Route::prefix('portal')->middleware(['auth','is-user'])->group(function(){
             Route::post('/store', $con.'store')->name($rkey.'.store');
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
             Route::post('/update', $con.'update')->name($rkey.'.update');
-            Route::get('/{id}/delete', $con.'destroy')->name($rkey.'.delete');
+            Route::get('/{title}/delete', $con.'destroy')->name($rkey.'.delete');
         });
     });
 

@@ -20,6 +20,8 @@ class User extends Authenticatable
         'name', 'email',
     ];
 
+    // protected $guard = ['id'];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -92,5 +94,10 @@ class User extends Authenticatable
     public function holiday()
 	{
 		return $this->hasMany(Models\Holiday::class);
+    }
+
+    public function kpi_settings()
+    {
+        return $this->hasMany(Models\KPI\Kpis::class);
     }
 }
