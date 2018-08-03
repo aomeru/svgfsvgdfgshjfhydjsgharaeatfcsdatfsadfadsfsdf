@@ -114,7 +114,16 @@ Route::prefix('portal')->middleware(['auth','is-user'])->group(function(){
             $con = 'Portal\KPI\KpisController@';
             $rkey = 'portal.kpi.settings';
             Route::get('/', $con.'index')->name($rkey);
-            Route::get('/apply', $con.'create')->name($rkey.'.apply');
+            Route::post('/store', $con.'store')->name($rkey.'.store');
+            Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
+            Route::post('/update', $con.'update')->name($rkey.'.update');
+            Route::get('/{title}/delete', $con.'destroy')->name($rkey.'.delete');
+        });
+
+        Route::group(['prefix' => 'goals'], function () {
+            $con = 'Portal\KPI\KpigController@';
+            $rkey = 'portal.kpi.goals';
+            Route::get('/', $con.'index')->name($rkey);
             Route::post('/store', $con.'store')->name($rkey.'.store');
             Route::get('/{id}/edit', $con.'edit')->name($rkey.'.edit');
             Route::post('/update', $con.'update')->name($rkey.'.update');

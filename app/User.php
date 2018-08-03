@@ -100,4 +100,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Models\KPI\Kpis::class);
     }
+
+    public function kpi_goals()
+    {
+        return $this->hasMany(Models\KPI\Kpig::class);
+    }
 }

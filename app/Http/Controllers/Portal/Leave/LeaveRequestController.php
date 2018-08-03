@@ -24,8 +24,9 @@ class LeaveRequestController extends Controller
 
     public function __construct()
     {
-        $this->middleware('role:system-administrator|manager|general-manager|executive-director|leave-manager');
-        $this->middleware('permission:update-leave-request', ['only' => ['show','update']]);
+        // $this->middleware('role:system-administrator|manager|general-manager|executive-director|leave-manager');
+        $this->middleware('permission:read-leave-request');
+        $this->middleware('permission:read-leave-request|update-leave-request', ['only' => ['show','update']]);
         $this->middleware('permission:approve-decline-leave', ['only' => ['manager_action','hr_action']]);
     }
 

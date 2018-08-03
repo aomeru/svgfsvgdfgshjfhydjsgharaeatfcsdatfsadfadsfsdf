@@ -26,7 +26,7 @@
                     <h5 class="card-title mb-0">Settings</h5>
                     @if(Laratrust::can('create-kpi-settings'))
                         <div class="d-flex justify-content-end" v-if="action == false">
-                            <button class="btn btn-primary btn-sm no-margin" title="Add new user" @click="set_create"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-primary btn-sm no-margin" title="Create new KPI setting" @click="set_create"><i class="fa fa-plus"></i></button>
                         </div>
                     @endif
                 </div>

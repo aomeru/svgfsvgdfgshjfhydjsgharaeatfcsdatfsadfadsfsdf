@@ -311,7 +311,7 @@ $call_off_request = in_array($item->status,['hr_approved','hr_deferred']) && Aut
 
                                             <td class="text-center">
                                                 <?php
-                                                $img = $x->type == 'sys' ? asset('images/brand-logo.png') : $x->user->photo;
+                                                $img = $x->type == 'sys' ? asset('images/brand-logo.png') : 'data:image.jpg;base64,'.$x->user->photo;
                                                 if($img == '') $img = asset('images/user.png');
                                                 ?>
                                                 <img src="{{$img}}" class="rounded-circle border border-light" alt="" width="50px" height="50px">
