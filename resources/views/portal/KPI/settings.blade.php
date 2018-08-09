@@ -321,9 +321,9 @@
                             self.unset_loading()
                             self.psuccess = true
                             self.presponse = response.data[0]
-                            this.list[this.key].title = this.edit_item.title
-                            this.list[this.key].tvalue = this.edit_item.tvalue
-                            this.list[this.key].descrip = this.edit_item.descrip
+                            self.list[self.key].title = self.edit_item.title
+                            self.list[self.key].tvalue = self.edit_item.tvalue
+                            self.list[self.key].descrip = self.edit_item.descrip
                             self.clear_action()
                         }).catch((error) => {
                             self.unset_loading()

@@ -85,13 +85,6 @@ trait CommonTrait
 				}
 				break;
 
-			case 'log':
-				do{
-					$val = strtoupper('DH'.rand($mi, $mx).str_random(4));
-					$data = Tlog::where($col, $val)->get();
-				}while(!$data->isEmpty());
-				break;
-
 			case 'batch':
 				do{
 					$val = '#'.rand($mi, $mx);
@@ -121,5 +114,10 @@ trait CommonTrait
 	{
 		$string = str_replace(' ', '_', $string);
 		return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
+    }
+
+    public function enc($v)
+    {
+        return encrypt($v);
     }
 }

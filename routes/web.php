@@ -21,6 +21,8 @@ Route::get('/test', 'App\AppController@test');
 Route::prefix('portal')->middleware(['auth','is-user'])->group(function(){
     Route::get('/', 'Portal\DashboardController@index')->middleware('permission:dashboard')->name('portal');
 
+    Route::post('/encrypt', 'Portal\DashboardController@enc_value');
+
     Route::post('/', 'Portal\DashboardController@read_notif')->name('read.notif');
 
     Route::resource('roles','Portal\RoleController')->except(['edit','create']);

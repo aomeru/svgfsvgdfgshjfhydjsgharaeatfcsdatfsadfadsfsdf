@@ -46,8 +46,8 @@ class StoreGoalsRequest extends FormRequest
     public function messages()
     {
         return [
-            'pgoal.required' => Kpig::find($this->parent_id),
-            // 'pgoal.required' => 'Selected parent KPI Goal does not exists.',
+            // 'pgoal.required' => Kpig::find($this->parent_id),
+            'pgoal.required' => 'Selected parent KPI Goal does not exists.',
             'goal.required' => 'KPI Goal is required.',
             'weight.required' => 'KPI Goal needs a weight.',
             'weight.numeric' => 'KPI Goal weight must be numeric.',

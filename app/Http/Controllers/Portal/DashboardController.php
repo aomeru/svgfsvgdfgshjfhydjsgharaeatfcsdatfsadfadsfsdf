@@ -28,4 +28,11 @@ class DashboardController extends Controller
         foreach(Auth::user()->unreadnotifications as $n) $n->markAsRead();
         return response()->json(['',200]);
     }
+
+    public function enc_value(Request $r)
+    {
+        $val = $this->enc($r->val);
+        if($r->ajax()) return response()->json($val);
+        return $val;
+    }
 }

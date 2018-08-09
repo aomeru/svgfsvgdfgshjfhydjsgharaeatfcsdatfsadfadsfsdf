@@ -91,35 +91,35 @@
 
             @if(Laratrust::can('update-kpi-goals'))
                 <form @submit.prevent="update_process" v-if="edit_state">
-                    <div class="form-group">
-                        <label for="stitle-edit">Title</label>
-                        <input type="text" id="stitle-edit" class="form-control" placeholder="Enter setting title" v-model="edit_item.title" :readonly="edit_item.title === 'Appraisal Period'">
-                    </div>
-
-                    <div class="form-group" v-if="is_date">
-                        <label for="date-value-edit">Value</label>
-                        <div class="input-group">
-                            <input id="date-value-edit" type="date" class="form-control" placeholder="Select Date" min="{{date('Y-m-d')}}" v-model="date_value">
-                            <label for="date-value-edit" class="input-group-append mb-0">
-                                <span class="input-group-text"><span class="fas fa-calendar"></span></span>
-                            </label>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <label for="goal">Goal</label>
+                                <textarea id="goal" class="form-control" v-model="edit_item.goal"></textarea>
+                                <div class="custom-control custom-checkbox mt-1">
+                                    <input type="checkbox" class="custom-control-input" id="is-sub-goal" v-model="edit_item.is_sub_goal">
+                                    <label class="custom-control-label font-weight-normal text-secondary" for="is-sub-goal">This is a  Sub Goal?</label>
+                                </div>
+                            </div>
+                            <div class="form-group mt-1" v-if="edit_item.is_sub_goal">
+                                <label for="parent-goal">Parent Goal</label>
+                                <select id="parent-goal" class="custom-select" v-model="edit_item.parent_id">
+                                    <option value="">Select Parent Goal</option>
+                                    <option v-for="pgoal in list[0].goals" :value="pgoal.id">@{{pgoal.goal}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="goal-weight">Goal Weight</label>
+                                <select id="goal-weight" class="custom-select" v-model="edit_item.weight">
+                                    <option value="">Select Weight</option>
+                                    <option v-for="val in weight_limit" :value="val">@{{val}}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group" v-else :class="{ 'mb-0' : edit_item.title !== 'Appraisal Period' }">
-                        <label for="svalue-edit">Value</label>
-                        <input type="text" id="svalue-edit" class="form-control" placeholder="Enter setting value" v-model="edit_item.tvalue" :hidden="is_date" :readonly="is_date">
-                    </div>
-
-                    <div class="custom-control custom-checkbox mb-3" v-show="edit_item.title !== 'Appraisal Period'">
-                        <input type="checkbox" class="custom-control-input" id="is-date" v-model="is_date">
-                        <label class="custom-control-label font-weight-normal text-secondary" for="is-date">Input date value?</label>
-                    </div>
-
-                    <div class="form-group mb-0">
-                        <label for="sdescrip-edit">Description</label>
-                        <textarea id="sdescrip-edit" class="form-control" v-model="edit_item.descrip"></textarea>
-                    </div>
                     <button class="btn btn-success" type="submit" v-html="sbtn" :disabled="process_state"></button>
                     <button class="btn btn-outline-secondary" type="button" @click="clear_action" :disabled="process_state"><i class="fas fa-times"></i></button>
                 </form>
@@ -132,15 +132,62 @@
                 <p class="alert alert-info mb-0">No kpi goals found.</p>
             </div>
 
-            <div v-else>
+            <div class="custom" v-else>
                 <nav>
                     <div class="nav nav-tabs" id="kpi-nav-tab" role="tablist">
-                        <a v-for="(kpi, key) in list" class="nav-item nav-link" :class="{ active : key === 0 }" :id="set_nt_id(kpi.appraisal_period)" data-toggle="tab" :href="set_nc_id(kpi.appraisal_period,'#')" role="tab" :aria-controls="set_nc_id(kpi.appraisal_period)" aria-selected="true">@{{kpi.appraisal_period}}</a>
+                        <a v-if="tsg" class="nav-item nav-link active" role="tab">@{{list[t.key].goals[t.gkey].goal}}</a>
+                        <a v-for="(kpi, key) in list" class="nav-item nav-link" :class="{ active : key === t.tkey && !tsg, 'disabled' : tsg }" role="tab">@{{kpi.appraisal_period}}</a>
                     </div>
                 </nav>
 
                 <div class="tab-content p-3 border border-top-0" id="kpi-nav-tabContent">
-                    <div v-for="(kpi, key) in list" class="tab-pane fade" :class="{ 'show active' : key === 0 }" :id="set_nc_id(kpi.appraisal_period)" role="tabpanel" :aria-labelledby="set_nt_id(kpi.appraisal_period)">
+                    <div v-if="tsg" class="tab-pane fade" :class="{ 'show active' : tsg }" role="tabpanel">
+                        <div class="d-flex justify-content-sm-between">
+                            <h5>@{{list[t.key].goals[t.gkey].goal}}</h5>
+                            <p class="text-right">
+                                <button class="btn btn-dark btn-sm" @click="unset_sgs"><i class="fas fa-arrow-left mr-2"></i>Back to Goals</button>
+                            </p>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-stripedd table-hover nowwrap data-table" width="100%" data-page-length="25">
+
+                                <thead>
+                                    <tr class="active">
+                                        <th>#</th>
+                                        <th>Goal</th>
+                                        <th class="text-center">Weight</th>
+                                        @if(Laratrust::can('update-kpi-goals'))<th class="text-right">Actions</th>@endif
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr v-for="(sgoal, sgkey) in list[t.key].goals[t.gkey].goals">
+                                        <td>@{{sgkey + 1}}</td>
+                                        <td>@{{sgoal.goal}}</td>
+                                        <td class="text-center">@{{sgoal.weight}}</td>
+                                        @if(Laratrust::can('update-kpi-goals'))
+                                            <td class="text-right">
+                                                @if(Laratrust::can('update-kpi-goals'))
+                                                    <button class="btn btn-primary btn-sm" type="button" @click="set_edit(t.key,t.gkey,sgkey)" :disabled="process_state"><i class="fas fa-pencil-alt"></i></button>
+                                                @endif
+
+                                                @if(Laratrust::can('delete-kpi-goals'))
+                                                    <button class="btn btn-danger btn-sm" type="button" @click="set_delete(t.key,t.gkey,sgkey)" :disabled="process_state"><i class="fas fa-trash-alt"></i></button>
+                                                @endif
+                                            </td>
+                                        @endif
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <div v-for="(kpi, key) in list" class="tab-pane fade" :class="{ 'show active' : key === t.tpkey && !tsg }" role="tabpanel">
 
                         <div class="table-responsive">
                             <table class="table table-stripedd table-hover nowwrap data-table" width="100%" data-page-length="25">
@@ -159,13 +206,18 @@
 
                                     <tr v-for="(goal, gkey) in kpi.goals">
                                         <td>@{{gkey + 1}}</td>
-                                        <td>@{{goal.goal}}</td>
+                                        <td>
+                                            <a href="#" v-if="goal.goals.length > 0" @click="view_sgs(key,gkey)">
+                                                @{{goal.goal}}
+                                            </a>
+                                            <span v-else>@{{goal.goal}}</span>
+                                        </td>
                                         <td class="text-center">@{{goal.weight}}</td>
                                         <td class="text-center">@{{goal.goals.length}}</td>
                                         @if(Laratrust::can('update-kpi-goals'))
                                             <td class="text-right">
                                                 @if(Laratrust::can('update-kpi-goals'))
-                                                    <button class="btn btn-primary btn-sm" type="button" @click="set_edit(gkey)" :disabled="process_state"><i class="fas fa-pencil-alt"></i></button>
+                                                    <button class="btn btn-primary btn-sm" type="button" @click="set_edit(key,gkey)" :disabled="process_state"><i class="fas fa-pencil-alt"></i></button>
                                                 @endif
 
                                                 @if(Laratrust::can('delete-kpi-goals'))
@@ -175,33 +227,14 @@
                                         @endif
                                     </tr>
 
-
-                                    {{-- <tr v-for="(sgoal, sgkey) in kpi.goals" v-if="kpi.goals.goals !== null">
-                                        <td>@{{gkey + 1 + '.'}}</td>
-                                        <td>@{{goal.goal}}</td>
-                                        <td class="text-center">@{{goal.weight}}</td>
-                                        @if(Laratrust::can('update-kpi-goals'))
-                                            <td class="text-right">
-                                                @if(Laratrust::can('update-kpi-goals'))
-                                                    <button class="btn btn-primary btn-sm" type="button" @click="set_edit(gkey)" :disabled="process_state"><i class="fas fa-pencil-alt"></i></button>
-                                                @endif
-
-                                                @if(Laratrust::can('delete-kpi-goals'))
-                                                    <button class="btn btn-danger btn-sm" type="button" @click="set_delete(gkey)" :disabled="process_state"><i class="fas fa-trash-alt"></i></button>
-                                                @endif
-                                            </td>
-                                        @endif
-                                    </tr> --}}
-
-
                                 </tbody>
 
                             </table>
 
                         </div>
                     </div>
-                </div>
 
+                </div>
 
             </div>
 
@@ -240,8 +273,17 @@
                     parent_id : '',
                     is_sub_goal : false,
 
-                    key : null,
+                    tsg : false,
+                    t : {
+                        tkey : 0,
+                        tpkey : 0,
+                        key : null,
+                        gkey : null,
+                        sgkey : null,
+                    },
+
                     edit_item : {
+                        t : '',
                         goal : '',
                         weight : '',
                         parent_id : '',
@@ -257,42 +299,64 @@
                     cbtn : '',
                     sbtn : '',
                     dbtn : '',
+
                     psuccess : false,
                     perror : false,
                     presponse : '',
                 },
                 methods : {
-                    set_nt_id : function(v){
-                        return 'nav-' + get_slug(v) + '-tab'
+                    view_sgs(key, gkey){
+                        this.tsg = true
+                        this.t.key = key
+                        this.t.gkey = gkey
+                        this.clear_action()
                     },
-                    set_nc_id : function(v,h = ''){
-                        return h + 'nav-' + get_slug(v) + '-content'
+                    unset_sgs(){
+                        this.tsg = false
+                        this.t.key = this.t.gkey = null
+                        this.clear_action()
                     },
-                    // set_encrypt : function(v){
-                    //     console.log({{ encrypt(' + v + ') }});
-                    // },
+
+
                     set_create : function(){
                         this.action = this.create_state = true
                         this.action_title = 'Create KPI Goal'
                     },
-                    set_edit : function(key){
+                    set_edit : function(key,gkey,sgkey=null){
+                        this.t.key = key
+                        this.t.gkey = gkey
+                        this.t.sgkey = sgkey
                         this.action = this.edit_state = true
-                        this.edit_item.goal = this.list[key].goal
-                        this.edit_item.weight = this.list[key].weight
-                        this.edit_item.parent_id = this.list[key].parent_id === null ? '' : this.list[key].parent_id
-                        this.edit_item.is_sub_goal = this.list[key].parent_id === null ? false : true
-                        this.key = key
-                        this.action_title = 'Edit KPI Goal'
+                        if(sgkey !== null)
+                        {
+                            this.enc(this.list[key].goals[gkey].goals[sgkey].id)
+                            this.edit_item.goal = this.list[key].goals[gkey].goals[sgkey].goal
+                            this.edit_item.weight = this.list[key].goals[gkey].goals[sgkey].weight
+                            this.edit_item.parent_id = this.list[key].goals[gkey].goals[sgkey].parent_id === null ? '' : this.list[key].goals[gkey].goals[sgkey].parent_id
+                            this.edit_item.is_sub_goal = this.list[key].goals[gkey].goals[sgkey].parent_id === null ? false : true
+                            this.action_title = 'Edit KPI Sub Goal'
+                        }
+                        else
+                        {
+                            this.enc(this.list[key].goals[gkey].id)
+                            this.edit_item.goal = this.list[key].goals[gkey].goal
+                            this.edit_item.weight = this.list[key].goals[gkey].weight
+                            this.edit_item.parent_id = this.list[key].goals[gkey].parent_id === null ? '' : this.list[key].goals[gkey].parent_id
+                            this.edit_item.is_sub_goal = this.list[key].goals[gkey].parent_id === null ? false : true
+                            this.action_title = 'Edit KPI Goal'
+                        }
                     },
-                    set_delete : function(key){
+                    set_delete : function(key,gkey,sgkey=null){
+                        this.t.gkey = gkey
                         this.action = this.delete_state = true
                         this.action_title = 'Delete KPI Goal'
-                        this.key = key
                     },
                     clear_action : function(){
-                        this.action = this.process_state = this.create_state = this.edit_state = this.delete_state = this.setap = this.is_sub_goal = this.edit_item.goal = false
-                        this.action_title = this.goal = this.weight = this.parent_id = this.key = this.edit_item.goal = this.edit_item.weight = this.edit_item.parent_id = ''
+                        this.action = this.process_state = this.create_state = this.edit_state = this.delete_state = this.setap = this.is_sub_goal = false
+                        this.action_title = this.goal = this.weight = this.parent_id = this.key = this.edit_item.t = this.edit_item.goal = this.edit_item.weight = this.edit_item.parent_id = ''
                     },
+
+
                     set_loading : function () {
                         this.process_state = true;
                         if(this.pmode === 'create') {
@@ -307,9 +371,20 @@
                         this.sbtn = this.button.save
                         this.dbtn = this.button.delete
                     },
+
                     unset_alert: function(){
                         this.psuccess = this.perror = false
                         this.presponse = ''
+                    },
+
+
+                    enc : function(v){
+                        let self = this
+                        axios.post('/portal/encrypt', {
+                            val : v,
+                        }).then((response) => {
+                            self.edit_item.t = response.data
+                        }).catch((error) => {});
                     },
                     store_process : function(){
                         this.set_loading()
@@ -338,18 +413,17 @@
                         this.set_loading()
                         this.unset_alert()
                         let self = this
-                        axios.post('/portal/kpi/settings/update', {
-                            title : this.list[this.key].title,
-                            stitle : this.edit_item.title,
-                            svalue : this.edit_item.tvalue,
-                            sdescrip : this.edit_item.descrip,
+                        axios.post('/portal/kpi/goals/update', {
+                            id : this.edit_item.t,
+                            goal : this.edit_item.goal,
+                            weight : this.edit_item.weight,
+                            is_sub_goal : this.edit_item.is_sub_goal,
+                            parent_id : this.edit_item.parent_id,
                         }).then((response) => {
                             self.unset_loading()
                             self.psuccess = true
                             self.presponse = response.data[0]
-                            this.list[this.key].title = this.edit_item.title
-                            this.list[this.key].tvalue = this.edit_item.tvalue
-                            this.list[this.key].descrip = this.edit_item.descrip
+                            self.list = response.data[1]
                             self.clear_action()
                         }).catch((error) => {
                             self.unset_loading()
@@ -398,12 +472,6 @@
                         this.pmode = x ? 'delete' : ''
                         this.edit_state = this.create_state = false
                     },
-                    // is_date : function(x){
-                    //     if(this.pmode === 'create')
-                    //     {
-                    //          if(!x) this.svalue = this.edit_item.tvalue = ''
-                    //     }
-                    // }
                 }
             });
         });

@@ -84,4 +84,5 @@ class KpigController extends Controller
         }
         return response()->json(['errors' => ['error' => ['Oops, we were unable to process your request, please try again']]], 422);
     }
+
 }
